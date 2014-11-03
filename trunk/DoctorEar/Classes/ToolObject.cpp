@@ -29,6 +29,7 @@ Tool* Tool::createTool(std::string imageTool, int typeTool){
 void Tool::initOptions(int typeTool){
     _visibleSize = Director::getInstance()->getVisibleSize();
     _typeTool = typeTool;
+    _isTouch = false;
     //Use for keepear tool
     _isSet = false;
     //Use for small table
@@ -203,7 +204,39 @@ void Tool::turnOnFlashLight(Ref *pSender){
         _noteHelp->setVisible(false);
         _noteHelp->removeFromParentAndCleanup(true);
         
-        ((GamePlay *)(this->getParent()))->addTools();
+        ((GamePlay *)(this->getParent()))->showTools();
         ((GamePlay*)(this->getParent()))->showMessesAndBugs();
     }
+}
+
+//Set scissor cut animation
+void Tool::setScissorCutAnimation(){
+    Vector<SpriteFrame*> animFrames(2);
+    char str1[100] = {0};
+    char str2[100] = {0};
+    
+    sprintf(str1, TOOL_SCISSOR_CLOSE);
+    auto frame1 = SpriteFrame::create(str1,Rect(0,0,this->getContentSize().width,this->getContentSize().height)); //we assume that the sprites' dimentions are 40*40 rectangles.
+    animFrames.pushBack(frame1);
+    
+    sprintf(str2, TOOL_SCISSOR_OPEN);
+    auto frame2 = SpriteFrame::create(str2,Rect(0,0,this->getContentSize().width,this->getContentSize().height)); //we assume that the sprites' dimentions are 40*40 rectangles.
+    animFrames.pushBack(frame2);
+    
+    auto animation = Animation::createWithSpriteFrames(animFrames, 0.15f);
+    auto animate = Animate::create(animation);
+    
+    RepeatForever *repeat = RepeatForever::create(animate);
+    this->runAction(repeat);
+    
+    auto action = CallFunc::create(CC_CALLBACK_0(Tool::setScissorClose,this));
+    this->runAction(Sequence::create(DelayTime::create(0.6f),action, NULL));
+}
+
+void Tool::setScissorClose(){
+    this->stopAllActions();
+    char str[100] = {0};
+    sprintf(str, TOOL_SCISSOR_CLOSE);
+    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+    this->setTexture(texture);
 }

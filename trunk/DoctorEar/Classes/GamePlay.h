@@ -25,6 +25,8 @@ public:
     
     cocos2d::Sprite *_spriteTable, *_background;
     cocos2d::extension::ControlSlider *slider;
+    cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools;
+    
     Patient *_patient;
     Tool *_keepEar, *_flashLight, *_scissor, *_getMess, *_catchBug, *_getWater, *_drugWater, *_injection, *_tamPon, *_desiccate, *_sprayChemicals, *_shakeEar, *_smallTable;
 
@@ -48,9 +50,9 @@ public:
     void valueChanged(Ref *sender, cocos2d::extension::Control::EventType controlEvent);
     
     void addTools();
+    void showTools();
     void addMessesAndBugs();
     void showMessesAndBugs();
-    
 };
 
 #endif /* defined(__DoctorEar__GamePlay__) */

@@ -38,9 +38,9 @@ bool GamePlay::init(){
     this->addChild(_background,0);
     
     _spriteTable = Sprite::create(GAME_PLAY_TABLE);
-    _spriteTable->setPosition(_background->getContentSize().width/2,0);
-    _spriteTable->setScaleY(0.85f);
-    _background->addChild(_spriteTable,10);
+    _spriteTable->setPosition(visibleSize.width/2,0);
+    _spriteTable->setScale(visibleSize.width/_spriteTable->getContentSize().width,1.5);
+    this->addChild(_spriteTable,14);
     
     //Init patient
     _patient = Patient::createPatient(PATIENT_BODY1, AppDelegate::_typePatient);
@@ -69,6 +69,7 @@ bool GamePlay::init(){
     _keepEar->setUpNoteHelp();
     
     //Add messes and bugs
+    this->addTools();
     this->addMessesAndBugs();
     
     return true;
@@ -311,7 +312,6 @@ void GamePlay::addFlashLight(){
 #pragma mark - INIT TOOLS
 void GamePlay::addTools(){
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    float fTime = 0.3f;
     
     _scissor = Tool::createTool(TOOL_SCISSOR_CLOSE, TOOL_TYPE_SCISSOR);
     this->addChild(_scissor,15);
@@ -319,7 +319,6 @@ void GamePlay::addTools(){
     _scissor->setScale(2.0f);
     _scissor->_patient = _patient;
     _scissor->_savePositionOriginal = Point(visibleSize.width*0.12f, visibleSize.height*0.13f);
-    _scissor->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.12f, visibleSize.height*0.13f)));
     _scissor->setUpNoteHelp();
 
     _shakeEar = Tool::createTool(TOOL_SHAKE_EAR, TOOL_TYPE_SHAKE_EAR);
@@ -327,7 +326,6 @@ void GamePlay::addTools(){
     _shakeEar->setPosition(Point(visibleSize.width*0.33f, -visibleSize.height*0.13f));
     _shakeEar->cocos2d::Node::setScale(2.0f);
     _shakeEar->_savePositionOriginal = Point(visibleSize.width*0.33f, visibleSize.height*0.13f);
-    _shakeEar->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f, visibleSize.height*0.13f)));
     _shakeEar->_patient = _patient;
     _shakeEar->setUpNoteHelp();
     
@@ -336,7 +334,6 @@ void GamePlay::addTools(){
     _getMess->setPosition(Point(visibleSize.width*0.5f, -visibleSize.height*0.13f));
     _getMess->cocos2d::Node::setScale(2.0f);
     _getMess->_savePositionOriginal = Point(visibleSize.width*0.5f, visibleSize.height*0.13f);
-    _getMess->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f, visibleSize.height*0.13f)));
     _getMess->_patient = _patient;
     _getMess->setUpNoteHelp();
     
@@ -345,7 +342,6 @@ void GamePlay::addTools(){
     _catchBug->setPosition(Point(visibleSize.width*0.66f, -visibleSize.height*0.13f));
     _catchBug->cocos2d::Node::setScale(2.0f);
     _catchBug->_savePositionOriginal = Point(visibleSize.width*0.66f, visibleSize.height*0.13f);
-    _catchBug->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.66f, visibleSize.height*0.13f)));
     _catchBug->_patient = _patient;
     _catchBug->setUpNoteHelp();
 
@@ -359,9 +355,37 @@ void GamePlay::addTools(){
     _getWater->setPosition(Point(visibleSize.width*0.91f, -visibleSize.height*0.5f));
     _getWater->cocos2d::Node::setScale(2.0f);
     _getWater->_savePositionOriginal = Point(visibleSize.width*0.91f, -visibleSize.height*0.3f);
-    _getWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f, -visibleSize.height*0.3f)));
     _getWater->_patient = _patient;
     _getWater->setUpNoteHelp();
+    
+//    DrawNode *dotNode = DrawNode::create();
+//    dotNode->drawDot(Point(visibleSize.width*.5, visibleSize.height*.5), 10, Color4F(Color3B::WHITE));
+//    this->addChild(dotNode, 16);
+    
+    _scissor->setVisible(false);
+    _getWater->setVisible(false);
+    _smallTable->setVisible(false);
+    _getMess->setVisible(false);
+    _catchBug->setVisible(false);
+    _shakeEar->setVisible(false);
+}
+
+void GamePlay::showTools(){
+    float fTime = 0.3f;
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    
+    _scissor->setVisible(true);
+    _getWater->setVisible(true);
+    _smallTable->setVisible(true);
+    _getMess->setVisible(true);
+    _catchBug->setVisible(true);
+    _shakeEar->setVisible(true);
+    
+    _scissor->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.12f, visibleSize.height*0.13f)));
+    _shakeEar->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f, visibleSize.height*0.13f)));
+    _getMess->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f, visibleSize.height*0.13f)));
+    _catchBug->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.66f, visibleSize.height*0.13f)));
+    _getWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f, -visibleSize.height*0.3f)));
 }
 
 #pragma mark - mess and bugs
