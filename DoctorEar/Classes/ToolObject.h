@@ -26,6 +26,8 @@ public:
     void setHandUp();
     void setUpNoteHelp();
     void turnOnFlashLight(cocos2d::Ref* pSender);
+    void setScissorCutAnimation();
+    void setScissorClose();
     
     int _typeTool;
     bool _isTouch,_isSet,_isTurnOnFlashLight;

@@ -127,6 +127,8 @@
 #define SOUND_MAIN_BUTTON           "sounds/main_button.wav"
 #define SOUND_SUB_BUTTON            "sounds/sub_button.wav"
 #define SOUND_MACHINE_KEEP_EAR      "sounds/machine.mp3"
+#define SOUND_GET_DIRTY_WATER       "sounds/getDirtyWaterSound.mp3"
+#define SOUND_SCISSOR               "sounds/scissorSound.mp3"
 
 //Mess
 #define MESS_RAY_TAI_1              "mess/rayTai1.png"

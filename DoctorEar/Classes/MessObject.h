@@ -24,9 +24,11 @@ public:
     void updateMess(float dt);
     void initOptions(int typeMess);
     void removeMess();
+    void callCheckAgain();
     
     int _typeMess;
-    bool _isRemove;
+    int _stateMess;
+    bool _isRemove, _isCheckingMess, _isPlaySoundEffect;
     Size _visibleSize;
     Tool *_tool;
 };
