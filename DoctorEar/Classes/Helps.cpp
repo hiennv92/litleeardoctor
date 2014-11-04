@@ -50,10 +50,26 @@ void Help::moveHandVertical(){
     this->runAction(Sequence::create(DelayTime::create(1.0f),action3,NULL));
 }
 
+void Help::setMuiTenNormal(){
+    this->setScale(2.0f);
+    this->setOpacity(1.0f);
+    auto action1 = CallFunc::create( CC_CALLBACK_0(Help::setMuiTenScale,this));
+    this->runAction(Sequence::create(DelayTime::create(0.1f),action1,NULL));
+}
+
+void Help::setMuiTenScale(){
+    auto action1 = ScaleTo::create(0.2f, 1.0f);
+//    auto action2 = FadeTo::create(0.2f, 0.5f);
+    auto action3 = CallFunc::create( CC_CALLBACK_0(Help::setMuiTenNormal,this));
+    
+    this->runAction(Sequence::create(action1,NULL));
+    this->runAction(Sequence::create(DelayTime::create(0.4f),action3,NULL));
+}
+
 void Help::setNormalState(){
     this->setPosition(_savePosition);
     this->setScale(2.5f);
-
+    
     if(_typeHand == 1){
         auto action1 = CallFunc::create( CC_CALLBACK_0(Help::moveHandVertical,this));
         this->runAction(Sequence::create(DelayTime::create(0.1f),action1,NULL));

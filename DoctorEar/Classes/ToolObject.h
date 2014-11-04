@@ -24,6 +24,8 @@ public:
     void updateTool(float dt);
     void initOptions(int typeTool);
     void setHandUp();
+    void setMuiTen();
+    void showMuiTen();
     void setUpNoteHelp();
     void turnOnFlashLight(cocos2d::Ref* pSender);
     void setScissorCutAnimation();
@@ -37,7 +39,7 @@ public:
     Point _savePositionOriginal;
     Point _velocityMoveSmallTable;
     
-    Help *_handHelp, *_noteHelp;
+    Help *_handHelp, *_noteHelp, *_muiTen;
     
     //Touchs
     void addEvents();

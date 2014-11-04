@@ -26,6 +26,8 @@ public:
     void moveHandVertical();
     void moveHandHorizontal();
     void setNormalState();
+    void setMuiTenNormal();
+    void setMuiTenScale();
     
     int _typeHelp;
     int _typeHand;

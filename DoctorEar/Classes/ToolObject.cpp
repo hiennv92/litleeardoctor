@@ -65,6 +65,21 @@ void Tool::setHandUp(){
     _handHelp->moveHandVertical();
 }
 
+void Tool::setMuiTen(){
+    _muiTen = Help::createHelp(HELP_MUI_TEN, 2);
+    _muiTen->setPosition(this->getPositionX() + 100,this->getPositionY());
+    _muiTen->setScale(2.0f);
+    _muiTen->setRotation(-45.0f);
+    (this->getParent())->addChild(_muiTen,15);
+    _muiTen->setVisible(false);
+}
+
+void Tool::showMuiTen(){
+    _muiTen->setPosition(this->getPositionX() + 100,this->getPositionY());
+    _muiTen->setVisible(true);
+    _muiTen->setMuiTenScale();
+}
+
 void Tool::setUpNoteHelp(){
     //set note help
     switch (_typeTool) {
@@ -167,20 +182,37 @@ void Tool::touchEvent(cocos2d::Touch* touch){
     cocos2d::Vec2 p = touch->getLocation();
 //    CCLOG("%f - %f",touch->getLocation().x,touch->getLocation().y);
     auto actionMove = MoveTo::create(0.7f, _savePositionOriginal);
-    if(_isTouch && _typeTool != 2){
+    if(_isTouch && _typeTool != 2 && _typeTool){
         _isTouch = false;
         _noteHelp->setVisible(false);
         _patient->setMouthNormal();
         _patient->setEyeBrowNormal();
 
-        this->runAction(actionMove);
+        if(_typeTool != TOOL_TYPE_WATER_DRUG){
+            this->runAction(actionMove);
+        }
         
         if(_typeTool == TOOL_TYPE_CATCH_BUG){
             //Small table
             ((GamePlay*)(this->getParent()))->_smallTable->_startMove = true;
             ((GamePlay*)(this->getParent()))->_smallTable->_isTouch = false;
         }
+        
+        if(_typeTool == TOOL_TYPE_WATER_DRUG && !_isSet){
+            this->runAction(RotateTo::create(0.7f, 0.0f));
+            this->runAction(actionMove);
+        }
+        
+        if(_typeTool >= TOOL_TYPE_SCISSOR ){
+            if(((GamePlay*)(this->getParent()))->_pageTools == 1){
+                ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
+            }else if(((GamePlay*)(this->getParent()))->_pageTools == 2){
+                ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(true);
+                ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
+            }
+        }
     }
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
 void Tool::setTouchDotPosition (Vec2 vec)
@@ -203,7 +235,6 @@ void Tool::setTouchDotPosition (Vec2 vec)
     }else{
         this->setPosition (vec);
     }
-    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
 //Flash light

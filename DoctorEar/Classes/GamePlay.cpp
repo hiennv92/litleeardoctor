@@ -135,6 +135,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_scissor){
         cocos2d::Rect rectScissor = _scissor->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _scissor->_isTouch = true;
             _scissor->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
@@ -146,6 +149,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_shakeEar){
         cocos2d::Rect rectScissor = _shakeEar->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _shakeEar->_isTouch = true;
             _shakeEar->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
@@ -158,6 +164,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_getMess){
         cocos2d::Rect rectScissor = _getMess->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _getMess->_isTouch = true;
             _getMess->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
@@ -170,6 +179,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_catchBug){
         cocos2d::Rect rectScissor = _catchBug->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _catchBug->_isTouch = true;
             _catchBug->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
@@ -185,6 +197,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_getWater){
         cocos2d::Rect rectScissor = _getWater->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _getWater->_isTouch = true;
             _getWater->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
@@ -197,6 +212,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_desiccate){
         cocos2d::Rect rectScissor = _desiccate->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _desiccate->_isTouch = true;
             _desiccate->_noteHelp->showHelp(0.0f);
             _patient->setMouthSmile();
@@ -209,6 +227,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_sprayChemicals){
         cocos2d::Rect rectScissor = _sprayChemicals->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _sprayChemicals->_isTouch = true;
             _sprayChemicals->_noteHelp->showHelp(0.0f);
             _patient->setMouthSmile();
@@ -221,6 +242,9 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_tamPon){
         cocos2d::Rect rectScissor = _tamPon->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _tamPon->_isTouch = true;
             _tamPon->_noteHelp->showHelp(0.0f);
             _patient->setMouthSmile();
@@ -231,20 +255,29 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     }
     
     if(_drugWater){
-        cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _drugWater->_isTouch = true;
-            _drugWater->_noteHelp->showHelp(0.0f);
-            _patient->setMouthSmile();
-            _patient->setEyeBrowSmile();
-            
-            return true;
+        if(!_drugWater->_isSet){
+            cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _drugWater->_isTouch = true;
+                _drugWater->_noteHelp->showHelp(0.0f);
+                _patient->setMouthSmile();
+                _patient->setEyeBrowSmile();
+                _drugWater->setRotation(65.0f);
+                _drugWater->setPosition(_drugWater->getPositionX(),_drugWater->getPositionY()+ 30);
+                return true;
+            }
         }
     }
     
     if(_injection){
         cocos2d::Rect rectScissor = _injection->getBoundingBox();
         if(rectScissor.containsPoint(p)){
+            _btnBackTools->setVisible(false);
+            _btnNextTools->setVisible(false);
+            
             _injection->_isTouch = true;
             _injection->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
@@ -358,7 +391,7 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
     
     //Move water drug
     if(_drugWater){
-        if(_drugWater->_isTouch){
+        if(_drugWater->_isTouch && !_drugWater->_isSet){
             _drugWater->setTouchDotPosition (_drugWater-> getPosition () + touch-> getDelta ());
             return;
         }
@@ -530,6 +563,7 @@ void GamePlay::addTools(){
     _drugWater->cocos2d::Node::setScale(2.0f);
     _drugWater->_savePositionOriginal = Point(visibleSize.width*0.69f, visibleSize.height*0.13f);
     _drugWater->_patient = _patient;
+    _drugWater->setMuiTen();
     _drugWater->setUpNoteHelp();
     
     _injection = Tool::createTool(TOOL_INJECTION_NORMAL, TOOL_TYPE_INJECTION);
@@ -539,7 +573,6 @@ void GamePlay::addTools(){
     _injection->_savePositionOriginal = Point(visibleSize.width*0.91f, visibleSize.height*0.13f);
     _injection->_patient = _patient;
     _injection->setUpNoteHelp();
-
 
     
     _scissor->setVisible(false);
@@ -597,7 +630,7 @@ void GamePlay::showTools(){
 void GamePlay::addMessesAndBugs(){
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
-    if (_patient->_typePatient == 1) {
+//    if (_patient->_typePatient == 1) {
         //Add nuoc ban
         _nuocTai1 = MessObject::createMess(MESS_NUOC_BAN_1, MESS_TYPE_NUOC_BAN);
         _nuocTai1->_tool = _tamPon;//Tam bong hut nuoc ban
@@ -713,12 +746,12 @@ void GamePlay::addMessesAndBugs(){
         _dichTai->setVisible(false);
         _dichTai->_tool = _getWater;
         this->addChild(_dichTai,13);
-    }
+//    }
 }
 
 void GamePlay::showMessesAndBugs(){
-    switch (AppDelegate::_typePatient) {
-        case 1:
+//    switch (AppDelegate::_typePatient) {
+//        case 1:
             _dichTai->setVisible(true);
             _mangTai->setVisible(true);
             _rayTai1->setVisible(true);
@@ -732,11 +765,11 @@ void GamePlay::showMessesAndBugs(){
             _longTai4->setVisible(true);
             _longTai5->setVisible(true);
             _longTai6->setVisible(true);
-            break;
-            
-        default:
-            break;
-    }
+//            break;
+    
+//        default:
+//            break;
+//    }
 }
 
 #pragma mark - BUTTONS SELECTED
