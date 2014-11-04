@@ -31,6 +31,21 @@ void Patient::initOptions(int typePatient){
         case 1:
             _stringPathImage = PATIENT_BOY1_PATH;
             break;
+        case 2:
+            _stringPathImage = PATIENT_GIRL_PATH;
+            break;
+        case 3:
+            _stringPathImage = PATIENT_BOY2_PATH;
+            break;
+        case 4:
+            _stringPathImage = PATIENT_JS_PATH;
+            break;
+        case 5:
+            _stringPathImage = PATIENT_XXG_PATH;
+            break;
+        case 6:
+            _stringPathImage = PATIENT_OLD_PATH;
+            break;
         default:
             break;
     }
@@ -74,8 +89,8 @@ void Patient::initOptions(int typePatient){
     _mouthScare->setVisible(false);
     
     char strMouthSmile[100] = {0};
-    sprintf(strMouthSmile,"%s_mouth_2.png",_stringPathImage.c_str());
-    _mouthSmile = Sprite::create(strMouthScare);
+    sprintf(strMouthSmile,"%s_mouth_3.png",_stringPathImage.c_str());
+    _mouthSmile = Sprite::create(strMouthSmile);
     _mouthSmile->setPosition(Point(this->getContentSize().width*0.85f,this->getContentSize().height*0.45f));
     this->addChild(_mouthSmile,1);
     _mouthSmile->setVisible(false);
@@ -219,7 +234,14 @@ void Patient::setEyeBrowScare(){
 }
 
 void Patient::setEyeBrowSmile(){
+    _eyeBrow->stopAllActions();
+    char str[100] = {0};
+    sprintf(str, "%s_brow_4.png",_stringPathImage.c_str());
+    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+    _eyeBrow->setTexture(texture);
     
+    auto action1 = CallFunc::create( CC_CALLBACK_0(Patient::setEyeBrowNormal,this));
+    this->runAction(Sequence::create(DelayTime::create(1.5f),action1,NULL));
 }
 
 void Patient::setEyeBrowNormal(){
@@ -252,6 +274,8 @@ void Patient::setMouthSmile(){
     _mouth->setVisible(false);
     _mouthScare->setVisible(false);
     _mouthSmile->setVisible(true);
+    auto action1 = CallFunc::create( CC_CALLBACK_0(Patient::setMouthNormal,this));
+    this->runAction(Sequence::create(DelayTime::create(1.5f),action1,NULL));
 }
 
 void Patient::setMouthNormal(){

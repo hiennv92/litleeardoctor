@@ -31,6 +31,8 @@ void MessObject::initOptions(int typeMess){
     this->schedule(schedule_selector(MessObject::updateMess));
     if(_typeMess == MESS_TYPE_DICH_TAI){
         _stateMess = 6;
+    }else if(_typeMess == MESS_TYPE_MANG_TAI){
+        _stateMess = 4;
     }
     _isCheckingMess = true;
     _isPlaySoundEffect = false;
@@ -113,7 +115,7 @@ void MessObject::removeMess(){
             this->setTexture(texture);
             
             auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
-            this->runAction(Sequence::create(DelayTime::create(.6f),action, NULL));
+            this->runAction(Sequence::create(DelayTime::create(.8f),action, NULL));
         }else{
             this->_isRemove = true;
             this->setVisible(false);
@@ -129,7 +131,7 @@ void MessObject::removeMess(){
         
         if(_stateMess != 0){
             char str[100] = {0};
-            sprintf(str, "mess/dichTai_%d.png",6 - _stateMess);
+            sprintf(str, "mess/mangTai_2.png");
             Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
             this->setTexture(texture);
             

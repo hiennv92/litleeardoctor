@@ -6,6 +6,16 @@
 USING_NS_CC;
 int AppDelegate::_typePatient = 1;
 
+typedef struct tagResource
+{
+    cocos2d::Size size;
+    char directory[100];
+}Resource;
+
+static Resource mediumResource =  { cocos2d::Size(640, 1136),  "iphone"   };
+static Resource largeResource  =  { cocos2d::Size(1536, 2048), "ipad" };
+static cocos2d::Size designResolutionSize = cocos2d::Size(640, 1136);
+
 AppDelegate::AppDelegate() {
 
 }
@@ -38,6 +48,25 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     defaults->flush();
+    
+    
+    cocos2d::Size frameSize = glview->getFrameSize();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_WIDTH);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_WIDTH);
+#endif
+    
+    //    if (frameSize.width > mediumResource.size.width) {
+    //        cocos2d::FileUtils::getInstance()->addSearchPath(largeResource.directory);
+    //        director->setContentScaleFactor(largeResource.size.width / designResolutionSize.width);
+    //    }
+    //    else
+    {
+        cocos2d::FileUtils::getInstance()->addSearchPath(mediumResource.directory);
+        director->setContentScaleFactor(mediumResource.size.width / designResolutionSize.width);
+    }
+    
     
     FileUtils::getInstance()->addSearchPath("images");
     

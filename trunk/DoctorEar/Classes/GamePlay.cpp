@@ -43,7 +43,28 @@ bool GamePlay::init(){
     this->addChild(_spriteTable,14);
     
     //Init patient
-    _patient = Patient::createPatient(PATIENT_BODY1, AppDelegate::_typePatient);
+    switch (AppDelegate::_typePatient) {
+        case 1:
+            _patient = Patient::createPatient(PATIENT_BODY1, AppDelegate::_typePatient);
+            break;
+        case 2:
+            _patient = Patient::createPatient(PATIENT_BODY2, AppDelegate::_typePatient);
+            break;
+        case 3:
+            _patient = Patient::createPatient(PATIENT_BODY3, AppDelegate::_typePatient);
+            break;
+        case 4:
+            _patient = Patient::createPatient(PATIENT_BODY4, AppDelegate::_typePatient);
+            break;
+        case 5:
+            _patient = Patient::createPatient(PATIENT_BODY5, AppDelegate::_typePatient);
+            break;
+        case 6:
+            _patient = Patient::createPatient(PATIENT_BODY6, AppDelegate::_typePatient);
+            break;
+        default:
+            break;
+    }
     _patient->setPosition(_background->getContentSize().width/2,_background->getContentSize().height/2);
     _background->addChild(_patient,1);
     _patient->createSmallEye();
@@ -178,8 +199,8 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         if(rectScissor.containsPoint(p)){
             _desiccate->_isTouch = true;
             _desiccate->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
+            _patient->setMouthSmile();
+            _patient->setEyeBrowSmile();
             
             return true;
         }
@@ -190,8 +211,8 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         if(rectScissor.containsPoint(p)){
             _sprayChemicals->_isTouch = true;
             _sprayChemicals->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
+            _patient->setMouthSmile();
+            _patient->setEyeBrowSmile();
             
             return true;
         }
@@ -202,8 +223,8 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         if(rectScissor.containsPoint(p)){
             _tamPon->_isTouch = true;
             _tamPon->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
+            _patient->setMouthSmile();
+            _patient->setEyeBrowSmile();
             
             return true;
         }
@@ -214,8 +235,8 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         if(rectScissor.containsPoint(p)){
             _drugWater->_isTouch = true;
             _drugWater->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
+            _patient->setMouthSmile();
+            _patient->setEyeBrowSmile();
             
             return true;
         }

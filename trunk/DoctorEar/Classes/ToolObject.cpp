@@ -203,6 +203,7 @@ void Tool::setTouchDotPosition (Vec2 vec)
     }else{
         this->setPosition (vec);
     }
+    CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
 //Flash light
