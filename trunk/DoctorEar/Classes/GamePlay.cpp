@@ -310,6 +310,46 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
             return;
         }
     }
+    
+    //Move desiccate
+    if(_desiccate){
+        if(_desiccate->_isTouch){
+            _desiccate->setTouchDotPosition (_desiccate-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    //Move spray chemical
+    if(_sprayChemicals){
+        if(_sprayChemicals->_isTouch){
+            _sprayChemicals->setTouchDotPosition (_sprayChemicals-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    //Move tam bong
+    if(_tamPon){
+        if(_tamPon->_isTouch){
+            _tamPon->setTouchDotPosition (_tamPon-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    //Move water drug
+    if(_drugWater){
+        if(_drugWater->_isTouch){
+            _drugWater->setTouchDotPosition (_drugWater-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    //Move injection
+    if(_injection){
+        if(_injection->_isTouch){
+            _injection->setTouchDotPosition (_injection-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
 }
 
 void GamePlay::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event){
@@ -443,7 +483,7 @@ void GamePlay::addTools(){
     _desiccate->setPosition(Point(visibleSize.width*0.05f + widthTmp, -visibleSize.height*0.5f));
     _scissor->setScale(2.0f);
     _desiccate->cocos2d::Node::setScale(2.0f);
-    _desiccate->_savePositionOriginal = Point(visibleSize.width*0.1f, -visibleSize.height*0.3f);
+    _desiccate->_savePositionOriginal = Point(visibleSize.width*0.05f, -visibleSize.height*0.3f);
     _desiccate->_patient = _patient;
     _desiccate->setUpNoteHelp();
     
@@ -475,7 +515,7 @@ void GamePlay::addTools(){
     this->addChild(_injection,15);
     _injection->setPosition(Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f));
     _injection->cocos2d::Node::setScale(2.0f);
-    _injection->_savePositionOriginal = Point(visibleSize.width*0.91f, -visibleSize.height*0.13f);
+    _injection->_savePositionOriginal = Point(visibleSize.width*0.91f, visibleSize.height*0.13f);
     _injection->_patient = _patient;
     _injection->setUpNoteHelp();
 
