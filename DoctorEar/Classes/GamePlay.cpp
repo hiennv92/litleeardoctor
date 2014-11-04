@@ -483,7 +483,7 @@ void GamePlay::addTools(){
     _desiccate->setPosition(Point(visibleSize.width*0.05f + widthTmp, -visibleSize.height*0.5f));
     _scissor->setScale(2.0f);
     _desiccate->cocos2d::Node::setScale(2.0f);
-    _desiccate->_savePositionOriginal = Point(visibleSize.width*0.05f, -visibleSize.height*0.3f);
+    _desiccate->_savePositionOriginal = Point(visibleSize.width*0.05f, -visibleSize.height*0.27f);
     _desiccate->_patient = _patient;
     _desiccate->setUpNoteHelp();
     
@@ -497,17 +497,17 @@ void GamePlay::addTools(){
     
     _tamPon = Tool::createTool(TOOL_TAM_BONG, TOOL_TYPE_TAM_BONG);
     this->addChild(_tamPon,15);
-    _tamPon->setPosition(Point(visibleSize.width*0.5f + widthTmp, -visibleSize.height*0.13f));
+    _tamPon->setPosition(Point(visibleSize.width*0.51f + widthTmp, -visibleSize.height*0.13f));
     _tamPon->cocos2d::Node::setScale(2.0f);
-    _tamPon->_savePositionOriginal = Point(visibleSize.width*0.5f, visibleSize.height*0.13f);
+    _tamPon->_savePositionOriginal = Point(visibleSize.width*0.51f, visibleSize.height*0.13f);
     _tamPon->_patient = _patient;
     _tamPon->setUpNoteHelp();
     
     _drugWater = Tool::createTool(TOOL_DRUG_WATER_TOOL, TOOL_TYPE_WATER_DRUG);
     this->addChild(_drugWater,15);
-    _drugWater->setPosition(Point(visibleSize.width*0.67f + widthTmp, -visibleSize.height*0.13f));
+    _drugWater->setPosition(Point(visibleSize.width*0.68f + widthTmp, -visibleSize.height*0.13f));
     _drugWater->cocos2d::Node::setScale(2.0f);
-    _drugWater->_savePositionOriginal = Point(visibleSize.width*0.67f, visibleSize.height*0.13f);
+    _drugWater->_savePositionOriginal = Point(visibleSize.width*0.69f, visibleSize.height*0.13f);
     _drugWater->_patient = _patient;
     _drugWater->setUpNoteHelp();
     
@@ -562,10 +562,10 @@ void GamePlay::showTools(){
     //Page 2;
     float widthTmp = visibleSize.width*1.2f;
 
-    _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f + widthTmp, - visibleSize.height*0.3f)));
+    _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f + widthTmp, - visibleSize.height*0.27f)));
     _sprayChemicals->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f +widthTmp, visibleSize.height*0.14f)));
-    _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f + widthTmp, visibleSize.height*0.13f)));
-    _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.67f + widthTmp, visibleSize.height*0.13f)));
+    _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.51f + widthTmp, visibleSize.height*0.13f)));
+    _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.69f + widthTmp, visibleSize.height*0.13f)));
     _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f)));
     
     _pageTools = 1;
@@ -751,10 +751,10 @@ void GamePlay::backToolsSelected(Ref *pSender){
         //Page 2;
         float widthTmp = visibleSize.width*1.2f;
         
-        _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f + widthTmp, -visibleSize.height*0.3f)));
+        _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f + widthTmp, -visibleSize.height*0.27f)));
         _sprayChemicals->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f +widthTmp, visibleSize.height*0.14f)));
-        _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f + widthTmp, visibleSize.height*0.13f)));
-        _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.67f + widthTmp, visibleSize.height*0.13f)));
+        _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.51f + widthTmp, visibleSize.height*0.13f)));
+        _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.69f + widthTmp, visibleSize.height*0.13f)));
         _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f)));
     }
 }
@@ -777,10 +777,10 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _getWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f -widthTmp, -visibleSize.height*0.3f)));
         
 
-        _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f, -visibleSize.height*0.3f)));
+        _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f, -visibleSize.height*0.27f)));
         _sprayChemicals->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f, visibleSize.height*0.14f)));
-        _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f, visibleSize.height*0.13f)));
-        _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.67f, visibleSize.height*0.13f)));
+        _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.51f, visibleSize.height*0.13f)));
+        _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.69f, visibleSize.height*0.13f)));
         _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f,visibleSize.height*0.13f)));
     }
 }
