@@ -32,7 +32,11 @@ void MessObject::initOptions(int typeMess){
     if(_typeMess == MESS_TYPE_DICH_TAI){
         _stateMess = 6;
     }else if(_typeMess == MESS_TYPE_MANG_TAI){
+        _stateMess = 6;
+    }else if(_typeMess == MESS_TYPE_NUOC_BAN){
         _stateMess = 4;
+    }else if(_typeMess == MESS_TYPE_MUN){
+        _stateMess = 3;
     }
     _isCheckingMess = true;
     _isPlaySoundEffect = false;
@@ -50,6 +54,7 @@ void MessObject::updateMess(float dt){
                     removeMess();
                 }
             }
+            
             if (_typeMess == MESS_TYPE_DICH_TAI && _isCheckingMess){
                 Rect pGetMess = _tool->getBoundingBox();
                 Rect rect =  Rect(pGetMess.origin.x,pGetMess.origin.y + pGetMess.size.height*18/20,pGetMess.size.width/6, pGetMess.size.height/20);
@@ -80,13 +85,13 @@ void MessObject::updateMess(float dt){
                 }
             }
             
-            if(_typeMess == MESS_TYPE_MANG_TAI){
+            if(_typeMess == MESS_TYPE_MANG_TAI && _isCheckingMess){
                 Rect pGetMess = _tool->getBoundingBox();
-                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*3/4 ,pGetMess.origin.y + pGetMess.size.height*18/20,pGetMess.size.width/4, pGetMess.size.height/20);
+                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*2/3 ,pGetMess.origin.y + pGetMess.size.height*18/20,pGetMess.size.width/3, pGetMess.size.height/20);
                 
                 if(this->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2))){
                     if(!_isPlaySoundEffect){
-                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_GET_DIRTY_WATER);
+                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_DECSICATE, true);
                         _isPlaySoundEffect = true;
                     }
                     CCLOG("GET Mang tai");
@@ -94,6 +99,28 @@ void MessObject::updateMess(float dt){
                 }else{
                     _isPlaySoundEffect = false;
                     CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+                }
+            }
+            //Dich tai
+            if(_typeMess == MESS_TYPE_NUOC_BAN && _isCheckingMess){
+                Rect pGetMess = _tool->getBoundingBox();
+                Rect rect =  Rect(pGetMess.origin.x,pGetMess.origin.y + pGetMess.size.height*7/8,pGetMess.size.width, pGetMess.size.height/8);
+                
+                if(this->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2))){
+                    CCLOG("hut nuoc ban");
+                    removeMess();
+                }
+            }
+            
+            if(_typeMess == MESS_TYPE_MUN && !_tool->_isSet){
+                Rect pGetMess = _tool->getBoundingBox();
+                Rect rect =  Rect(pGetMess.origin.x,pGetMess.origin.y,pGetMess.size.width, pGetMess.size.height/6);
+                if(this->getBoundingBox().intersectsRect(rect)){
+                    CCLOG("Set tay mun");
+                    _tool->runAction(MoveTo::create(0.3f, Point(this->getPositionX() + 90,this->getPositionY() + 100)));
+                    _tool->_isSet = true;
+                    _tool->showMuiTen();
+//                    removeMess();
                 }
             }
         }
@@ -104,7 +131,8 @@ void MessObject::removeMess(){
     if(_typeMess == MESS_TYPE_RAY_TAI){
         this->_isRemove = true;
         this->runAction(MoveTo::create(0.7f, Point(this->getPositionX(),0)));
-    }else if(_typeMess == MESS_TYPE_DICH_TAI){
+    }
+    else if(_typeMess == MESS_TYPE_DICH_TAI){
         _stateMess--;
         _isCheckingMess = false;
         
@@ -115,32 +143,65 @@ void MessObject::removeMess(){
             this->setTexture(texture);
             
             auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
-            this->runAction(Sequence::create(DelayTime::create(.8f),action, NULL));
+            this->runAction(Sequence::create(DelayTime::create(.6f),action, NULL));
         }else{
             this->_isRemove = true;
             this->setVisible(false);
             CCLOG("REMOVE DIRTY WATER");
         }
         
-    }else if(_typeMess == MESS_TYPE_LONG_TAI){
+    }
+    else if(_typeMess == MESS_TYPE_LONG_TAI){
         this->_isRemove = true;
         this->runAction(Sequence::create(MoveTo::create(0.7f, Point(this->getPositionX(),0)), NULL));
-    }else if(_typeMess == MESS_TYPE_MANG_TAI){
-        _stateMess -= 2;
+    }
+    else if(_typeMess == MESS_TYPE_MANG_TAI){
+        _stateMess --;
         _isCheckingMess = false;
         
         if(_stateMess != 0){
-            char str[100] = {0};
-            sprintf(str, "mess/mangTai_2.png");
-            Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
-            this->setTexture(texture);
-            
+            this->runAction(FadeTo::create(0.7f, _stateMess/6));
+
             auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
-            this->runAction(Sequence::create(DelayTime::create(.6f),action, NULL));
+            this->runAction(Sequence::create(DelayTime::create(0.8f),action, NULL));
         }else{
             this->_isRemove = true;
             this->setVisible(false);
             CCLOG("REMOVE MANG TAI");
+            CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+        }
+    }
+    else if(_typeMess == MESS_TYPE_NUOC_BAN){
+        _stateMess --;
+        _isCheckingMess = false;
+        
+        if(_stateMess != 0){
+            this->runAction(FadeTo::create(0.7f, _stateMess/4));
+            
+            auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
+            this->runAction(Sequence::create(DelayTime::create(.8f),action, NULL));
+        }else{
+            this->_isRemove = true;
+            this->setVisible(false);
+            CCLOG("REMOVE Nuoc ban");
+        }
+    }else if(_typeMess == MESS_TYPE_MUN){
+        _stateMess --;
+        _isCheckingMess = false;
+        
+        if(_stateMess != 0){
+            this->runAction(FadeTo::create(0.7f, _stateMess/3));
+            
+            auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
+            this->runAction(Sequence::create(DelayTime::create(2.8f),action, NULL));
+        }else{
+            this->_isRemove = true;
+            this->setVisible(false);
+            CCLOG("REMOVE mun");
+            _tool->_isSet = false;
+            auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
+            _tool->runAction(actionMove);
+            _tool->runAction(RotateTo::create(0.7f, 0.0f));
         }
     }
 }

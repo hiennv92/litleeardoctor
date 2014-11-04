@@ -146,6 +146,7 @@
 #define HELP_NOTE_13                "helps/help_12.png"
 #define HELP_NOTE_14                "helps/help_13.png"
 #define HELP_NOTE_15                "helps/help_14.png"
+#define HELP_MUI_TEN                "helps/jiantou.png"
 
 //Sounds
 #define SOUND_GAME                  "sounds/game.mp3"
@@ -154,6 +155,7 @@
 #define SOUND_MACHINE_KEEP_EAR      "sounds/machine.mp3"
 #define SOUND_GET_DIRTY_WATER       "sounds/getDirtyWaterSound.mp3"
 #define SOUND_SCISSOR               "sounds/scissorSound.mp3"
+#define SOUND_DECSICATE             "sounds/decsicateSound.mp3"
 
 //Mess
 #define MESS_RAY_TAI_1              "mess/rayTai1.png"
