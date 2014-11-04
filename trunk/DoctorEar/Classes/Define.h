@@ -45,6 +45,10 @@
 #define GAME_PLAY_BG1            "bgs/bg1.png"
 #define GAME_PLAY_BG2            "bgs/bg2.png"
 #define GAME_PLAY_TABLE          "tools/table.png"
+#define GAME_PLAY_BTN_NEXT_TOOLS_NORMAL     "buttons/btnNextNormal.png"
+#define GAME_PLAY_BTN_NEXT_TOOLS_SELECTED   "buttons/btnNextSelected.png"
+#define GAME_PLAY_BTN_BACK_TOOLS_NORMAL     "buttons/btnBackNormal.png"
+#define GAME_PLAY_BTN_BACK_TOOLS_SELECTED   "buttons/btnBackSelected.png"
 
 //Patient
 //Boy 1
@@ -79,8 +83,11 @@
 #define TOOL_TYPE_GET_MESS                  5
 #define TOOL_TYPE_CATCH_BUG                 6
 #define TOOL_TYPE_GET_WATER                 7
-#define TOOL_8                      8
-#define TOOL_9                      9
+#define TOOL_TYPE_DESICCATE                 8
+#define TOOL_TYPE_SPRAY_CHEMICALs           9
+#define TOOL_TYPE_TAM_BONG                  10
+#define TOOL_TYPE_WATER_DRUG                11
+#define TOOL_TYPE_INJECTION                 12
 
 #define TOOL_SLIDER_BAR_1           "helps/sliderBar1.png"
 #define TOOL_SLIDER_BAR_1_BUTTON    "helps/sliderBar1_Button.png"
@@ -101,6 +108,11 @@
 #define TOOL_CATCH_BUG_1            "tools/catchBug1.png"
 #define TOOL_CATCH_BUG_2            "tools/catchBug2.png"
 #define TOOL_GET_WATER              "tools/hutNuoc.png"
+#define TOOL_INJECTION_NORMAL       "tools/injection1.png"
+#define TOOL_INJECTION_USED         "tools/injection2.png"
+#define TOOL_SPRAY_CHEMICALS_NORMAL "tools/shachongji1.png"
+#define TOOL_SPRAY_CHEMICALS_USED   "tools/shachongji2.png"
+#define TOOL_DESICATE               "tools/xitMangTai.png"
 
 #define TOOL_SMALL_TABLE            "tools/small_table.png"
 

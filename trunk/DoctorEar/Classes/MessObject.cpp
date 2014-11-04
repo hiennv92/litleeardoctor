@@ -65,16 +65,14 @@ void MessObject::updateMess(float dt){
                 }
             }
             
-            if (_typeMess == MESS_TYPE_LONG_TAI && _isCheckingMess){
+            if (_typeMess == MESS_TYPE_LONG_TAI && !_tool->_isSet){
                 Rect pGetMess = _tool->getBoundingBox();
                 Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*2/5,pGetMess.origin.y + pGetMess.size.height*4/5,pGetMess.size.width/5, pGetMess.size.height/5);
                 
                 if(rect.intersectsRect(this->getBoundingBox())){
-                    if(!_isPlaySoundEffect){
-                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SCISSOR);
-                        _isPlaySoundEffect = true;
-                        _tool->setScissorCutAnimation();
-                    }
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SCISSOR);
+                    _tool->setScissorCutAnimation();
+                    
                     CCLOG("remove fur");
                     removeMess();
                 }
@@ -107,10 +105,7 @@ void MessObject::removeMess(){
         
     }else if(_typeMess == MESS_TYPE_LONG_TAI){
         this->_isRemove = true;
-        _isCheckingMess = false;
         this->runAction(Sequence::create(MoveTo::create(0.7f, Point(this->getPositionX(),0)), NULL));
-        auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
-        this->runAction(Sequence::create(DelayTime::create(1.5f),action, NULL));
     }
 }
 

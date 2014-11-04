@@ -34,7 +34,7 @@ public:
     MessObject *_rayTai1, *_rayTai2, *_rayTai3, *_munTai1, *_munTai2, *_munTai3,*_muTai1, *_muTai2, *_longTai1, *_longTai2, *_longTai3, *_longTai4, *_longTai5, *_longTai6;
     MessObject *_dichTai, *_nuocTai1, *_mangTai;
     
-    int _tag;
+    int _tag, _pageTools;
     bool _isChangeBarSlider;
     
     CREATE_FUNC(GamePlay);
@@ -53,6 +53,8 @@ public:
     void showTools();
     void addMessesAndBugs();
     void showMessesAndBugs();
+    void nextToolsSelected(cocos2d::Ref* pSender);
+    void backToolsSelected(cocos2d::Ref* pSender);
 };
 
 #endif /* defined(__DoctorEar__GamePlay__) */

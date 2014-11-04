@@ -30,7 +30,7 @@ void Tool::initOptions(int typeTool){
     _visibleSize = Director::getInstance()->getVisibleSize();
     _typeTool = typeTool;
     _isTouch = false;
-    //Use for keepear tool
+    //Use for keepear tool and scissor
     _isSet = false;
     //Use for small table
     _velocityMoveSmallTable = Point(1.0f,0.0f);
@@ -104,6 +104,26 @@ void Tool::setUpNoteHelp(){
             break;
         case TOOL_TYPE_GET_WATER:
             _noteHelp = Help::createHelp(HELP_NOTE_7, TOOL_TYPE_GET_WATER);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
+            break;
+        case TOOL_TYPE_DESICCATE:
+            _noteHelp = Help::createHelp(HELP_NOTE_8, TOOL_TYPE_DESICCATE);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
+            break;
+        case TOOL_TYPE_SPRAY_CHEMICALs:
+            _noteHelp = Help::createHelp(HELP_NOTE_9, TOOL_TYPE_SPRAY_CHEMICALs);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
+            break;
+        case TOOL_TYPE_TAM_BONG:
+            _noteHelp = Help::createHelp(HELP_NOTE_10, TOOL_TYPE_TAM_BONG);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
+            break;
+        case TOOL_TYPE_WATER_DRUG:
+            _noteHelp = Help::createHelp(HELP_NOTE_11, TOOL_TYPE_WATER_DRUG);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
+            break;
+        case TOOL_TYPE_INJECTION:
+            _noteHelp = Help::createHelp(HELP_NOTE_12, TOOL_TYPE_INJECTION);
             _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
             break;
             
@@ -211,6 +231,8 @@ void Tool::turnOnFlashLight(Ref *pSender){
 
 //Set scissor cut animation
 void Tool::setScissorCutAnimation(){
+    _isSet = true;
+
     Vector<SpriteFrame*> animFrames(2);
     char str1[100] = {0};
     char str2[100] = {0};
@@ -234,6 +256,8 @@ void Tool::setScissorCutAnimation(){
 }
 
 void Tool::setScissorClose(){
+    _isSet = false;
+
     this->stopAllActions();
     char str[100] = {0};
     sprintf(str, TOOL_SCISSOR_CLOSE);
