@@ -72,6 +72,23 @@ bool GamePlay::init(){
     this->addTools();
     this->addMessesAndBugs();
     
+    //Add button
+    //Add buttons
+    _btnNextTools   = MenuItemImage::create(GAME_PLAY_BTN_NEXT_TOOLS_NORMAL,GAME_PLAY_BTN_NEXT_TOOLS_SELECTED, CC_CALLBACK_1(GamePlay::nextToolsSelected, this));
+    _btnBackTools   = MenuItemImage::create(GAME_PLAY_BTN_BACK_TOOLS_NORMAL,GAME_PLAY_BTN_BACK_TOOLS_SELECTED, CC_CALLBACK_1(GamePlay::backToolsSelected, this));
+    _btnNextTools->setPosition(visibleSize.width*0.9f,visibleSize.height*0.85f);
+    _btnBackTools->setPosition(visibleSize.width*0.1f,visibleSize.height*0.85f);
+    _btnNextTools->setScale(2.0f);
+    _btnBackTools->setScale(2.0f);
+    _btnBackTools->setVisible(false);
+    _btnNextTools->setVisible(false);
+    _pageTools = 1;
+
+    //Menu
+    auto menu = Menu::create(_btnNextTools,_btnBackTools, NULL);
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu,15);
+    
     return true;
 }
 
@@ -152,6 +169,66 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
             _patient->setMouthScare();
             _patient->setEyeBrowScare();
 
+            return true;
+        }
+    }
+    
+    if(_desiccate){
+        cocos2d::Rect rectScissor = _desiccate->getBoundingBox();
+        if(rectScissor.containsPoint(p)){
+            _desiccate->_isTouch = true;
+            _desiccate->_noteHelp->showHelp(0.0f);
+            _patient->setMouthScare();
+            _patient->setEyeBrowScare();
+            
+            return true;
+        }
+    }
+    
+    if(_sprayChemicals){
+        cocos2d::Rect rectScissor = _sprayChemicals->getBoundingBox();
+        if(rectScissor.containsPoint(p)){
+            _sprayChemicals->_isTouch = true;
+            _sprayChemicals->_noteHelp->showHelp(0.0f);
+            _patient->setMouthScare();
+            _patient->setEyeBrowScare();
+            
+            return true;
+        }
+    }
+    
+    if(_tamPon){
+        cocos2d::Rect rectScissor = _tamPon->getBoundingBox();
+        if(rectScissor.containsPoint(p)){
+            _tamPon->_isTouch = true;
+            _tamPon->_noteHelp->showHelp(0.0f);
+            _patient->setMouthScare();
+            _patient->setEyeBrowScare();
+            
+            return true;
+        }
+    }
+    
+    if(_drugWater){
+        cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
+        if(rectScissor.containsPoint(p)){
+            _drugWater->_isTouch = true;
+            _drugWater->_noteHelp->showHelp(0.0f);
+            _patient->setMouthScare();
+            _patient->setEyeBrowScare();
+            
+            return true;
+        }
+    }
+    
+    if(_injection){
+        cocos2d::Rect rectScissor = _injection->getBoundingBox();
+        if(rectScissor.containsPoint(p)){
+            _injection->_isTouch = true;
+            _injection->_noteHelp->showHelp(0.0f);
+            _patient->setMouthScare();
+            _patient->setEyeBrowScare();
+            
             return true;
         }
     }
@@ -358,9 +435,51 @@ void GamePlay::addTools(){
     _getWater->_patient = _patient;
     _getWater->setUpNoteHelp();
     
-//    DrawNode *dotNode = DrawNode::create();
-//    dotNode->drawDot(Point(visibleSize.width*.5, visibleSize.height*.5), 10, Color4F(Color3B::WHITE));
-//    this->addChild(dotNode, 16);
+    //Page tools 2
+    float widthTmp = visibleSize.width*1.2f;
+    
+    _desiccate = Tool::createTool(TOOL_DESICATE, TOOL_TYPE_DESICCATE);
+    this->addChild(_desiccate,15);
+    _desiccate->setPosition(Point(visibleSize.width*0.05f + widthTmp, -visibleSize.height*0.5f));
+    _scissor->setScale(2.0f);
+    _desiccate->cocos2d::Node::setScale(2.0f);
+    _desiccate->_savePositionOriginal = Point(visibleSize.width*0.1f, -visibleSize.height*0.3f);
+    _desiccate->_patient = _patient;
+    _desiccate->setUpNoteHelp();
+    
+    _sprayChemicals = Tool::createTool(TOOL_SPRAY_CHEMICALS_NORMAL, TOOL_TYPE_SPRAY_CHEMICALs);
+    this->addChild(_sprayChemicals,15);
+    _sprayChemicals->setPosition(Point(visibleSize.width*0.33f + widthTmp, -visibleSize.height*0.14f));
+    _sprayChemicals->cocos2d::Node::setScale(2.0f);
+    _sprayChemicals->_savePositionOriginal = Point(visibleSize.width*0.33f, visibleSize.height*0.14f);
+    _sprayChemicals->_patient = _patient;
+    _sprayChemicals->setUpNoteHelp();
+    
+    _tamPon = Tool::createTool(TOOL_TAM_BONG, TOOL_TYPE_TAM_BONG);
+    this->addChild(_tamPon,15);
+    _tamPon->setPosition(Point(visibleSize.width*0.5f + widthTmp, -visibleSize.height*0.13f));
+    _tamPon->cocos2d::Node::setScale(2.0f);
+    _tamPon->_savePositionOriginal = Point(visibleSize.width*0.5f, visibleSize.height*0.13f);
+    _tamPon->_patient = _patient;
+    _tamPon->setUpNoteHelp();
+    
+    _drugWater = Tool::createTool(TOOL_DRUG_WATER_TOOL, TOOL_TYPE_WATER_DRUG);
+    this->addChild(_drugWater,15);
+    _drugWater->setPosition(Point(visibleSize.width*0.67f + widthTmp, -visibleSize.height*0.13f));
+    _drugWater->cocos2d::Node::setScale(2.0f);
+    _drugWater->_savePositionOriginal = Point(visibleSize.width*0.67f, visibleSize.height*0.13f);
+    _drugWater->_patient = _patient;
+    _drugWater->setUpNoteHelp();
+    
+    _injection = Tool::createTool(TOOL_INJECTION_NORMAL, TOOL_TYPE_INJECTION);
+    this->addChild(_injection,15);
+    _injection->setPosition(Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f));
+    _injection->cocos2d::Node::setScale(2.0f);
+    _injection->_savePositionOriginal = Point(visibleSize.width*0.91f, -visibleSize.height*0.13f);
+    _injection->_patient = _patient;
+    _injection->setUpNoteHelp();
+
+
     
     _scissor->setVisible(false);
     _getWater->setVisible(false);
@@ -368,6 +487,12 @@ void GamePlay::addTools(){
     _getMess->setVisible(false);
     _catchBug->setVisible(false);
     _shakeEar->setVisible(false);
+    
+    _desiccate->setVisible(false);
+    _sprayChemicals->setVisible(false);
+    _tamPon->setVisible(false);
+    _drugWater->setVisible(false);
+    _injection->setVisible(false);
 }
 
 void GamePlay::showTools(){
@@ -380,12 +505,31 @@ void GamePlay::showTools(){
     _getMess->setVisible(true);
     _catchBug->setVisible(true);
     _shakeEar->setVisible(true);
+
+    
+    _desiccate->setVisible(true);
+    _sprayChemicals->setVisible(true);
+    _tamPon->setVisible(true);
+    _drugWater->setVisible(true);
+    _injection->setVisible(true);
     
     _scissor->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.12f, visibleSize.height*0.13f)));
     _shakeEar->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f, visibleSize.height*0.13f)));
     _getMess->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f, visibleSize.height*0.13f)));
     _catchBug->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.66f, visibleSize.height*0.13f)));
     _getWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f, -visibleSize.height*0.3f)));
+    
+    //Page 2;
+    float widthTmp = visibleSize.width*1.2f;
+
+    _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f + widthTmp, - visibleSize.height*0.3f)));
+    _sprayChemicals->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f +widthTmp, visibleSize.height*0.14f)));
+    _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f + widthTmp, visibleSize.height*0.13f)));
+    _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.67f + widthTmp, visibleSize.height*0.13f)));
+    _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f)));
+    
+    _pageTools = 1;
+    _btnNextTools->setVisible(true);
 }
 
 #pragma mark - mess and bugs
@@ -531,5 +675,72 @@ void GamePlay::showMessesAndBugs(){
             
         default:
             break;
+    }
+}
+
+#pragma mark - BUTTONS SELECTED
+void GamePlay::backToolsSelected(Ref *pSender){
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+    if(_pageTools == 2){
+        _pageTools = 1;
+        _btnBackTools->setVisible(false);
+        
+        float fTime = 0.3f;
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        
+        _scissor->setVisible(true);
+        _getWater->setVisible(true);
+        _smallTable->setVisible(true);
+        _getMess->setVisible(true);
+        _catchBug->setVisible(true);
+        _shakeEar->setVisible(true);
+        
+        
+        _desiccate->setVisible(true);
+        _sprayChemicals->setVisible(true);
+        _tamPon->setVisible(true);
+        _drugWater->setVisible(true);
+        _injection->setVisible(true);
+        
+        _scissor->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.12f, visibleSize.height*0.13f)));
+        _shakeEar->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f, visibleSize.height*0.13f)));
+        _getMess->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f, visibleSize.height*0.13f)));
+        _catchBug->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.66f, visibleSize.height*0.13f)));
+        _getWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f, -visibleSize.height*0.3f)));
+        
+        //Page 2;
+        float widthTmp = visibleSize.width*1.2f;
+        
+        _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f + widthTmp, -visibleSize.height*0.3f)));
+        _sprayChemicals->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f +widthTmp, visibleSize.height*0.14f)));
+        _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f + widthTmp, visibleSize.height*0.13f)));
+        _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.67f + widthTmp, visibleSize.height*0.13f)));
+        _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f)));
+    }
+}
+
+void GamePlay::nextToolsSelected(Ref *pSender){
+    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+    if (_pageTools == 1) {
+        _pageTools = 2;
+        _btnBackTools->setVisible(true);
+        
+        //Page 2;
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        float widthTmp = visibleSize.width*1.2f;
+        float fTime = 0.3f;
+
+        _scissor->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.12f -widthTmp, visibleSize.height*0.13f)));
+        _shakeEar->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f -widthTmp, visibleSize.height*0.13f)));
+        _getMess->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f -widthTmp, visibleSize.height*0.13f)));
+        _catchBug->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.66f -widthTmp, visibleSize.height*0.13f)));
+        _getWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f -widthTmp, -visibleSize.height*0.3f)));
+        
+
+        _desiccate->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.05f, -visibleSize.height*0.3f)));
+        _sprayChemicals->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.33f, visibleSize.height*0.14f)));
+        _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.5f, visibleSize.height*0.13f)));
+        _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.67f, visibleSize.height*0.13f)));
+        _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f,visibleSize.height*0.13f)));
     }
 }
