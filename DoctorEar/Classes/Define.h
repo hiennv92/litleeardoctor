@@ -67,7 +67,20 @@
 #define PATIENT_BOY1_MOUTH1         "Patients/boys/boy1_mouth_1.png"
 #define PATIENT_BOY1_MOUTH2         "Patients/boys/boy1_mouth_2.png"
 #define PATIENT_BOY1_MOUTH3         "Patients/boys/boy1_mouth_3.png"
+
+#define PATIENT_BODY2               "Patients/girls/girl.png"
+#define PATIENT_BODY3               "Patients/boys/boy2.png"
+#define PATIENT_BODY4               "Patients/JS/js.png"
+#define PATIENT_BODY5               "Patients/xxg/xxg.png"
+#define PATIENT_BODY6               "Patients/old/old.png"
+
 #define PATIENT_BOY1_PATH           "Patients/boys/boy1"
+#define PATIENT_BOY2_PATH           "Patients/boys/boy2"
+#define PATIENT_GIRL_PATH           "Patients/girls/girl"
+#define PATIENT_JS_PATH             "Patients/JS/js"
+#define PATIENT_OLD_PATH            "Patients/old/old"
+#define PATIENT_XXG_PATH            "Patients/xxg/xxg"
+
 
 #define PATIENT_EAR_HOLE            "all/tmp_ear_1.png"
 
