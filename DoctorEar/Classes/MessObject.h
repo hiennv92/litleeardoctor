@@ -24,6 +24,7 @@ public:
     void updateMess(float dt);
     void initOptions(int typeMess);
     void removeMess();
+    void deleteMess();
     void callCheckAgain();
     
     int _typeMess;

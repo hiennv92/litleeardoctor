@@ -79,7 +79,19 @@ void Help::setMuiTenScale(){
     this->runAction(Sequence::create(DelayTime::create(0.3f),action3,NULL));
 }
 
+void Help::setMuiTenMove(){
+    auto action = MoveTo::create(0.25f, Point(this->getPosition().x,this->getPosition().y - 60));
+    auto action2 = CallFunc::create( CC_CALLBACK_0(Help::setMuiTenMoveNormal,this));
+    
+    this->runAction(Sequence::create(action,NULL));
+    this->runAction(Sequence::create(DelayTime::create(0.3f),action2,NULL));
+}
 
+void Help::setMuiTenMoveNormal(){
+    this->setPosition(_savePosition);
+    auto action1 = CallFunc::create( CC_CALLBACK_0(Help::setMuiTenMove,this));
+    this->runAction(Sequence::create(DelayTime::create(0.05f),action1,NULL));
+}
 
 #pragma mark - SHOW NOTE HELP
 
