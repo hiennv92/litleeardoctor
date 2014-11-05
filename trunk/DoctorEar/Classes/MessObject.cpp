@@ -112,15 +112,23 @@ void MessObject::updateMess(float dt){
                 }
             }
             
-            if(_typeMess == MESS_TYPE_MUN && !_tool->_isSet){
+            
+            if(_typeMess == MESS_TYPE_MUN && !_tool->_isSet && _isCheckingMess){
                 Rect pGetMess = _tool->getBoundingBox();
                 Rect rect =  Rect(pGetMess.origin.x,pGetMess.origin.y,pGetMess.size.width, pGetMess.size.height/6);
                 if(this->getBoundingBox().intersectsRect(rect)){
                     CCLOG("Set tay mun");
+                    _isCheckingMess = false;
                     _tool->runAction(MoveTo::create(0.3f, Point(this->getPositionX() + 90,this->getPositionY() + 100)));
-                    _tool->_isSet = true;
-                    _tool->showMuiTen();
-//                    removeMess();
+                    _tool->_isSet = true;                    
+
+                    auto action = CallFunc::create(CC_CALLBACK_0(Tool::showMuiTen,_tool));
+                    _tool->runAction(Sequence::create(DelayTime::create(0.4f),action, NULL));
+                }
+            }else if(_typeMess == MESS_TYPE_MUN && _tool->_isSet && !_isCheckingMess){
+                if(_tool->_isDropDrugWater){
+                    removeMess();
+                    _tool->_isDropDrugWater = false;
                 }
             }
         }
@@ -176,7 +184,7 @@ void MessObject::removeMess(){
         _isCheckingMess = false;
         
         if(_stateMess != 0){
-            this->runAction(FadeTo::create(0.7f, _stateMess/4));
+            this->runAction(FadeTo::create(0.7f, 255.0f - _stateMess*25));
             
             auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
             this->runAction(Sequence::create(DelayTime::create(.8f),action, NULL));
@@ -185,23 +193,26 @@ void MessObject::removeMess(){
             this->setVisible(false);
             CCLOG("REMOVE Nuoc ban");
         }
-    }else if(_typeMess == MESS_TYPE_MUN){
+    }
+    else if(_typeMess == MESS_TYPE_MUN){
         _stateMess --;
-        _isCheckingMess = false;
-        
         if(_stateMess != 0){
-            this->runAction(FadeTo::create(0.7f, _stateMess/3));
-            
-            auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
-            this->runAction(Sequence::create(DelayTime::create(2.8f),action, NULL));
+            CCLOG("DROP");
+            if(_stateMess == 2)
+                this->runAction(FadeTo::create(0.7f, 255.0f - 100));
+            else
+                this->runAction(FadeTo::create(0.7f, 255.0f - 150));
+
         }else{
             this->_isRemove = true;
             this->setVisible(false);
             CCLOG("REMOVE mun");
             _tool->_isSet = false;
-            auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
-            _tool->runAction(actionMove);
-            _tool->runAction(RotateTo::create(0.7f, 0.0f));
+//            auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
+//            _tool->runAction(actionMove);
+            _tool->_muiTen->setVisible(false);
+//            _tool->runAction(RotateTo::create(0.7f, 0.0f));
+            _tool->_isDropDrugWater = false;
         }
     }
 }

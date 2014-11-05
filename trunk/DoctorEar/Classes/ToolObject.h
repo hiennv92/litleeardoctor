@@ -26,6 +26,7 @@ public:
     void setHandUp();
     void setMuiTen();
     void showMuiTen();
+    void dropDrug();
     void setUpNoteHelp();
     void turnOnFlashLight(cocos2d::Ref* pSender);
     void setScissorCutAnimation();
@@ -34,12 +35,14 @@ public:
     int _typeTool;
     bool _isTouch,_isSet,_isTurnOnFlashLight;
     bool _startMove;//Use for small table
+    bool _isDropDrugWater;//Use for drug water
     Patient *_patient;
     Size _visibleSize;
     Point _savePositionOriginal;
     Point _velocityMoveSmallTable;
     
     Help *_handHelp, *_noteHelp, *_muiTen;
+    Sprite *_dropDrug;
     
     //Touchs
     void addEvents();
