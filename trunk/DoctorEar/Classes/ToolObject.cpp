@@ -70,21 +70,36 @@ void Tool::setHandUp(){
 
 void Tool::setMuiTen(){
     _muiTen = Help::createHelp(HELP_MUI_TEN, 2);
-    _muiTen->setPosition(this->getPositionX() + 110,this->getPositionY() - 20);
-    _muiTen->setScale(2.0f);
-    _muiTen->setRotation(-45.0f);
     (this->getParent())->addChild(_muiTen,15);
     _muiTen->setVisible(false);
     
-    //Set drop drug
-    _dropDrug = Sprite::create(TOOL_DRUG_WATER_DROP);
-    (this->getParent())->addChild(_dropDrug,15);
-    _dropDrug->setScale(2.0f);
-    _dropDrug->setVisible(false);
+    if(_typeTool == TOOL_TYPE_WATER_DRUG){
+        _muiTen->setRotation(-45.0f);
+        _muiTen->setScale(2.0f);
+        _muiTen->setPosition(this->getPositionX() + 110,this->getPositionY() - 20);
+
+        //Set drop drug
+        _dropDrug = Sprite::create(TOOL_DRUG_WATER_DROP);
+        (this->getParent())->addChild(_dropDrug,15);
+        _dropDrug->setScale(2.0f);
+        _dropDrug->setVisible(false);
+    }else if(_typeTool == TOOL_TYPE_INJECTION){
+        _muiTen->setRotation(180.0f);
+        _muiTen->setScale(1.2f);
+        _muiTen->setPosition(this->getPositionX() + 100,this->getPositionY() + 60);
+        _muiTen->_savePosition = _muiTen->getPosition();
+    }
 }
 
 void Tool::showMuiTen(){
-    _muiTen->setPosition(this->getPositionX() + 110,this->getPositionY() - 40);
+    if(_typeTool == TOOL_TYPE_INJECTION){
+        _muiTen->stopAllActions();
+        _muiTen->setPosition(this->getPositionX() + 80,this->getPositionY());
+        _muiTen->_savePosition = _muiTen->getPosition();
+        _muiTen->setMuiTenMove();
+    }else{
+        _muiTen->setPosition(this->getPositionX() + 110,this->getPositionY() - 40);
+    }
     _muiTen->setVisible(true);
 }
 
@@ -199,13 +214,18 @@ void Tool::touchEvent(cocos2d::Touch* touch){
     cocos2d::Vec2 p = touch->getLocation();
 //    CCLOG("%f - %f",touch->getLocation().x,touch->getLocation().y);
     auto actionMove = MoveTo::create(0.7f, _savePositionOriginal);
-    if(_isTouch && _typeTool != 2 && _typeTool){
+    if(_isTouch && _typeTool != 2){
         _isTouch = false;
         _noteHelp->setVisible(false);
         _patient->setMouthNormal();
         _patient->setEyeBrowNormal();
 
-        if(_typeTool != TOOL_TYPE_WATER_DRUG){
+        if(_typeTool == TOOL_TYPE_SCISSOR){
+            this->stopAllActions();
+            this->setScissorClose();
+        }
+        
+        if(_typeTool != TOOL_TYPE_WATER_DRUG && _typeTool != TOOL_TYPE_INJECTION){
             this->runAction(actionMove);
         }
         
@@ -224,7 +244,7 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             }
         }
         
-        if(_typeTool == TOOL_TYPE_WATER_DRUG && !_isSet){
+        if((_typeTool == TOOL_TYPE_WATER_DRUG || _typeTool == TOOL_TYPE_INJECTION)  && !_isSet){
             this->runAction(RotateTo::create(0.7f, 0.0f));
             this->runAction(actionMove);
             
@@ -234,7 +254,7 @@ void Tool::touchEvent(cocos2d::Touch* touch){
                 ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(true);
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }
-        }else if(_typeTool == TOOL_TYPE_WATER_DRUG && _isSet){
+        }else if((_typeTool == TOOL_TYPE_WATER_DRUG || _typeTool == TOOL_TYPE_INJECTION) && _isSet){
             _isTouch = true;
             _noteHelp->setVisible(true);
         }
@@ -323,3 +343,21 @@ void Tool::setScissorClose(){
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
     this->setTexture(texture);
 }
+
+void Tool::setInjectionFull(){
+    char str[100] = {0};
+    sprintf(str, TOOL_INJECTION_USED);
+    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+    this->setTexture(texture);
+    this->_muiTen->setVisible(false);
+}
+
+void Tool::setInjectionNormal(){
+    char str[100] = {0};
+    sprintf(str, TOOL_INJECTION_NORMAL);
+    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+    this->setTexture(texture);
+    this->_muiTen->setVisible(false);
+}
+
+

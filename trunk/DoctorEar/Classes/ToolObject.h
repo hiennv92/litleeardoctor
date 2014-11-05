@@ -31,6 +31,8 @@ public:
     void turnOnFlashLight(cocos2d::Ref* pSender);
     void setScissorCutAnimation();
     void setScissorClose();
+    void setInjectionFull();
+    void setInjectionNormal();
     
     int _typeTool;
     bool _isTouch,_isSet,_isTurnOnFlashLight;

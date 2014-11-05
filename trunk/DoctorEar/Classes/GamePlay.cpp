@@ -255,12 +255,12 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     }
     
     if(_drugWater){
-        if(!_drugWater->_isSet){
-            cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
-            if(rectScissor.containsPoint(p)){
+        cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
+        if(rectScissor.containsPoint(p)){
+            if(!_drugWater->_isSet){
                 _btnBackTools->setVisible(false);
                 _btnNextTools->setVisible(false);
-                
+                    
                 _drugWater->_isTouch = true;
                 _drugWater->_noteHelp->showHelp(0.0f);
                 _patient->setMouthSmile();
@@ -269,25 +269,33 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
                 _drugWater->setPosition(_drugWater->getPositionX(),_drugWater->getPositionY()+ 30);
                 return true;
             }
-        }else{
-            CCLOG("Nho thuoc");
-            _drugWater->_isDropDrugWater = true;
-            _drugWater->dropDrug();
+            else{
+                CCLOG("Nho thuoc");
+                _drugWater->_isDropDrugWater = true;
+                _drugWater->dropDrug();
+            }
         }
     }
     
     if(_injection){
         cocos2d::Rect rectScissor = _injection->getBoundingBox();
         if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _injection->_isTouch = true;
-            _injection->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
-            
-            return true;
+            if(!_injection->_isSet){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _injection->_isTouch = true;
+                _injection->_noteHelp->showHelp(0.0f);
+                _patient->setMouthScare();
+                _patient->setEyeBrowScare();
+                
+                return true;
+            }
+            else{
+                CCLOG("Hut mu");
+                _injection->_isDropDrugWater = true;
+                _injection->setInjectionFull();
+            }
         }
     }
     
@@ -403,7 +411,7 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
     
     //Move injection
     if(_injection){
-        if(_injection->_isTouch){
+        if(_injection->_isTouch && !_injection->_isSet){
             _injection->setTouchDotPosition (_injection-> getPosition () + touch-> getDelta ());
             return;
         }
@@ -578,7 +586,7 @@ void GamePlay::addTools(){
     _injection->_savePositionOriginal = Point(visibleSize.width*0.91f, visibleSize.height*0.13f);
     _injection->_patient = _patient;
     _injection->setUpNoteHelp();
-
+    _injection->setMuiTen();
     
     _scissor->setVisible(false);
     _getWater->setVisible(false);

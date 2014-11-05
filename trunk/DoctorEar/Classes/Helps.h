@@ -28,6 +28,8 @@ public:
     void setNormalState();
     void setMuiTenNormal();
     void setMuiTenScale();
+    void setMuiTenMove();
+    void setMuiTenMoveNormal();
     
     int _typeHelp;
     int _typeHand;
