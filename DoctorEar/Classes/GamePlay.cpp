@@ -269,6 +269,10 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
                 _drugWater->setPosition(_drugWater->getPositionX(),_drugWater->getPositionY()+ 30);
                 return true;
             }
+        }else{
+            CCLOG("Nho thuoc");
+            _drugWater->_isDropDrugWater = true;
+            _drugWater->dropDrug();
         }
     }
     
@@ -565,7 +569,8 @@ void GamePlay::addTools(){
     _drugWater->_patient = _patient;
     _drugWater->setMuiTen();
     _drugWater->setUpNoteHelp();
-    
+    _drugWater->_muiTen->setMuiTenScale();
+
     _injection = Tool::createTool(TOOL_INJECTION_NORMAL, TOOL_TYPE_INJECTION);
     this->addChild(_injection,15);
     _injection->setPosition(Point(visibleSize.width*0.91f + widthTmp, -visibleSize.height*0.13f));

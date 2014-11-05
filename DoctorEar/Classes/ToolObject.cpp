@@ -34,6 +34,9 @@ void Tool::initOptions(int typeTool){
     _isSet = false;
     //Use for small table
     _velocityMoveSmallTable = Point(1.0f,0.0f);
+    //use for drug water
+    _isDropDrugWater = false;
+    
     if(_typeTool == 100){
         this->schedule(schedule_selector(Tool::updateTool));
         _startMove = false;
@@ -67,17 +70,31 @@ void Tool::setHandUp(){
 
 void Tool::setMuiTen(){
     _muiTen = Help::createHelp(HELP_MUI_TEN, 2);
-    _muiTen->setPosition(this->getPositionX() + 100,this->getPositionY());
+    _muiTen->setPosition(this->getPositionX() + 110,this->getPositionY() - 20);
     _muiTen->setScale(2.0f);
     _muiTen->setRotation(-45.0f);
     (this->getParent())->addChild(_muiTen,15);
     _muiTen->setVisible(false);
+    
+    //Set drop drug
+    _dropDrug = Sprite::create(TOOL_DRUG_WATER_DROP);
+    (this->getParent())->addChild(_dropDrug,15);
+    _dropDrug->setScale(2.0f);
+    _dropDrug->setVisible(false);
 }
 
 void Tool::showMuiTen(){
-    _muiTen->setPosition(this->getPositionX() + 100,this->getPositionY());
+    _muiTen->setPosition(this->getPositionX() + 110,this->getPositionY() - 40);
     _muiTen->setVisible(true);
-    _muiTen->setMuiTenScale();
+}
+
+void Tool::dropDrug(){
+    _dropDrug->setPosition(this->getPositionX() - this->getContentSize().width * 2, this->getPositionY() - this->getContentSize().height / 1.9);
+    _dropDrug->setVisible(true);
+    _dropDrug->setOpacity(255.0f);
+    
+    _dropDrug->runAction(MoveTo::create(0.25f, Point(_dropDrug->getPositionX(),this->getPositionY() - this->getContentSize().height / 1.1)));
+    _dropDrug->runAction(FadeTo::create(0.25f, 0));
 }
 
 void Tool::setUpNoteHelp(){
@@ -198,18 +215,28 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             ((GamePlay*)(this->getParent()))->_smallTable->_isTouch = false;
         }
         
-        if(_typeTool == TOOL_TYPE_WATER_DRUG && !_isSet){
-            this->runAction(RotateTo::create(0.7f, 0.0f));
-            this->runAction(actionMove);
-        }
-        
-        if(_typeTool >= TOOL_TYPE_SCISSOR ){
+        if(_typeTool >= TOOL_TYPE_SCISSOR && _typeTool != TOOL_TYPE_WATER_DRUG){
             if(((GamePlay*)(this->getParent()))->_pageTools == 1){
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }else if(((GamePlay*)(this->getParent()))->_pageTools == 2){
                 ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(true);
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }
+        }
+        
+        if(_typeTool == TOOL_TYPE_WATER_DRUG && !_isSet){
+            this->runAction(RotateTo::create(0.7f, 0.0f));
+            this->runAction(actionMove);
+            
+            if(((GamePlay*)(this->getParent()))->_pageTools == 1){
+                ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
+            }else if(((GamePlay*)(this->getParent()))->_pageTools == 2){
+                ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(true);
+                ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
+            }
+        }else if(_typeTool == TOOL_TYPE_WATER_DRUG && _isSet){
+            _isTouch = true;
+            _noteHelp->setVisible(true);
         }
     }
     CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
