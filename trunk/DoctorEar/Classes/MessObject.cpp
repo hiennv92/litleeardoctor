@@ -36,7 +36,7 @@ void MessObject::initOptions(int typeMess){
     }else if(_typeMess == MESS_TYPE_NUOC_BAN){
         _stateMess = 4;
     }else if(_typeMess == MESS_TYPE_MUN){
-        _stateMess = 3;
+        _stateMess = 4;
     }else if(_typeMess == MESS_TYPE_MU_TAI){
         _stateMess = 3;
     }
@@ -90,9 +90,10 @@ void MessObject::updateMess(float dt){
             
             if(_typeMess == MESS_TYPE_MANG_TAI && _isCheckingMess){
                 Rect pGetMess = _tool->getBoundingBox();
-                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*1/3 ,pGetMess.origin.y + pGetMess.size.height*18/20,pGetMess.size.width*2/3, pGetMess.size.height/20);
+                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*2/3 ,pGetMess.origin.y + pGetMess.size.height*14/16,pGetMess.size.width*1/3, pGetMess.size.height/16);
                 
-                if(this->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2))){
+//                if(this->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2))){
+                if(this->getBoundingBox().intersectsRect(rect)){
                     if(!_isPlaySoundEffect){
                         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_DECSICATE, true);
                         _isPlaySoundEffect = true;
@@ -221,11 +222,7 @@ void MessObject::removeMess(){
         _stateMess --;
         if(_stateMess != 0){
             CCLOG("DROP");
-            if(_stateMess == 2)
-                this->runAction(FadeTo::create(0.7f, 255.0f - 100));
-            else
-                this->runAction(FadeTo::create(0.7f, 255.0f - 150));
-
+            this->runAction(FadeTo::create(0.7f, 255.0f - 30*(4 - _stateMess)));
         }else{
             this->deleteMess();
         }
@@ -233,9 +230,9 @@ void MessObject::removeMess(){
     else if(_typeMess == MESS_TYPE_MU_TAI){
         CCLOG("REMOVE mu tai");
         _isCheckingMess = false;
-        this->runAction(FadeTo::create(0.5f, 0.0f));
+        this->runAction(FadeTo::create(0.3f, 0.0f));
         auto action = CallFunc::create(CC_CALLBACK_0(MessObject::deleteMess,this));
-        this->runAction(Sequence::create(DelayTime::create(0.7f),action, NULL));
+        this->runAction(Sequence::create(DelayTime::create(0.5f),action, NULL));
     }
 }
 
@@ -247,6 +244,9 @@ void MessObject::deleteMess(){
     _tool->_isDropDrugWater = false;
     if(_typeMess == MESS_TYPE_MU_TAI){
         _tool->setInjectionNormal();
+        _tool->_isTouch = false;
+        _tool->_noteHelp->setVisible(false);
+        _tool->_patient->setMouthNormal();
         auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
         _tool->runAction(actionMove);
     }
