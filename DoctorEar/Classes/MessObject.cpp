@@ -50,7 +50,7 @@ void MessObject::updateMess(float dt){
         if(_tool->_isTouch && !_isRemove){
             if(_typeMess == MESS_TYPE_RAY_TAI){
                 Rect pGetMess = _tool->getBoundingBox();
-                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
+                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*6/7,pGetMess.size.width /3, pGetMess.size.height/7);
                 if(rect.intersectsRect(this->getBoundingBox())){
                     CCLOG("GET MESSSSSS");
                     this->_isRemove = true;
@@ -75,16 +75,26 @@ void MessObject::updateMess(float dt){
                 }
             }
             
-            if (_typeMess == MESS_TYPE_LONG_TAI && !_tool->_isSet){
-                Rect pGetMess = _tool->getBoundingBox();
-                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*2/5,pGetMess.origin.y + pGetMess.size.height*4/5,pGetMess.size.width/5, pGetMess.size.height/5);
-                
-                if(rect.intersectsRect(this->getBoundingBox())){
-                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SCISSOR);
-                    _tool->setScissorCutAnimation();
+            if (_typeMess == MESS_TYPE_LONG_TAI){
+                if(_tool->_typeTool == TOOL_TYPE_SHAKE_EAR){
+                    Rect pGetMess = _tool->getBoundingBox();
+                    Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*1/2,pGetMess.origin.y + pGetMess.size.height*9/10,pGetMess.size.width/10, pGetMess.size.height/10);
                     
-                    CCLOG("remove fur");
-                    removeMess();
+                    if(rect.intersectsRect(this->getBoundingBox())){                        
+                        CCLOG("remove fur");
+                        removeMess();
+                    }
+                }else if(_tool->_typeTool == TOOL_TYPE_SCISSOR && !_tool->_isSet){
+                    Rect pGetMess = _tool->getBoundingBox();
+                    Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*2/5,pGetMess.origin.y + pGetMess.size.height*4/5,pGetMess.size.width/5, pGetMess.size.height/5);
+                    
+                    if(rect.intersectsRect(this->getBoundingBox())){
+                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SCISSOR);
+                        _tool->setScissorCutAnimation();
+                        
+                        CCLOG("remove fur");
+                        removeMess();
+                    }
                 }
             }
             
@@ -180,6 +190,8 @@ void MessObject::removeMess(){
             this->_isRemove = true;
             this->setVisible(false);
             CCLOG("REMOVE DIRTY WATER");
+            this->stopAllActions();
+            this->removeFromParentAndCleanup(true);
         }
         
     }
@@ -192,7 +204,7 @@ void MessObject::removeMess(){
         _isCheckingMess = false;
         
         if(_stateMess != 0){
-            this->runAction(FadeTo::create(0.7f, 255.0f - _stateMess*25));
+            this->runAction(FadeTo::create(0.7f, 255.0f - (6 - _stateMess)*25));
 
             auto action = CallFunc::create(CC_CALLBACK_0(MessObject::callCheckAgain,this));
             this->runAction(Sequence::create(DelayTime::create(0.8f),action, NULL));
@@ -201,6 +213,8 @@ void MessObject::removeMess(){
             this->setVisible(false);
             CCLOG("REMOVE MANG TAI");
             CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+            this->stopAllActions();
+            this->removeFromParentAndCleanup(true);
         }
     }
     else if(_typeMess == MESS_TYPE_NUOC_BAN){
@@ -216,6 +230,8 @@ void MessObject::removeMess(){
             this->_isRemove = true;
             this->setVisible(false);
             CCLOG("REMOVE Nuoc ban");
+            this->stopAllActions();
+            this->removeFromParentAndCleanup(true);
         }
     }
     else if(_typeMess == MESS_TYPE_MUN){

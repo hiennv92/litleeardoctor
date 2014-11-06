@@ -36,6 +36,11 @@ void Tool::initOptions(int typeTool){
     _velocityMoveSmallTable = Point(1.0f,0.0f);
     //use for drug water
     _isDropDrugWater = false;
+    //Use for catched bug
+    _isCatchedBug = false;
+    _isDroppedBug = false;
+    _ignoreDropBug = false;
+    _countNumberBugCatched = 0;
     
     if(_typeTool == 100){
         this->schedule(schedule_selector(Tool::updateTool));
@@ -43,6 +48,7 @@ void Tool::initOptions(int typeTool){
     }
 }
 
+//Use for small table
 void Tool::updateTool(float dt){
     if(_startMove){
         if(!_isTouch){
@@ -50,10 +56,67 @@ void Tool::updateTool(float dt){
         }else{
             _velocityMoveSmallTable = Point(25,_velocityMoveSmallTable.y);
         }
+        
         this->setPosition(this->getPosition() + _velocityMoveSmallTable);
 
         if(this->getPosition().x <= -_visibleSize.width*0.5f || this->getPosition().x >= _visibleSize.width*0.3f){
             _startMove = false;
+        }
+    }
+
+    if(_toolCatchBug->_isCatchedBug){
+        Rect pGetMess = _toolCatchBug->getBoundingBox();
+        Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
+        if(this->getBoundingBox().intersectsRect(rect)){
+            CCLOG("Drop bug");
+            _countNumberBugCatched ++;
+        
+            char str1[100] = {0};
+            std::string img;
+            if(_toolCatchBug->_typeBugCatched == 1){
+                img = BUG_BLUE_BUG;
+            }else{
+                img = BUG_RED_BUG;
+            }
+            sprintf(str1,"%s_1.png",img.c_str());
+            
+            fakeBug *fBug = fakeBug::createBug(str1);
+            switch (_countNumberBugCatched) {
+                case 1:
+                    fBug->setRotation(-90);
+                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
+                    fBug->_savePosition = fBug->getPosition();
+                    fBug->_pointFinish = Point(fBug->_savePosition.x - 80, fBug->_savePosition.y);
+                    break;
+                case 2:
+                    fBug->setRotation(-135);
+                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/4, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
+                    fBug->_savePosition = fBug->getPosition();
+                    fBug->_pointFinish = Point(fBug->_savePosition.x + 50, fBug->_savePosition.y + 50);
+                    break;
+                case 3:
+                    fBug->setRotation(-45);
+                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
+                    fBug->_savePosition = fBug->getPosition();
+                    fBug->_pointFinish = Point(fBug->_savePosition.x - 50, fBug->_savePosition.y + 50);
+                    break;
+                case 4:
+                    fBug->setRotation(-75);
+                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/2 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
+                    fBug->_savePosition = fBug->getPosition();
+                    fBug->_pointFinish = Point(fBug->_savePosition.x - 60, fBug->_savePosition.y + 30);
+                    break;
+                default:
+                    break;
+            }
+            
+            fBug->_typeMove = 1;
+            fBug->setScale(0.7f);
+            fBug->animationBug(_toolCatchBug->_typeBugCatched);
+            fBug->bugMove();
+            this->addChild(fBug,10);
+ 
+            _toolCatchBug->_isDroppedBug = true;
         }
     }
 }
@@ -225,6 +288,10 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             this->setScissorClose();
         }
         
+        if(_typeTool == TOOL_TYPE_SHAKE_EAR){
+            this->stopAllActions();
+        }
+        
         if(_typeTool != TOOL_TYPE_WATER_DRUG && _typeTool != TOOL_TYPE_INJECTION){
             this->runAction(actionMove);
         }
@@ -233,6 +300,9 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             //Small table
             ((GamePlay*)(this->getParent()))->_smallTable->_startMove = true;
             ((GamePlay*)(this->getParent()))->_smallTable->_isTouch = false;
+            if(_isCatchedBug){
+                this->_ignoreDropBug = true;
+            }
         }
         
         if(_typeTool >= TOOL_TYPE_SCISSOR && _typeTool != TOOL_TYPE_WATER_DRUG){
@@ -297,6 +367,7 @@ void Tool::turnOnFlashLight(Ref *pSender){
         auto light = Sprite::create(TOOL_LIGHT_FLASH);
         light->setPosition(Point(_visibleSize.width*0.34f,_visibleSize.height*0.56f));
         light->setScale(1.7f);
+        light->setTag(200);
         (this->getParent())->addChild(light,12);
         
         _isTurnOnFlashLight = true;
@@ -306,6 +377,37 @@ void Tool::turnOnFlashLight(Ref *pSender){
         ((GamePlay *)(this->getParent()))->showTools();
         ((GamePlay*)(this->getParent()))->showMessesAndBugs();
     }
+}
+
+//Set shake ear animation
+void Tool::setShakeEarAnimation(){
+    Vector<SpriteFrame*> animFrames(4);
+    char str1[100] = {0};
+    char str2[100] = {0};
+    char str3[100] = {0};
+    char str4[100] = {0};
+    
+    sprintf(str1, "tools/timao0.png");
+    auto frame1 = SpriteFrame::create(str1,Rect(0,0,this->getContentSize().width,this->getContentSize().height)); //we assume that the sprites' dimentions are 40*40 rectangles.
+    animFrames.pushBack(frame1);
+    
+    sprintf(str2, "tools/timao1.png");
+    auto frame2 = SpriteFrame::create(str2,Rect(0,0,this->getContentSize().width,this->getContentSize().height)); //we assume that the sprites' dimentions are 40*40 rectangles.
+    animFrames.pushBack(frame2);
+    
+    sprintf(str3, "tools/timao2.png");
+    auto frame3 = SpriteFrame::create(str1,Rect(0,0,this->getContentSize().width,this->getContentSize().height)); //we assume that the sprites' dimentions are 40*40 rectangles.
+    animFrames.pushBack(frame3);
+    
+    sprintf(str4, "tools/timao3.png");
+    auto frame4 = SpriteFrame::create(str1,Rect(0,0,this->getContentSize().width,this->getContentSize().height)); //we assume that the sprites' dimentions are 40*40 rectangles.
+    animFrames.pushBack(frame4);
+    
+    auto animation = Animation::createWithSpriteFrames(animFrames, 0.05f);
+    auto animate = Animate::create(animation);
+    
+    RepeatForever *repeat = RepeatForever::create(animate);
+    this->runAction(repeat);
 }
 
 //Set scissor cut animation
@@ -360,4 +462,25 @@ void Tool::setInjectionNormal(){
     this->_muiTen->setVisible(false);
 }
 
+void Tool::setToolCatchedBug(){
+    _isCatchedBug = true;
+    char str[100] = {0};
+    if (_typeBugCatched == 1) {
+        sprintf(str, TOOL_CATCH_BUG_2);
+    }else{
+        sprintf(str, TOOL_CATCH_BUG_1);
+    }
+
+    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+    this->setTexture(texture);
+}
+
+void Tool::setToolCatchNormal(){
+    _isCatchedBug = false;
+    char str[100] = {0};
+    sprintf(str, TOOL_CATCH_BUG);
+
+    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+    this->setTexture(texture);
+}
 

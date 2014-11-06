@@ -62,6 +62,7 @@
 		516AA4D31A031D8E0067D982 /* MessObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516AA4D11A031D8E0067D982 /* MessObject.cpp */; };
 		516AA4D81A0322F40067D982 /* ToolObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516AA4D61A0322F40067D982 /* ToolObject.cpp */; };
 		516AA4DB1A0324A80067D982 /* Helps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516AA4D91A0324A80067D982 /* Helps.cpp */; };
+		5172A9E91A0C464D0053A19C /* fakeBug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5172A9E71A0C464D0053A19C /* fakeBug.cpp */; };
 		51B14AD31A010F35007476D5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51B14AD21A010F35007476D5 /* OpenGLES.framework */; };
 		51B14AD51A010F40007476D5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51B14AD41A010F40007476D5 /* UIKit.framework */; };
 		51B14AD71A010F4D007476D5 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51B14AD61A010F4C007476D5 /* CoreMotion.framework */; };
@@ -279,6 +280,8 @@
 		516AA4D71A0322F40067D982 /* ToolObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToolObject.h; path = ../Classes/ToolObject.h; sourceTree = "<group>"; };
 		516AA4D91A0324A80067D982 /* Helps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helps.cpp; path = ../Classes/Helps.cpp; sourceTree = "<group>"; };
 		516AA4DA1A0324A80067D982 /* Helps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helps.h; path = ../Classes/Helps.h; sourceTree = "<group>"; };
+		5172A9E71A0C464D0053A19C /* fakeBug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fakeBug.cpp; path = ../Classes/fakeBug.cpp; sourceTree = "<group>"; };
+		5172A9E81A0C464D0053A19C /* fakeBug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fakeBug.h; path = ../Classes/fakeBug.h; sourceTree = "<group>"; };
 		51B14AD21A010F35007476D5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		51B14AD41A010F40007476D5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		51B14AD61A010F4C007476D5 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.0.sdk/System/Library/Frameworks/CoreMotion.framework; sourceTree = DEVELOPER_DIR; };
@@ -382,6 +385,8 @@
 				516AA4DA1A0324A80067D982 /* Helps.h */,
 				510244B01A068B4D0084AB8B /* Bug.cpp */,
 				510244B11A068B4D0084AB8B /* Bug.h */,
+				5172A9E71A0C464D0053A19C /* fakeBug.cpp */,
+				5172A9E81A0C464D0053A19C /* fakeBug.h */,
 			);
 			name = Classes;
 			path = ../classes;
@@ -720,6 +725,7 @@
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				516AA4DB1A0324A80067D982 /* Helps.cpp in Sources */,
 				1AFAF8B716D35DE700DB1158 /* AppDelegate.cpp in Sources */,
+				5172A9E91A0C464D0053A19C /* fakeBug.cpp in Sources */,
 				516AA4D81A0322F40067D982 /* ToolObject.cpp in Sources */,
 				511848C91A024CFA0035013B /* GamePlay.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,

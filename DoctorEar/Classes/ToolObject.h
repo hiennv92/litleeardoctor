@@ -13,6 +13,7 @@
 #include "cocos2d.h"
 #include "Patient.h"
 #include "Helps.h"
+#include "fakeBug.h"
 
 USING_NS_CC;
 class Tool:public Sprite{
@@ -29,13 +30,16 @@ public:
     void dropDrug();
     void setUpNoteHelp();
     void turnOnFlashLight(cocos2d::Ref* pSender);
+    void setShakeEarAnimation();
     void setScissorCutAnimation();
     void setScissorClose();
     void setInjectionFull();
     void setInjectionNormal();
+    void setToolCatchedBug();
+    void setToolCatchNormal();
     
-    int _typeTool;
-    bool _isTouch,_isSet,_isTurnOnFlashLight;
+    int _typeTool, _typeBugCatched, _countNumberBugCatched;
+    bool _isTouch,_isSet,_isTurnOnFlashLight, _isCatchedBug, _isDroppedBug, _ignoreDropBug;
     bool _startMove;//Use for small table
     bool _isDropDrugWater;//Use for drug water
     Patient *_patient;
@@ -45,6 +49,7 @@ public:
     
     Help *_handHelp, *_noteHelp, *_muiTen;
     Sprite *_dropDrug;
+    Tool *_toolCatchBug;
     
     //Touchs
     void addEvents();

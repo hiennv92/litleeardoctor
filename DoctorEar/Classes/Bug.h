@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 #include "cocos2d.h"
-#include "Patient.h"
 #include "ToolObject.h"
 
 USING_NS_CC;
@@ -26,11 +25,14 @@ public:
     void removeBug();
     void deleteBug();
     void callCheckAgain();
-    void bugMove(Point start, Point finish, int typeMove);
+    void bugMove();
+    void bugMoveTurnAround();
     void animationBug(int typeBug);
 
-    int _stateBUg;
+    int _stateBUg, _typeMove, _typeBug;
+    Point _savePosition, _pointFinish;
     bool _isRemove,_isCatching, _isCheckingBug, _isPlaySoundEffect;
+    bool _isTurnAround;
     Size _visibleSize;
     Tool *_tool;
 };
