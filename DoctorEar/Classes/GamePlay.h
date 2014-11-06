@@ -34,6 +34,8 @@ public:
     MessObject *_rayTai1, *_rayTai2, *_rayTai3, *_munTai1, *_munTai2, *_munTai3,*_muTai1, *_muTai2, *_longTai1, *_longTai2, *_longTai3, *_longTai4, *_longTai5, *_longTai6;
     MessObject *_dichTai, *_nuocTai1, *_mangTai;
     
+    Bug *_bug1, *_bug2, *_bug3, *_bug4;
+    
     int _tag, _pageTools;
     bool _isChangeBarSlider;
     

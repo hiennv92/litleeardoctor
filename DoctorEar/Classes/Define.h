@@ -187,7 +187,8 @@
 #define MESS_MU_TAI_TO_1            "mess/muTaiTo_1.png"
 #define MESS_MU_TAI_TO_2            "mess/muTaiTo_2.png"
 #define MESS_MU_TAI_TO_3            "mess/muTaiTo_3.png"
-
+#define BUG_BLUE_BUG                "bugs/BlueBug"
+#define BUG_RED_BUG                 "bugs/RedBug"
 
 #define MESS_TYPE_NUOC_BAN          1
 #define MESS_TYPE_MUN               2

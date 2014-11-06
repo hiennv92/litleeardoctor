@@ -759,7 +759,46 @@ void GamePlay::addMessesAndBugs(){
         _dichTai->setVisible(false);
         _dichTai->_tool = _getWater;
         this->addChild(_dichTai,13);
-//    }
+    
+    char str1[100] = {0};
+    sprintf(str1, "%s_1.png",BUG_BLUE_BUG);
+    
+    char str2[100] = {0};
+    sprintf(str2, "%s_1.png",BUG_RED_BUG);
+    
+    _bug1 = Bug::createBug(str1);
+//    _bug1->setScale(2.0f);
+    _bug1->setRotation(90);
+    _bug1->setPosition(visibleSize.width*0.3f, visibleSize.height* 0.7f);
+    _bug1->setVisible(false);
+    _bug1->animationBug(1);
+    this->addChild(_bug1,13);
+    
+    _bug2 = Bug::createBug(str1);
+//    _bug2->setScale(2.0f);
+    _bug2->setRotation(45);
+    _bug2->setPosition(visibleSize.width*0.3f, visibleSize.height* 0.55f);
+    _bug2->setVisible(false);
+    _bug2->animationBug(1);
+    this->addChild(_bug2,13);
+    
+    _bug3 = Bug::createBug(str2);
+//    _bug3->setScale(2.0f);
+    _bug3->setRotation(-45.0f);
+    _bug3->setPosition(visibleSize.width*0.4f, visibleSize.height* 0.5f);
+    _bug3->setVisible(false);
+    _bug3->animationBug(2);
+    this->addChild(_bug3,13);
+    
+    _bug4 = Bug::createBug(str2);
+//    _bug4->setScale(2.0f);
+    _bug4->setRotation(-75.0f);
+    _bug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.6f);
+    _bug4->setVisible(false);
+    _bug4->animationBug(2);
+    this->addChild(_bug4,13);
+    
+    //    }
 }
 
 void GamePlay::showMessesAndBugs(){
@@ -778,6 +817,11 @@ void GamePlay::showMessesAndBugs(){
             _longTai4->setVisible(true);
             _longTai5->setVisible(true);
             _longTai6->setVisible(true);
+    
+    _bug1->setVisible(true);
+    _bug2->setVisible(true);
+    _bug3->setVisible(true);
+    _bug4->setVisible(true);
 //            break;
     
 //        default:
