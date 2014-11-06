@@ -934,23 +934,22 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.69f, visibleSize.height*0.13f)));
         _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f,visibleSize.height*0.13f)));
     }else if (_pageTools == 2){
-        _scissor->removeFromParentAndCleanup(true);
-        _scissor->removeFromParentAndCleanup(true);
-        _getWater->removeFromParentAndCleanup(true);
-        _smallTable->removeFromParentAndCleanup(true);
-        _getMess->removeFromParentAndCleanup(true);
-        _catchBug->removeFromParentAndCleanup(true);
-        _shakeEar->removeFromParentAndCleanup(true);
+        _scissor->setVisible(false);
+        _getWater->setVisible(false);
+        _smallTable->setVisible(false);
+        _getMess->setVisible(false);
+        _catchBug->setVisible(false);
+        _shakeEar->setVisible(false);
         
-        _desiccate->removeFromParentAndCleanup(true);
-        _sprayChemicals->removeFromParentAndCleanup(true);
-        _tamPon->removeFromParentAndCleanup(true);
-        _drugWater->removeFromParentAndCleanup(true);
-        _injection->removeFromParentAndCleanup(true);
-        _keepEar->removeFromParentAndCleanup(true);
-        _flashLight->removeFromParentAndCleanup(true);
-        this->removeChildByTag(200);
-        _btnBackTools->removeFromParentAndCleanup(true);
+        _desiccate->setVisible(false);
+        _sprayChemicals->setVisible(false);
+        _tamPon->setVisible(false);
+        _drugWater->setVisible(false);
+        _injection->setVisible(false);
+        _keepEar->setVisible(false);
+        _flashLight->setVisible(false);
+        
+        _btnBackTools->setVisible(false);
         
         _dichTai->setVisible(false);
         _mangTai->setVisible(false);
@@ -973,5 +972,6 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _munTai1->setVisible(false);
         _munTai2->setVisible(false);
         _munTai3->setVisible(false);
+        this->removeChildByTag(200);
     }
 }
