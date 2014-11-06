@@ -115,7 +115,7 @@
 #define TOOL_SCISSOR_CLOSE          "tools/scissor2.png"
 #define TOOL_SCISSOR_OPEN           "tools/scissor1.png"
 #define TOOL_TAM_BONG               "tools/tamBong.png"
-#define TOOL_SHAKE_EAR              "tools/timao1.png"
+#define TOOL_SHAKE_EAR              "tools/timao0.png"
 #define TOOL_GET_MESS               "tools/getMess.png"
 #define TOOL_CATCH_BUG              "tools/catchBug.png"
 #define TOOL_CATCH_BUG_1            "tools/catchBug1.png"

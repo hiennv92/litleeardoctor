@@ -142,6 +142,14 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
             _scissor->_noteHelp->showHelp(0.0f);
             _patient->setMouthScare();
             _patient->setEyeBrowScare();
+            
+            _longTai1->_tool = _scissor;
+            _longTai2->_tool = _scissor;
+            _longTai3->_tool = _scissor;
+            _longTai4->_tool = _scissor;
+            _longTai5->_tool = _scissor;
+            _longTai6->_tool = _scissor;
+
             return true;
         }
     }
@@ -154,9 +162,17 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
             
             _shakeEar->_isTouch = true;
             _shakeEar->_noteHelp->showHelp(0.0f);
+            _shakeEar->setShakeEarAnimation();
             _patient->setMouthScare();
             _patient->setEyeBrowScare();
             
+            _longTai1->_tool = _shakeEar;
+            _longTai2->_tool = _shakeEar;
+            _longTai3->_tool = _shakeEar;
+            _longTai4->_tool = _shakeEar;
+            _longTai5->_tool = _shakeEar;
+            _longTai6->_tool = _shakeEar;
+
             return true;
         }
     }
@@ -531,6 +547,7 @@ void GamePlay::addTools(){
     _smallTable = Tool::createTool(TOOL_SMALL_TABLE, 100);
     this->addChild(_smallTable,14);
     _smallTable->setScale(1.1f,1.6f);
+    _smallTable->_toolCatchBug = _catchBug;
     _smallTable->setPosition(-visibleSize.width*0.5f, visibleSize.height*0.3f);
     
     _getWater = Tool::createTool(TOOL_GET_WATER, TOOL_TYPE_GET_WATER);
@@ -644,122 +661,6 @@ void GamePlay::addMessesAndBugs(){
     Size visibleSize = Director::getInstance()->getVisibleSize();
 
 //    if (_patient->_typePatient == 1) {
-        //Add nuoc ban
-        _nuocTai1 = MessObject::createMess(MESS_NUOC_BAN_1, MESS_TYPE_NUOC_BAN);
-        _nuocTai1->_tool = _tamPon;//Tam bong hut nuoc ban
-        _nuocTai1->setScale(2.0f);
-        _nuocTai1->setPosition(Point(visibleSize.width*0.28,visibleSize.height*0.57f));
-        this->addChild(_nuocTai1,13);
-        
-        //Add mun
-        _munTai1 = MessObject::createMess(MESS_MUN_1, MESS_TYPE_MUN);
-        _munTai2 = MessObject::createMess(MESS_MUN_2, MESS_TYPE_MUN);
-        _munTai3 = MessObject::createMess(MESS_MUN_2, MESS_TYPE_MUN);
-        _munTai1->_tool = _drugWater;
-        _munTai2->_tool = _drugWater;
-        _munTai3->_tool = _drugWater;
-        _munTai3->setScale(2.0f);
-        _munTai2->setScale(2.0f);
-        _munTai1->setScale(2.0f);
-        _munTai3->setPosition(Point(visibleSize.width*0.25f, visibleSize.height*0.73f));
-        _munTai2->setPosition(Point(visibleSize.width*0.2f, visibleSize.height*0.6f));
-        _munTai1->setPosition(Point(visibleSize.width*0.35f, visibleSize.height*0.50f));
-        this->addChild(_munTai3,13);
-        this->addChild(_munTai2,13);
-        this->addChild(_munTai1,13);
-        
-        //Add Long tai
-        _longTai1 = MessObject::createMess(MESS_LONG_TAI_2, MESS_TYPE_LONG_TAI);
-        _longTai2 = MessObject::createMess(MESS_LONG_TAI_1, MESS_TYPE_LONG_TAI);
-        _longTai1->setScale(2.0f);
-        _longTai2->setScale(2.0f);
-        _longTai1->setPosition(visibleSize.width*0.3f, visibleSize.height*0.51f);
-        _longTai2->setPosition(visibleSize.width*0.31f, visibleSize.height*0.51f);
-        _longTai1->setVisible(false);
-        _longTai2->setVisible(false);
-        _longTai1->_tool = _scissor;
-        _longTai2->_tool = _scissor;
-        this->addChild(_longTai1,13);
-        this->addChild(_longTai2,13);
-
-        _longTai3 = MessObject::createMess(MESS_LONG_TAI_3, MESS_TYPE_LONG_TAI);
-        _longTai3->setScale(1.5f);
-        _longTai3->setPosition(visibleSize.width*0.32f,visibleSize.height*0.51f);
-        _longTai3->setVisible(false);
-        _longTai3->_tool = _scissor;
-        this->addChild(_longTai3,13);
-        
-        _longTai4 = MessObject::createMess(MESS_LONG_TAI_2, MESS_TYPE_LONG_TAI);
-        _longTai4->setScale(1.6f);
-        _longTai4->setPosition(visibleSize.width*0.36f,visibleSize.height*0.50f);
-        _longTai4->setVisible(false);
-        _longTai4->_tool = _scissor;
-        this->addChild(_longTai4,13);
-        
-        _longTai5 = MessObject::createMess(MESS_LONG_TAI_1, MESS_TYPE_LONG_TAI);
-        _longTai5->setScale(2.0f);
-        _longTai5->setPosition(visibleSize.width*0.36f,visibleSize.height*0.50f);
-        _longTai5->setVisible(false);
-        _longTai5->_tool = _scissor;
-        this->addChild(_longTai5,13);
-        
-        _longTai6 = MessObject::createMess(MESS_LONG_TAI_1, MESS_TYPE_LONG_TAI);
-        _longTai6->setScale(2.0f);
-        _longTai6->setPosition(visibleSize.width*0.37f,visibleSize.height*0.49f);
-        _longTai6->setVisible(false);
-        _longTai6->_tool = _scissor;
-        this->addChild(_longTai6,13);
-        
-        //Add ray tai
-        _rayTai1 = MessObject::createMess(MESS_RAY_TAI_1, MESS_TYPE_RAY_TAI);
-        _rayTai2 = MessObject::createMess(MESS_RAY_TAI_2, MESS_TYPE_RAY_TAI);
-        _rayTai3 = MessObject::createMess(MESS_RAY_TAI_3, MESS_TYPE_RAY_TAI);
-        _rayTai1->setScale(2.0f);
-        _rayTai2->setScale(2.0f);
-        _rayTai3->setScale(2.0f);
-        _rayTai1->setVisible(false);
-        _rayTai2->setVisible(false);
-        _rayTai3->setVisible(false);
-        _rayTai3->_tool = _getMess;
-        _rayTai2->_tool = _getMess;
-        _rayTai1->_tool = _getMess;
-        _rayTai1->setPosition(visibleSize.width*0.46f, visibleSize.height*0.66f);
-        _rayTai2->setPosition(visibleSize.width*0.35f, visibleSize.height*0.62f);
-        _rayTai3->setPosition(visibleSize.width*0.40f, visibleSize.height*0.60f);
-        this->addChild(_rayTai3,13);
-        this->addChild(_rayTai2,13);
-        this->addChild(_rayTai1,13);
-        
-        //Add mu tai
-        _muTai1 = MessObject::createMess(MESS_MU_TAI_NHO_1, MESS_TYPE_MU_TAI);
-        _muTai2 = MessObject::createMess(MESS_MU_TAI_NHO_2, MESS_TYPE_MU_TAI);
-        _muTai1->setScale(2.0f);
-        _muTai2->setScale(2.0f);
-        _muTai1->_tool = _injection;
-        _muTai2->_tool = _injection;
-        _muTai1->setVisible(false);
-        _muTai2->setVisible(false);
-        _muTai1->setPosition(visibleSize.width*0.36f, visibleSize.height*0.66f);
-        _muTai2->setPosition(visibleSize.width*0.46f, visibleSize.height*0.62f);
-        this->addChild(_muTai1,13);
-        this->addChild(_muTai2,13);
-        
-        //Add Mang tai
-        _mangTai = MessObject::createMess(MESS_MANG_TAI_1, MESS_TYPE_MANG_TAI);
-        _mangTai->setScale(2.0f);
-        _mangTai->setPosition(Point(visibleSize.width*0.4f,visibleSize.height*0.6f));
-        _mangTai->setVisible(false);
-        _mangTai->_tool = _desiccate;
-        this->addChild(_mangTai,13);
-        
-        //Add Dich tai
-        _dichTai = MessObject::createMess(MESS_DICH_TAI_FULL, MESS_TYPE_DICH_TAI);
-        _dichTai->setScale(2.0f);
-        _dichTai->setPosition(Point(visibleSize.width*0.415f,visibleSize.height*0.555f));
-        _dichTai->setVisible(false);
-        _dichTai->_tool = _getWater;
-        this->addChild(_dichTai,13);
-    
     char str1[100] = {0};
     sprintf(str1, "%s_1.png",BUG_BLUE_BUG);
     
@@ -767,38 +668,177 @@ void GamePlay::addMessesAndBugs(){
     sprintf(str2, "%s_1.png",BUG_RED_BUG);
     
     _bug1 = Bug::createBug(str1);
-//    _bug1->setScale(2.0f);
+    _bug1->setScale(0.2f);
     _bug1->setRotation(90);
-    _bug1->setPosition(visibleSize.width*0.3f, visibleSize.height* 0.7f);
-    _bug1->setVisible(false);
+    _bug1->setPosition(visibleSize.width*0.46f, visibleSize.height* 0.65f);
     _bug1->animationBug(1);
+    _bug1->_typeMove = 2;
+    _bug1->_typeBug = 1;
+    _bug1->_savePosition = _bug1->getPosition();
+    _bug1->_pointFinish = Point(_bug1->_savePosition.x - 60, _bug1->_savePosition.y);
+    _bug1->bugMove();
+    _bug1->_tool = _catchBug;
     this->addChild(_bug1,13);
     
     _bug2 = Bug::createBug(str1);
-//    _bug2->setScale(2.0f);
-    _bug2->setRotation(45);
-    _bug2->setPosition(visibleSize.width*0.3f, visibleSize.height* 0.55f);
-    _bug2->setVisible(false);
+    _bug2->setRotation(-135);
+    _bug2->setPosition(visibleSize.width*0.20f, visibleSize.height* 0.56f);
     _bug2->animationBug(1);
+    _bug2->_typeMove = 1;
+    _bug2->_typeBug = 1;
+    _bug2->_savePosition = _bug2->getPosition();
+    _bug2->_pointFinish = Point(_bug2->_savePosition.x + 60, _bug2->_savePosition.y + 60);
+    _bug2->bugMove();
+    _bug2->_tool = _catchBug;
     this->addChild(_bug2,13);
     
     _bug3 = Bug::createBug(str2);
-//    _bug3->setScale(2.0f);
     _bug3->setRotation(-45.0f);
-    _bug3->setPosition(visibleSize.width*0.4f, visibleSize.height* 0.5f);
-    _bug3->setVisible(false);
+    _bug3->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.45f);
     _bug3->animationBug(2);
+    _bug3->_typeMove = 1;
+    _bug3->_typeBug = 2;
+    _bug3->_savePosition = _bug3->getPosition();
+    _bug3->_pointFinish = Point(_bug3->_savePosition.x - 60, _bug3->_savePosition.y + 60);
+    _bug3->bugMove();
+    _bug3->_tool = _catchBug;
     this->addChild(_bug3,13);
     
     _bug4 = Bug::createBug(str2);
-//    _bug4->setScale(2.0f);
+    _bug4->setScale(0.2f);
     _bug4->setRotation(-75.0f);
-    _bug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.6f);
-    _bug4->setVisible(false);
+    _bug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.58f);
     _bug4->animationBug(2);
+    _bug4->_typeMove = 2;
+    _bug4->_typeBug = 2;
+    _bug4->_savePosition = _bug4->getPosition();
+    _bug4->_pointFinish = Point(_bug4->_savePosition.x - 60, _bug2->_savePosition.y + 30);
+    _bug4->bugMove();
+    _bug4->_tool = _catchBug;
     this->addChild(_bug4,13);
+
     
+    //Add nuoc ban
+    _nuocTai1 = MessObject::createMess(MESS_NUOC_BAN_1, MESS_TYPE_NUOC_BAN);
+    _nuocTai1->_tool = _tamPon;//Tam bong hut nuoc ban
+    _nuocTai1->setScale(2.0f);
+    _nuocTai1->setPosition(Point(visibleSize.width*0.28,visibleSize.height*0.57f));
+    this->addChild(_nuocTai1,13);
+    
+    //Add mun
+    _munTai1 = MessObject::createMess(MESS_MUN_1, MESS_TYPE_MUN);
+    _munTai2 = MessObject::createMess(MESS_MUN_2, MESS_TYPE_MUN);
+    _munTai3 = MessObject::createMess(MESS_MUN_2, MESS_TYPE_MUN);
+    _munTai1->_tool = _drugWater;
+    _munTai2->_tool = _drugWater;
+    _munTai3->_tool = _drugWater;
+    _munTai3->setScale(2.0f);
+    _munTai2->setScale(2.0f);
+    _munTai1->setScale(2.0f);
+    _munTai3->setPosition(Point(visibleSize.width*0.25f, visibleSize.height*0.73f));
+    _munTai2->setPosition(Point(visibleSize.width*0.2f, visibleSize.height*0.6f));
+    _munTai1->setPosition(Point(visibleSize.width*0.35f, visibleSize.height*0.50f));
+    this->addChild(_munTai3,13);
+    this->addChild(_munTai2,13);
+    this->addChild(_munTai1,13);
+    
+    //Add Long tai
+    _longTai1 = MessObject::createMess(MESS_LONG_TAI_2, MESS_TYPE_LONG_TAI);
+    _longTai2 = MessObject::createMess(MESS_LONG_TAI_1, MESS_TYPE_LONG_TAI);
+    _longTai1->setScale(2.0f);
+    _longTai2->setScale(2.0f);
+    _longTai1->setPosition(visibleSize.width*0.3f, visibleSize.height*0.51f);
+    _longTai2->setPosition(visibleSize.width*0.31f, visibleSize.height*0.51f);
+    _longTai1->_tool = _scissor;
+    _longTai2->_tool = _scissor;
+    this->addChild(_longTai1,13);
+    this->addChild(_longTai2,13);
+    
+    _longTai3 = MessObject::createMess(MESS_LONG_TAI_3, MESS_TYPE_LONG_TAI);
+    _longTai3->setScale(1.5f);
+    _longTai3->setPosition(visibleSize.width*0.32f,visibleSize.height*0.51f);
+    _longTai3->_tool = _scissor;
+    this->addChild(_longTai3,13);
+    
+    _longTai4 = MessObject::createMess(MESS_LONG_TAI_2, MESS_TYPE_LONG_TAI);
+    _longTai4->setScale(1.6f);
+    _longTai4->setPosition(visibleSize.width*0.36f,visibleSize.height*0.50f);
+    _longTai4->_tool = _scissor;
+    this->addChild(_longTai4,13);
+    
+    _longTai5 = MessObject::createMess(MESS_LONG_TAI_1, MESS_TYPE_LONG_TAI);
+    _longTai5->setScale(2.0f);
+    _longTai5->setPosition(visibleSize.width*0.36f,visibleSize.height*0.50f);
+    _longTai5->_tool = _scissor;
+    this->addChild(_longTai5,13);
+    
+    _longTai6 = MessObject::createMess(MESS_LONG_TAI_1, MESS_TYPE_LONG_TAI);
+    _longTai6->setScale(2.0f);
+    _longTai6->setPosition(visibleSize.width*0.37f,visibleSize.height*0.49f);
+    _longTai6->_tool = _scissor;
+    this->addChild(_longTai6,13);
+    
+    //Add ray tai
+    _rayTai1 = MessObject::createMess(MESS_RAY_TAI_1, MESS_TYPE_RAY_TAI);
+    _rayTai2 = MessObject::createMess(MESS_RAY_TAI_2, MESS_TYPE_RAY_TAI);
+    _rayTai3 = MessObject::createMess(MESS_RAY_TAI_3, MESS_TYPE_RAY_TAI);
+    _rayTai1->setScale(2.0f);
+    _rayTai2->setScale(2.0f);
+    _rayTai3->setScale(2.0f);
+    _rayTai3->_tool = _getMess;
+    _rayTai2->_tool = _getMess;
+    _rayTai1->_tool = _getMess;
+    _rayTai1->setPosition(visibleSize.width*0.46f, visibleSize.height*0.66f);
+    _rayTai2->setPosition(visibleSize.width*0.35f, visibleSize.height*0.62f);
+    _rayTai3->setPosition(visibleSize.width*0.40f, visibleSize.height*0.60f);
+    this->addChild(_rayTai3,13);
+    this->addChild(_rayTai2,13);
+    this->addChild(_rayTai1,13);
+    
+    //Add mu tai
+    _muTai1 = MessObject::createMess(MESS_MU_TAI_NHO_1, MESS_TYPE_MU_TAI);
+    _muTai2 = MessObject::createMess(MESS_MU_TAI_NHO_2, MESS_TYPE_MU_TAI);
+    _muTai1->setScale(2.0f);
+    _muTai2->setScale(2.0f);
+    _muTai1->_tool = _injection;
+    _muTai2->_tool = _injection;
+    _muTai1->setPosition(visibleSize.width*0.36f, visibleSize.height*0.66f);
+    _muTai2->setPosition(visibleSize.width*0.46f, visibleSize.height*0.62f);
+    this->addChild(_muTai1,13);
+    this->addChild(_muTai2,13);
+    
+    //Add Mang tai
+    _mangTai = MessObject::createMess(MESS_MANG_TAI_1, MESS_TYPE_MANG_TAI);
+    _mangTai->setScale(2.0f);
+    _mangTai->setPosition(Point(visibleSize.width*0.4f,visibleSize.height*0.6f));
+    _mangTai->_tool = _desiccate;
+    this->addChild(_mangTai,13);
+    
+    //Add Dich tai
+    _dichTai = MessObject::createMess(MESS_DICH_TAI_FULL, MESS_TYPE_DICH_TAI);
+    _dichTai->setScale(2.0f);
+    _dichTai->setPosition(Point(visibleSize.width*0.415f,visibleSize.height*0.555f));
+    _dichTai->_tool = _getWater;
+    this->addChild(_dichTai,13);
     //    }
+    
+    _dichTai->setVisible(false);
+    _mangTai->setVisible(false);
+    _muTai1->setVisible(false);
+    _muTai2->setVisible(false);
+    _rayTai1->setVisible(false);
+    _rayTai2->setVisible(false);
+    _rayTai3->setVisible(false);
+    _longTai6->setVisible(false);
+    _longTai5->setVisible(false);
+    _longTai4->setVisible(false);
+    _longTai3->setVisible(false);
+    _longTai1->setVisible(false);
+    _longTai2->setVisible(false);
+    _bug3->setVisible(false);
+    _bug1->setVisible(false);
+    _bug2->setVisible(false);
+    _bug4->setVisible(false);
 }
 
 void GamePlay::showMessesAndBugs(){
@@ -893,5 +933,45 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.51f, visibleSize.height*0.13f)));
         _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.69f, visibleSize.height*0.13f)));
         _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f,visibleSize.height*0.13f)));
+    }else if (_pageTools == 2){
+        _scissor->removeFromParentAndCleanup(true);
+        _scissor->removeFromParentAndCleanup(true);
+        _getWater->removeFromParentAndCleanup(true);
+        _smallTable->removeFromParentAndCleanup(true);
+        _getMess->removeFromParentAndCleanup(true);
+        _catchBug->removeFromParentAndCleanup(true);
+        _shakeEar->removeFromParentAndCleanup(true);
+        
+        _desiccate->removeFromParentAndCleanup(true);
+        _sprayChemicals->removeFromParentAndCleanup(true);
+        _tamPon->removeFromParentAndCleanup(true);
+        _drugWater->removeFromParentAndCleanup(true);
+        _injection->removeFromParentAndCleanup(true);
+        _keepEar->removeFromParentAndCleanup(true);
+        _flashLight->removeFromParentAndCleanup(true);
+        this->removeChildByTag(200);
+        _btnBackTools->removeFromParentAndCleanup(true);
+        
+        _dichTai->setVisible(false);
+        _mangTai->setVisible(false);
+        _muTai1->setVisible(false);
+        _muTai2->setVisible(false);
+        _rayTai1->setVisible(false);
+        _rayTai2->setVisible(false);
+        _rayTai3->setVisible(false);
+        _longTai6->setVisible(false);
+        _longTai5->setVisible(false);
+        _longTai4->setVisible(false);
+        _longTai3->setVisible(false);
+        _longTai1->setVisible(false);
+        _longTai2->setVisible(false);
+        _bug3->setVisible(false);
+        _bug1->setVisible(false);
+        _bug2->setVisible(false);
+        _bug4->setVisible(false);
+        _nuocTai1->setVisible(false);
+        _munTai1->setVisible(false);
+        _munTai2->setVisible(false);
+        _munTai3->setVisible(false);
     }
 }

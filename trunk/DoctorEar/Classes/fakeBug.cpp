@@ -1,20 +1,20 @@
 //
-//  Bug.cpp
+//  fakeBug.cpp
 //  DoctorEar
 //
-//  Created by Trinh Van Duong on 11/2/14.
+//  Created by Trinh Van Duong on 11/7/14.
 //
 //
 
-#include "Bug.h"
+#include "fakeBug.h"
 #include "Define.h"
 
-Bug::Bug(){}
+fakeBug::fakeBug(){}
 
-Bug::~Bug(){}
+fakeBug::~fakeBug(){}
 
-Bug* Bug::createBug(std::string imageBug){
-    Bug *bug = new Bug();
+fakeBug* fakeBug::createBug(std::string imageBug){
+    fakeBug *bug = new fakeBug();
     if(bug->initWithFile(imageBug)){
         bug->autorelease();
         bug->initOptions();
@@ -24,49 +24,11 @@ Bug* Bug::createBug(std::string imageBug){
     return NULL;
 }
 
-void Bug::initOptions(){
-    _visibleSize = Director::getInstance()->getVisibleSize();
-    _isRemove = false;
-    this->schedule(schedule_selector(Bug::updateBug));
-    
-    _isCheckingBug = true;
+void fakeBug::initOptions(){
     _isTurnAround = false;
-    _isCatching = false;
-    _isPlaySoundEffect = false;
 }
 
-void Bug::updateBug(float dt){
-    if(_tool){
-        if(_tool->_isTouch && !_isRemove && !_tool->_isCatchedBug){
-            Rect pGetMess = _tool->getBoundingBox();
-            Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
-            if(rect.intersectsRect(this->getBoundingBox())){
-                CCLOG("Catch a bug");
-                this->setVisible(false);
-                this->_isCatching = true;
-                _tool->_typeBugCatched = _typeBug;
-                _tool->setToolCatchedBug();
-            }
-        }
-
-        if(this->_isCatching && _tool->_isCatchedBug && !_isRemove){
-            if(_tool->_isDroppedBug){
-                removeBug();
-            }
-            
-            if(_tool->_ignoreDropBug){
-                CCLOG("Release bug");
-                _tool->_ignoreDropBug = false;
-                _tool->setToolCatchNormal();
-                
-                this->setVisible(true);
-                this->_isCatching = false;
-            }
-        }
-    }
-}
-
-void Bug::animationBug(int typeBug){
+void fakeBug::animationBug(int typeBug){
     Vector<SpriteFrame*> animFrames(3);
     char str1[100] = {0};
     char str2[100] = {0};
@@ -98,51 +60,38 @@ void Bug::animationBug(int typeBug){
     this->runAction(repeat);
 }
 
-void Bug::bugMove(){
+void fakeBug::bugMove(){
     if (!_isTurnAround) {
         if (_typeMove == 2) {
-            auto action = CallFunc::create(CC_CALLBACK_0(Bug::bugMoveTurnAround,this));
+            auto action = CallFunc::create(CC_CALLBACK_0(fakeBug::bugMoveTurnAround,this));
             this->runAction(Sequence::create(MoveTo::create(1.0f, _pointFinish),action, NULL));
             this->runAction(Sequence::create(ScaleTo::create(1.0f, 1.0f), NULL));
         }else{
-            auto action = CallFunc::create(CC_CALLBACK_0(Bug::bugMoveTurnAround,this));
+            auto action = CallFunc::create(CC_CALLBACK_0(fakeBug::bugMoveTurnAround,this));
             this->runAction(Sequence::create(MoveTo::create(1.0f, _pointFinish),action, NULL));
         }
-
+        
         _isTurnAround = true;
     }else{
         if (_typeMove == 2) {
-            auto action = CallFunc::create(CC_CALLBACK_0(Bug::bugMoveTurnAround,this));
+            auto action = CallFunc::create(CC_CALLBACK_0(fakeBug::bugMoveTurnAround,this));
             this->runAction(Sequence::create(RotateTo::create(0.5f,this->getRotation()-180),MoveTo::create(1.0f, _pointFinish),action, NULL));
             this->runAction(Sequence::create(ScaleTo::create(1.5f, 1.0f), NULL));
         }else{
-            auto action = CallFunc::create(CC_CALLBACK_0(Bug::bugMoveTurnAround,this));
+            auto action = CallFunc::create(CC_CALLBACK_0(fakeBug::bugMoveTurnAround,this));
             this->runAction(Sequence::create(RotateTo::create(0.5f,this->getRotation()-180),MoveTo::create(1.0f, _pointFinish),action, NULL));
         }
     }
 }
 
-void Bug::bugMoveTurnAround(){
+void fakeBug::bugMoveTurnAround(){
     if (_typeMove == 2) {
-        auto action = CallFunc::create(CC_CALLBACK_0(Bug::bugMove,this));
+        auto action = CallFunc::create(CC_CALLBACK_0(fakeBug::bugMove,this));
         this->runAction(Sequence::create(RotateTo::create(0.5f,this->getRotation()+ 180),MoveTo::create(1.5f,_savePosition),action, NULL));
         
         this->runAction(Sequence::create(ScaleTo::create(2.0f, 0.2f), NULL));
     }else{
-        auto action = CallFunc::create(CC_CALLBACK_0(Bug::bugMove,this));
+        auto action = CallFunc::create(CC_CALLBACK_0(fakeBug::bugMove,this));
         this->runAction(Sequence::create(RotateTo::create(0.5f,this->getRotation()+ 180),MoveTo::create(1.5f,_savePosition),action, NULL));
     }
-}
-
-void Bug::removeBug(){
-    CCLOG("REMOVED BUG");
-    _tool->_isDroppedBug = false;
-    _tool->setToolCatchNormal();
-    this->_isRemove = true;
-    this->stopAllActions();
-    this->removeFromParentAndCleanup(true);
-}
-
-void Bug::deleteBug(){
-    
 }
