@@ -47,7 +47,7 @@ void MessObject::initOptions(int typeMess){
 
 void MessObject::updateMess(float dt){
     if(_tool){
-        if(_tool->_isTouch && !_isRemove){
+        if(_tool->_isTouch && !_isRemove && this->isVisible()){
             if(_typeMess == MESS_TYPE_RAY_TAI){
                 Rect pGetMess = _tool->getBoundingBox();
                 Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*6/7,pGetMess.size.width /3, pGetMess.size.height/7);

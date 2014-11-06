@@ -133,184 +133,206 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
     }
     
     if(_scissor){
-        cocos2d::Rect rectScissor = _scissor->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _scissor->_isTouch = true;
-            _scissor->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
-            
-            _longTai1->_tool = _scissor;
-            _longTai2->_tool = _scissor;
-            _longTai3->_tool = _scissor;
-            _longTai4->_tool = _scissor;
-            _longTai5->_tool = _scissor;
-            _longTai6->_tool = _scissor;
-
-            return true;
+        if(_scissor->isVisible()){
+            cocos2d::Rect rectScissor = _scissor->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _scissor->_isTouch = true;
+                _scissor->_noteHelp->showHelp(0.0f);
+                _patient->setMouthScare();
+                _patient->setEyeBrowScare();
+                
+                _longTai1->_tool = _scissor;
+                _longTai2->_tool = _scissor;
+                _longTai3->_tool = _scissor;
+                _longTai4->_tool = _scissor;
+                _longTai5->_tool = _scissor;
+                _longTai6->_tool = _scissor;
+                
+                return true;
+            }
         }
     }
     
     if(_shakeEar){
-        cocos2d::Rect rectScissor = _shakeEar->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _shakeEar->_isTouch = true;
-            _shakeEar->_noteHelp->showHelp(0.0f);
-            _shakeEar->setShakeEarAnimation();
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
-            
-            _longTai1->_tool = _shakeEar;
-            _longTai2->_tool = _shakeEar;
-            _longTai3->_tool = _shakeEar;
-            _longTai4->_tool = _shakeEar;
-            _longTai5->_tool = _shakeEar;
-            _longTai6->_tool = _shakeEar;
+        if (_shakeEar->isVisible()) {
+            cocos2d::Rect rectScissor = _shakeEar->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _shakeEar->_isTouch = true;
+                _shakeEar->_noteHelp->showHelp(0.0f);
+                _shakeEar->setShakeEarAnimation();
+                _patient->setMouthScare();
+                _patient->setEyeBrowScare();
+                
+                _longTai1->_tool = _shakeEar;
+                _longTai2->_tool = _shakeEar;
+                _longTai3->_tool = _shakeEar;
+                _longTai4->_tool = _shakeEar;
+                _longTai5->_tool = _shakeEar;
+                _longTai6->_tool = _shakeEar;
+                
+                return true;
+            }
 
-            return true;
         }
     }
     
     if(_getMess){
-        cocos2d::Rect rectScissor = _getMess->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _getMess->_isTouch = true;
-            _getMess->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
-
-            return true;
-        }
-    }
-    
-    if(_catchBug){
-        cocos2d::Rect rectScissor = _catchBug->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _catchBug->_isTouch = true;
-            _catchBug->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
-            
-            //Call small table
-            _smallTable->_startMove = true;
-            _smallTable->_isTouch = true;
-            return true;
-        }
-    }
-    
-    if(_getWater){
-        cocos2d::Rect rectScissor = _getWater->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _getWater->_isTouch = true;
-            _getWater->_noteHelp->showHelp(0.0f);
-            _patient->setMouthScare();
-            _patient->setEyeBrowScare();
-
-            return true;
-        }
-    }
-    
-    if(_desiccate){
-        cocos2d::Rect rectScissor = _desiccate->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _desiccate->_isTouch = true;
-            _desiccate->_noteHelp->showHelp(0.0f);
-            _patient->setMouthSmile();
-            _patient->setEyeBrowSmile();
-            
-            return true;
-        }
-    }
-    
-    if(_sprayChemicals){
-        cocos2d::Rect rectScissor = _sprayChemicals->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _sprayChemicals->_isTouch = true;
-            _sprayChemicals->_noteHelp->showHelp(0.0f);
-            _patient->setMouthSmile();
-            _patient->setEyeBrowSmile();
-            
-            return true;
-        }
-    }
-    
-    if(_tamPon){
-        cocos2d::Rect rectScissor = _tamPon->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            _btnBackTools->setVisible(false);
-            _btnNextTools->setVisible(false);
-            
-            _tamPon->_isTouch = true;
-            _tamPon->_noteHelp->showHelp(0.0f);
-            _patient->setMouthSmile();
-            _patient->setEyeBrowSmile();
-            
-            return true;
-        }
-    }
-    
-    if(_drugWater){
-        cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            if(!_drugWater->_isSet){
-                _btnBackTools->setVisible(false);
-                _btnNextTools->setVisible(false);
-                    
-                _drugWater->_isTouch = true;
-                _drugWater->_noteHelp->showHelp(0.0f);
-                _patient->setMouthSmile();
-                _patient->setEyeBrowSmile();
-                _drugWater->setRotation(65.0f);
-                _drugWater->setPosition(_drugWater->getPositionX(),_drugWater->getPositionY()+ 30);
-                return true;
-            }
-            else{
-                CCLOG("Nho thuoc");
-                _drugWater->_isDropDrugWater = true;
-                _drugWater->dropDrug();
-            }
-        }
-    }
-    
-    if(_injection){
-        cocos2d::Rect rectScissor = _injection->getBoundingBox();
-        if(rectScissor.containsPoint(p)){
-            if(!_injection->_isSet){
+        if (_getWater->isVisible()) {
+            cocos2d::Rect rectScissor = _getMess->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
                 _btnBackTools->setVisible(false);
                 _btnNextTools->setVisible(false);
                 
-                _injection->_isTouch = true;
-                _injection->_noteHelp->showHelp(0.0f);
+                _getMess->_isTouch = true;
+                _getMess->_noteHelp->showHelp(0.0f);
                 _patient->setMouthScare();
                 _patient->setEyeBrowScare();
                 
                 return true;
             }
-            else{
-                CCLOG("Hut mu");
-                _injection->_isDropDrugWater = true;
-                _injection->setInjectionFull();
+        }
+    }
+    
+    if(_catchBug){
+        if (_catchBug->isVisible()) {
+            cocos2d::Rect rectScissor = _catchBug->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _catchBug->_isTouch = true;
+                _catchBug->_noteHelp->showHelp(0.0f);
+                _patient->setMouthScare();
+                _patient->setEyeBrowScare();
+                
+                //Call small table
+                _smallTable->_startMove = true;
+                _smallTable->_isTouch = true;
+                return true;
+            }
+
+        }
+    }
+    
+    if(_getWater){
+        if (_getWater->isVisible()) {
+            cocos2d::Rect rectScissor = _getWater->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _getWater->_isTouch = true;
+                _getWater->_noteHelp->showHelp(0.0f);
+                _patient->setMouthScare();
+                _patient->setEyeBrowScare();
+                
+                return true;
+            }
+        }
+    }
+    
+    if(_desiccate){
+        if (_desiccate->isVisible()) {
+            cocos2d::Rect rectScissor = _desiccate->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _desiccate->_isTouch = true;
+                _desiccate->_noteHelp->showHelp(0.0f);
+                _patient->setMouthSmile();
+                _patient->setEyeBrowSmile();
+                
+                return true;
+            }
+        }
+    }
+    
+    if(_sprayChemicals){
+        if (_sprayChemicals->isVisible()) {
+            cocos2d::Rect rectScissor = _sprayChemicals->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _sprayChemicals->_isTouch = true;
+                _sprayChemicals->_noteHelp->showHelp(0.0f);
+                _patient->setMouthSmile();
+                _patient->setEyeBrowSmile();
+                
+                return true;
+            }
+        }
+    }
+    
+    if(_tamPon){
+        if (_tamPon->isVisible()) {
+            cocos2d::Rect rectScissor = _tamPon->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                
+                _tamPon->_isTouch = true;
+                _tamPon->_noteHelp->showHelp(0.0f);
+                _patient->setMouthSmile();
+                _patient->setEyeBrowSmile();
+                
+                return true;
+            }
+        }
+    }
+    
+    if(_drugWater){
+        if (_drugWater->isVisible()) {
+            cocos2d::Rect rectScissor = _drugWater->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                if(!_drugWater->_isSet){
+                    _btnBackTools->setVisible(false);
+                    _btnNextTools->setVisible(false);
+                    
+                    _drugWater->_isTouch = true;
+                    _drugWater->_noteHelp->showHelp(0.0f);
+                    _patient->setMouthSmile();
+                    _patient->setEyeBrowSmile();
+                    _drugWater->setRotation(65.0f);
+                    _drugWater->setPosition(_drugWater->getPositionX(),_drugWater->getPositionY()+ 30);
+                    return true;
+                }
+                else{
+                    CCLOG("Nho thuoc");
+                    _drugWater->_isDropDrugWater = true;
+                    _drugWater->dropDrug();
+                }
+            }
+        }
+    }
+    
+    if(_injection){
+        if (_injection->isVisible()) {
+            cocos2d::Rect rectScissor = _injection->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                if(!_injection->_isSet){
+                    _btnBackTools->setVisible(false);
+                    _btnNextTools->setVisible(false);
+                    
+                    _injection->_isTouch = true;
+                    _injection->_noteHelp->showHelp(0.0f);
+                    _patient->setMouthScare();
+                    _patient->setEyeBrowScare();
+                    
+                    return true;
+                }
+                else{
+                    CCLOG("Hut mu");
+                    _injection->_isDropDrugWater = true;
+                    _injection->setInjectionFull();
+                }
             }
         }
     }
