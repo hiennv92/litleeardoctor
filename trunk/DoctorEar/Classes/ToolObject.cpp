@@ -319,6 +319,10 @@ void Tool::touchEvent(cocos2d::Touch* touch){
                 ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(true);
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }
+            else if(((GamePlay*)(this->getParent()))->_pageTools == 3){
+                ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(false);
+                ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
+            }
         }
         
         if((_typeTool == TOOL_TYPE_WATER_DRUG || _typeTool == TOOL_TYPE_INJECTION)  && !_isSet){
@@ -331,6 +335,10 @@ void Tool::touchEvent(cocos2d::Touch* touch){
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }else if(((GamePlay*)(this->getParent()))->_pageTools == 2){
                 ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(true);
+                ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
+            }
+            else if(((GamePlay*)(this->getParent()))->_pageTools == 3){
+                ((GamePlay*)(this->getParent()))->_btnBackTools->setVisible(false);
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }
         }else if((_typeTool == TOOL_TYPE_WATER_DRUG || _typeTool == TOOL_TYPE_INJECTION) && _isSet){
