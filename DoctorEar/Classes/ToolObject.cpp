@@ -35,6 +35,7 @@ void Tool::initOptions(int typeTool){
     _isSet = false;
     //Use for small table
     _velocityMoveSmallTable = Point(1.0f,0.0f);
+    _velocityMoveOngSoi = Point(0.0f,0.0f);
     //use for drug water
     _isDropDrugWater = false;
     //Use for catched bug
@@ -43,7 +44,7 @@ void Tool::initOptions(int typeTool){
     _ignoreDropBug = false;
     _countNumberBugCatched = 0;
     
-    if(_typeTool == 100){
+    if(_typeTool == 100 || _typeTool == 200){
         this->schedule(schedule_selector(Tool::updateTool));
         _startMove = false;
     }
@@ -51,74 +52,105 @@ void Tool::initOptions(int typeTool){
 
 //Use for small table
 void Tool::updateTool(float dt){
-    if(_startMove){
-        if(!_isTouch){
-            _velocityMoveSmallTable = Point(-25,_velocityMoveSmallTable.y);
-        }else{
-            _velocityMoveSmallTable = Point(25,_velocityMoveSmallTable.y);
+    if(_typeTool == 100){
+        if(_startMove){
+            if(!_isTouch){
+                _velocityMoveSmallTable = Point(-25,_velocityMoveSmallTable.y);
+            }else{
+                _velocityMoveSmallTable = Point(25,_velocityMoveSmallTable.y);
+            }
+            
+            this->setPosition(this->getPosition() + _velocityMoveSmallTable);
+            
+            if(this->getPosition().x <= -_visibleSize.width*0.5f || this->getPosition().x >= _visibleSize.width*0.3f){
+                _startMove = false;
+            }
         }
         
-        this->setPosition(this->getPosition() + _velocityMoveSmallTable);
-
-        if(this->getPosition().x <= -_visibleSize.width*0.5f || this->getPosition().x >= _visibleSize.width*0.3f){
-            _startMove = false;
+        if(_toolCatchBug->_isCatchedBug){
+            Rect pGetMess = _toolCatchBug->getBoundingBox();
+            Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
+            if(this->getBoundingBox().intersectsRect(rect)){
+                CCLOG("Drop bug");
+                _countNumberBugCatched ++;
+                
+                char str1[100] = {0};
+                std::string img;
+                if(_toolCatchBug->_typeBugCatched == 1){
+                    img = BUG_BLUE_BUG;
+                }else{
+                    img = BUG_RED_BUG;
+                }
+                sprintf(str1,"%s_1.png",img.c_str());
+                
+                fakeBug *fBug = fakeBug::createBug(str1);
+                switch (_countNumberBugCatched) {
+                    case 1:
+                        fBug->setRotation(-90);
+                        fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
+                        fBug->_savePosition = fBug->getPosition();
+                        fBug->_pointFinish = Point(fBug->_savePosition.x - 80, fBug->_savePosition.y);
+                        break;
+                    case 2:
+                        fBug->setRotation(-135);
+                        fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/4, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
+                        fBug->_savePosition = fBug->getPosition();
+                        fBug->_pointFinish = Point(fBug->_savePosition.x + 50, fBug->_savePosition.y + 50);
+                        break;
+                    case 3:
+                        fBug->setRotation(-45);
+                        fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
+                        fBug->_savePosition = fBug->getPosition();
+                        fBug->_pointFinish = Point(fBug->_savePosition.x - 50, fBug->_savePosition.y + 50);
+                        break;
+                    case 4:
+                        fBug->setRotation(-75);
+                        fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/2 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
+                        fBug->_savePosition = fBug->getPosition();
+                        fBug->_pointFinish = Point(fBug->_savePosition.x - 60, fBug->_savePosition.y + 30);
+                        break;
+                    default:
+                        break;
+                }
+                
+                fBug->_typeMove = 1;
+                fBug->setScale(0.7f);
+                fBug->animationBug(_toolCatchBug->_typeBugCatched);
+                fBug->bugMove();
+                this->addChild(fBug,10);
+                
+                _toolCatchBug->_isDroppedBug = true;
+            }
         }
     }
 
-    if(_toolCatchBug->_isCatchedBug){
-        Rect pGetMess = _toolCatchBug->getBoundingBox();
-        Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
-        if(this->getBoundingBox().intersectsRect(rect)){
-            CCLOG("Drop bug");
-            _countNumberBugCatched ++;
-        
-            char str1[100] = {0};
-            std::string img;
-            if(_toolCatchBug->_typeBugCatched == 1){
-                img = BUG_BLUE_BUG;
+    if (_typeTool == 200) {
+        if(_isTouch){
+            if (_leftRight) {
+                _velocityMoveOngSoi = Point(2.0f,_velocityMoveOngSoi.y);
             }else{
-                img = BUG_RED_BUG;
-            }
-            sprintf(str1,"%s_1.png",img.c_str());
-            
-            fakeBug *fBug = fakeBug::createBug(str1);
-            switch (_countNumberBugCatched) {
-                case 1:
-                    fBug->setRotation(-90);
-                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
-                    fBug->_savePosition = fBug->getPosition();
-                    fBug->_pointFinish = Point(fBug->_savePosition.x - 80, fBug->_savePosition.y);
-                    break;
-                case 2:
-                    fBug->setRotation(-135);
-                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/4, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
-                    fBug->_savePosition = fBug->getPosition();
-                    fBug->_pointFinish = Point(fBug->_savePosition.x + 50, fBug->_savePosition.y + 50);
-                    break;
-                case 3:
-                    fBug->setRotation(-45);
-                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
-                    fBug->_savePosition = fBug->getPosition();
-                    fBug->_pointFinish = Point(fBug->_savePosition.x - 50, fBug->_savePosition.y + 50);
-                    break;
-                case 4:
-                    fBug->setRotation(-75);
-                    fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/2 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
-                    fBug->_savePosition = fBug->getPosition();
-                    fBug->_pointFinish = Point(fBug->_savePosition.x - 60, fBug->_savePosition.y + 30);
-                    break;
-                default:
-                    break;
+                _velocityMoveOngSoi = Point(-2.0f,_velocityMoveOngSoi.y);
             }
             
-            fBug->_typeMove = 1;
-            fBug->setScale(0.7f);
-            fBug->animationBug(_toolCatchBug->_typeBugCatched);
-            fBug->bugMove();
-            this->addChild(fBug,10);
- 
-            _toolCatchBug->_isDroppedBug = true;
+            if (_upDown) {
+                _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,2.0f);
+            }else{
+                _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,-2.0f);
+            }
+        }else{
+            _velocityMoveOngSoi = Point(0.0f,0.0f);
         }
+        
+        
+        if (_toolOngSoi->getPositionY() < _toolOngSoi->getContentSize().height/6.2f || _toolOngSoi->getPositionY() > _visibleSize.height - _toolOngSoi->getContentSize().height/4) {
+            _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,0.0f);
+        }
+        
+        if (_toolOngSoi->getPositionX() < _toolOngSoi->getContentSize().width /4.9f || _toolOngSoi->getPositionX() > _visibleSize.width - _toolOngSoi->getContentSize().width/4.9f){
+            _velocityMoveOngSoi = Point(0.0f,_velocityMoveOngSoi.y);
+        }
+
+        _toolOngSoi->setPosition(_toolOngSoi->getPosition() + _velocityMoveOngSoi);
     }
 }
 
@@ -241,7 +273,26 @@ void Tool::setUpNoteHelp(){
             _noteHelp = Help::createHelp(HELP_NOTE_13, TOOL_TYPE_ONG_SOI);
             _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.7f));
             break;
-            
+        case TOOL_TYPE_LAZER:
+            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            break;
+        case TOOL_TYPE_CATCH_BUG_ADVANCE:
+            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            break;
+        case TOOL_TYPE_TAM_BONG_ADVANCE:
+            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            break;
+        case TOOL_TYPE_GEL:
+            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            break;
+        case TOOL_TYPE_GET_WATER_ADVANCE:
+            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            break;
         default:
             break;
     }
@@ -283,7 +334,7 @@ void Tool::touchEvent(cocos2d::Touch* touch){
 //    CCLOG("%f - %f",touch->getLocation().x,touch->getLocation().y);
     auto actionMove = MoveTo::create(0.7f, _savePositionOriginal);
     auto action = CallFunc::create(CC_CALLBACK_0(Tool::setTouchAvailable,this));
-    if(_isTouch && _typeTool != 2){
+    if(_isTouch && _typeTool != 2 && _typeTool != 200){
         _isTouch = false;
         _noteHelp->setVisible(false);
         _noteHelp->setScale(2.0f);
@@ -345,6 +396,9 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             _isTouch = true;
             _noteHelp->setVisible(true);
         }
+    }else if(_isTouch && _typeTool == 200){
+        _isTouch = false;
+        this->runAction(Sequence::create(MoveTo::create(0.2f, _savePositionOriginal),action, NULL));
     }
     CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
@@ -373,7 +427,8 @@ void Tool::setTouchDotPosition (Vec2 vec)
         }
         this->setPosition (vec);
 
-    }else if(_typeTool == TOOL_TYPE_ONG_SOI){
+    }
+    else if(_typeTool == TOOL_TYPE_ONG_SOI){
         if(vec.x < _visibleSize.width*0.65f){
             vec.x = _visibleSize.width*0.65f;
         }
@@ -388,11 +443,84 @@ void Tool::setTouchDotPosition (Vec2 vec)
         }
         this->setPosition (vec);
     }
+    else if(_typeTool == 200) {
+        float x =  fabsf(vec.x - _savePositionOriginal.x);
+        float y =  fabsf(vec.y - _savePositionOriginal.y);
+    
+        if (sqrtf(x*x + y*y) < 10) {
+            this->setPosition (vec);
+        }
+//        else{
+//            CCLOG("OUT");
+//        }
+        this->changeAngle();
+    }
     else{
         this->setPosition (vec);
     }
     this->_isMoved = true;
 }
+
+void Tool::changeAngle()
+{
+//    float x =  fabsf(this->getPositionX() - _savePositionOriginal.x);
+//    float y =  fabsf(this->getPositionY() - _savePositionOriginal.y);
+    
+//    auto angle = CC_RADIANS_TO_DEGREES(atanf(y/x));
+    
+    if(this->getPositionX() >= _savePositionOriginal.x){
+        CCLOG("PHAI");
+        _leftRight = true;
+    }else{
+        CCLOG("TRAI");
+        _leftRight = false;
+    }
+    
+    if (this->getPositionY() >= _savePositionOriginal.y) {
+        CCLOG("LEN");
+        _upDown = true;
+    }else{
+        CCLOG("XUONG");
+        _upDown = false;
+    }
+    
+//    CCLOG("ANGLE: %f",angle);
+//
+//    if (angle > -22.5 && angle < 22.5 )
+//    {
+//        _direction = D_RIGHT;
+//    }
+//    else  if (angle> 22.5 && angle < 67.5 )
+//    {
+//        _direction = D_RIGHT_UP;
+//    }
+//    else  if (angle> 67.5 && angle < 112.5 )
+//    {
+//        _direction = D_UP;
+//    }
+//    else  if (angle> 112.5 && angle < 157.5 )
+//    {
+//        _direction = D_LEFT_UP;
+//    }
+//    else  if ((angle> 157.5 && angle < 180 ) || (angle <- 157.5 && angle> - 180 ))
+//    {
+//        _direction = D_LEFT;
+//    }
+//    else  if (angle <-112.5 && angle> - 157.5 )
+//    {
+//        _direction = D_LEFT_DOWN;
+//    }
+//    else  if (angle <-67.5 && angle> - 112.5 )
+//    {
+//        _direction = D_DOWN;
+//    }
+//    else  if (angle <-22.5 && angle> - 67.5 )
+//    {
+//        _direction = D_RIGHT_DOWN;
+//    }
+//    callDirectionFun ();
+}
+
 
 //Flash light
 void Tool::turnOnFlashLight(Ref *pSender){

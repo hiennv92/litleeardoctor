@@ -30,12 +30,30 @@ bool GamePlay::init(){
         _background = Sprite::create(GAME_PLAY_BG1);
     }else{
         _background = Sprite::create(GAME_PLAY_BG2);
-
     }
-
+    
     _background->setPosition(Vec2(visibleSize.width/2, visibleSize.height/2));
     _background->setScale(visibleSize.width/_background->getContentSize().width, visibleSize.height/_background->getContentSize().height);
     this->addChild(_background,0);
+    
+    //The secondbackground
+    _earHoleScale = Sprite::create(EARHOLE_SCALE);
+    _earHoleScale->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
+    _earHoleScale->setVisible(false);
+    _earHoleScale->setScale(2.0f);
+    this->addChild(_earHoleScale,7);
+    
+    _backgroundBlackFont = Sprite::create(BLACK_BACKGROUND);
+    _backgroundBlackFont->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
+    _backgroundBlackFont->setVisible(false);
+    _backgroundBlackFont->setScale(2.0f);
+    this->addChild(_backgroundBlackFont,15);
+
+    spriteCircle = Sprite::create(TOOL_VONG_TRON);
+    spriteCircle->setPosition(_background->getPosition());
+    spriteCircle->setVisible(false);
+    spriteCircle->setScale(2.0f);
+    this->addChild(spriteCircle,16);
     
     _spriteTable = Sprite::create(GAME_PLAY_TABLE);
     _spriteTable->setPosition(visibleSize.width/2,0);
@@ -99,6 +117,21 @@ bool GamePlay::init(){
     _ongSoi->setUpNoteHelp();
     _ongSoi->setVisible(false);
     
+    //Add Joystick
+    _joystickBase = Tool::createTool(JOYSTICK_BASE,300);
+    _joystickButton =Tool::createTool(JOYSTICK_BUTTON,200);
+    _joystickButton->setVisible(false);
+    _joystickBase->setVisible(false);
+    _joystickBase->setPosition(visibleSize.width * 0.9f, visibleSize.height * 0.85f); // set the initial position
+    _joystickButton->setPosition(visibleSize.width * 0.9f, visibleSize.height * 0.85f); // set the initial position
+    _joystickButton->_savePositionOriginal = _joystickButton->getPosition();
+    _joystickButton->setScale(2.0f);
+    _joystickBase->setScale(2.0f);
+    _joystickButton->_toolOngSoi = _backgroundBlackFont;
+    _joystickButton->_circle = spriteCircle;
+    this->addChild(_joystickBase,16);
+    this->addChild(_joystickButton,16);
+    
     //Add messes and bugs
     this->addTools();
     this->addMessesAndBugs();
@@ -107,19 +140,37 @@ bool GamePlay::init(){
     //Add buttons
     _btnNextTools   = MenuItemImage::create(GAME_PLAY_BTN_NEXT_TOOLS_NORMAL,GAME_PLAY_BTN_NEXT_TOOLS_SELECTED, CC_CALLBACK_1(GamePlay::nextToolsSelected, this));
     _btnBackTools   = MenuItemImage::create(GAME_PLAY_BTN_BACK_TOOLS_NORMAL,GAME_PLAY_BTN_BACK_TOOLS_SELECTED, CC_CALLBACK_1(GamePlay::backToolsSelected, this));
+    _stopAdvanceLevelButton = MenuItemImage::create(GAME_PLAY_BTN_STOP_ADVANCE_LEVEL,GAME_PLAY_BTN_STOP_ADVANCE_LEVEL_SELECTED, CC_CALLBACK_1(GamePlay::stopAdvanceLevel,this));
+    
     _btnNextTools->setPosition(visibleSize.width*0.9f,visibleSize.height*0.85f);
     _btnBackTools->setPosition(visibleSize.width*0.1f,visibleSize.height*0.85f);
+    _stopAdvanceLevelButton->setPosition(_btnBackTools->getPosition());
     _btnNextTools->setScale(2.0f);
     _btnBackTools->setScale(2.0f);
+    _stopAdvanceLevelButton->setScale(2.0f);
     _btnBackTools->setVisible(false);
     _btnNextTools->setVisible(false);
+    _stopAdvanceLevelButton->setVisible(false);
     _pageTools = 1;
 
     //Menu
-    auto menu = Menu::create(_btnNextTools,_btnBackTools, NULL);
+    auto menu = Menu::create(_btnNextTools,_btnBackTools,_stopAdvanceLevelButton, NULL);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu,15);
+    this->addChild(menu,16);
     
+    //Joystick
+//    auto joystick = Joystick::create(JOYSTICK_BASE, JOYSTICK_BUTTON); // initialized by two picture controls
+//    this->addChild(joystick, 15);
+//    
+//    joystick->setPosition(visibleSize.width * 0.9f, visibleSize.height * 0.85f); // set the initial position
+//    joystick->setTag(202);
+//    joystick->setFailRadius(30);
+//    joystick->setDieRadius(60); // set death radius (outer)
+//    
+//    joystick->onDirection = CC_CALLBACK_1(GamePlay::onDirection,this);
+//    joystick->OnRun(); // start
+//    joystick->setVisible(false);
+//    joystick->setScale(2.0f);
     return true;
 }
 
@@ -360,6 +411,17 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         }
     }
     
+    if(_joystickButton){
+        if (_joystickButton->isVisible()) {
+            cocos2d::Rect rectScissor = _joystickButton->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _joystickButton->_isTouch = true;
+                CCLOG("TOUCH JOYSTICK");
+                return true;
+            }
+        }
+    }
+    
     return true;
 }
 
@@ -380,7 +442,7 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
             _keepEar->setTouchDotPosition (_keepEar-> getPosition () + touch-> getDelta ());
             if (rect.containsPoint(_patient->_earHole->getPosition())) {
                 CCLOG("Correct");
-                _keepEar->setPosition(Point(_keepEar->_visibleSize.width*0.15f,_keepEar->_visibleSize.height*0.61f));
+                _keepEar->runAction(MoveTo::create(0.4f, Point(_keepEar->_visibleSize.width*0.15f,_keepEar->_visibleSize.height*0.61f)));
                 _keepEar->_isTouch = false;
                 _keepEar->_isSet = true;
                 
@@ -400,17 +462,19 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
     
     if(!_ongSoi->_isSet){
         Rect pKeepEar = _ongSoi->getBoundingBox();
-        Rect rect =  Rect(pKeepEar.origin.x,pKeepEar.origin.y,pKeepEar.size.width/5, pKeepEar.size.height*2/3);
+        Rect rect =  Rect(pKeepEar.origin.x,pKeepEar.origin.y,pKeepEar.size.width/6, pKeepEar.size.height/6);
         
         if(_ongSoi->_isTouch)
         {
             _ongSoi->setTouchDotPosition (_ongSoi-> getPosition () + touch-> getDelta ());
-//            if (rect.containsPoint(_patient->_earHole->getPosition())) {
-//                CCLOG("Ong soi Correct");
-//                _ongSoi->setPosition(Point(_ongSoi->_visibleSize.width*0.15f,_ongSoi->_visibleSize.height*0.61f));
-//                _ongSoi->_isTouch = false;
-//                _ongSoi->_isSet = true;
-//            }
+            if (_patient->_earHole->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2 , rect.origin.y + rect.size.height/2))) {
+                _ongSoi->runAction(MoveTo::create(0.4f,Point(_ongSoi->_visibleSize.width*0.8f,_ongSoi->_visibleSize.height*0.74f)));
+                _ongSoi->_isTouch = false;
+                _ongSoi->_isSet = true;
+                
+                auto action = CallFunc::create(CC_CALLBACK_0(GamePlay::setupAdvanceLevel,this));
+                this->runAction(Sequence::create(DelayTime::create(1.0f),action, NULL));
+            }
             return;
         }
     }
@@ -491,6 +555,13 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_injection){
         if(_injection->_isTouch && !_injection->_isSet){
             _injection->setTouchDotPosition (_injection-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    if(_joystickButton){
+        if(_joystickButton->_isTouch){
+            _joystickButton->setTouchDotPosition(_joystickButton->getPosition() + touch->getDelta());
             return;
         }
     }
@@ -667,6 +738,48 @@ void GamePlay::addTools(){
     _injection->setUpNoteHelp();
     _injection->setMuiTen();
     
+    //TOOLS ADVANCE
+    _lazer = Tool::createTool(TOOL_LAZER, TOOL_TYPE_SCISSOR);
+    this->addChild(_lazer,15);
+    _lazer->setPosition(Point(visibleSize.width*0.05f, -visibleSize.height*0.05f));
+    _lazer->setScale(2.0f);
+    _lazer->_patient = _patient;
+    _lazer->_savePositionOriginal = _lazer->getPosition();
+    _lazer->setUpNoteHelp();
+    
+    _catchBugAdvance = Tool::createTool(TOOL_CATCH_BUG_ADVANCE, TOOL_TYPE_CATCH_BUG_ADVANCE);
+    this->addChild(_catchBugAdvance,15);
+    _catchBugAdvance->setPosition(Point(visibleSize.width*0.33f, -visibleSize.height*0.2f));
+    _catchBugAdvance->setScale(2.0f);
+    _catchBugAdvance->_patient = _patient;
+    _catchBugAdvance->_savePositionOriginal = _catchBugAdvance->getPosition();
+    _catchBugAdvance->setUpNoteHelp();
+    
+    _tamponAdvance = Tool::createTool(TOOL_TAM_BONG, TOOL_TYPE_TAM_BONG_ADVANCE);
+    this->addChild(_tamponAdvance,15);
+    _tamponAdvance->setPosition(Point(visibleSize.width*0.52f, visibleSize.height*0.13f));
+    _tamponAdvance->setScale(2.0f);
+    _tamponAdvance->_patient = _patient;
+    _tamponAdvance->_savePositionOriginal = _tamponAdvance->getPosition();
+    _tamponAdvance->setUpNoteHelp();
+
+    _bottleGel = Tool::createTool(TOOL_BOTTLE_GEL, TOOL_TYPE_GEL);
+    this->addChild(_bottleGel,15);
+    _bottleGel->setPosition(Point(visibleSize.width*0.7f, visibleSize.height*0.13f));
+    _bottleGel->setScale(2.0f);
+    _bottleGel->_patient = _patient;
+    _bottleGel->_savePositionOriginal = _bottleGel->getPosition();
+    _bottleGel->setUpNoteHelp();
+    
+    _getWaterAdvance = Tool::createTool(TOOL_GET_WATER, TOOL_TYPE_GEL);
+    this->addChild(_getWaterAdvance,15);
+    _getWaterAdvance->setPosition(Point(visibleSize.width*0.92f, -visibleSize.height*0.16f));
+    _getWaterAdvance->setScale(2.0f);
+    _getWaterAdvance->_patient = _patient;
+    _getWaterAdvance->_savePositionOriginal = _getWaterAdvance->getPosition();
+    _getWaterAdvance->setUpNoteHelp();
+    ///
+    
     _scissor->setVisible(false);
     _getWater->setVisible(false);
     _smallTable->setVisible(false);
@@ -679,6 +792,12 @@ void GamePlay::addTools(){
     _tamPon->setVisible(false);
     _drugWater->setVisible(false);
     _injection->setVisible(false);
+    
+    _lazer->setVisible(false);
+    _bottleGel->setVisible(false);
+    _catchBugAdvance->setVisible(false);
+    _tamponAdvance->setVisible(false);
+    _getWaterAdvance->setVisible(false);
 }
 
 void GamePlay::showTools(){
@@ -1001,7 +1120,8 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _tamPon->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.51f, visibleSize.height*0.13f)));
         _drugWater->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.69f, visibleSize.height*0.13f)));
         _injection->runAction(MoveTo::create(fTime, Point(visibleSize.width*0.91f,visibleSize.height*0.13f)));
-    }else if (_pageTools == 2){
+    }
+    else if (_pageTools == 2){
         _scissor->setVisible(false);
         _getWater->setVisible(false);
         _smallTable->setVisible(false);
@@ -1085,5 +1205,61 @@ void GamePlay::nextToolsSelected(Ref *pSender){
     
         _pageTools ++;
         _ongSoi->setVisible(true);
+        _patient->_earHole->setScale(1.3f);
+        _patient->_earHole->setPosition(_patient->_pointSavePositionEarHole);
     }
+}
+
+void GamePlay::stopAdvanceLevel(Ref *pSender){
+    _patient->setVisible(true);
+    _ongSoi->setVisible(true);
+    _patient->_earHole->setVisible(true);
+    _patient->_smallEye->setVisible(true);
+    _ongSoi->_noteHelp->setVisible(false);
+    _spriteTable->setVisible(true);
+    _background->setVisible(true);
+    _btnNextTools->setVisible(true);
+    _ongSoi->setPosition(_ongSoi->_savePositionOriginal);
+    _ongSoi->_isTouch = false;
+    _ongSoi->_isSet = false;
+    this->getChildByTag(201)->setVisible(true);//Ear tmp
+    
+    _backgroundBlackFont->setVisible(false);
+    _earHoleScale->setVisible(false);
+    _stopAdvanceLevelButton->setVisible(false);
+    spriteCircle->setVisible(false);
+    _tamponAdvance->setVisible(false);
+    _getWaterAdvance->setVisible(false);
+    _catchBugAdvance->setVisible(false);
+    _lazer->setVisible(false);
+    _bottleGel->setVisible(false);
+    _joystickButton->setVisible(false);
+    _joystickBase->setVisible(false);
+//    this->getChildByTag(202)->setVisible(false);//Joystick
+}
+
+void GamePlay::setupAdvanceLevel(){
+    _patient->setVisible(false);
+    _ongSoi->setVisible(false);
+    _patient->_earHole->setVisible(false);
+    _patient->_smallEye->setVisible(false);
+    _ongSoi->_noteHelp->setVisible(false);
+    _spriteTable->setVisible(false);
+    _background->setVisible(false);
+    this->getChildByTag(201)->setVisible(false);//Ear tmp
+    
+    _backgroundBlackFont->setVisible(true);
+    spriteCircle->setVisible(true);
+    _earHoleScale->setVisible(true);
+    _stopAdvanceLevelButton->setVisible(true);
+    _joystickBase->setVisible(true);
+    _joystickButton->setVisible(true);
+//    this->getChildByTag(202)->setVisible(true);//Joystick
+
+    //Show tool
+    _tamponAdvance->setVisible(true);
+    _getWaterAdvance->setVisible(true);
+    _lazer->setVisible(true);
+    _catchBugAdvance->setVisible(true);
+    _bottleGel->setVisible(true);
 }

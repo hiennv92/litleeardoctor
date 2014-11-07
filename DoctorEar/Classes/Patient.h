@@ -50,6 +50,7 @@ public:
     int _typePatient;
     bool _isSetCloseEye;
     Point _pointSavePositionSmallEye;
+    Point _pointSavePositionEarHole;
 };
 
 #endif /* defined(__DoctorEar__Patient__) */
