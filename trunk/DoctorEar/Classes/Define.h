@@ -14,6 +14,8 @@
 
 //Main menu
 #define MAIN_BG             "bgs/main_bg.png"
+#define BLACK_BACKGROUND    "all/blackFont.png"
+#define EARHOLE_SCALE       "all/earHoleScale.png"
 #define MAIN_IMAGE          "bgs/main_image.png"
 #define MAIN_TITLE          "bgs/main_title.png"
 #define MAIN_START_BUTTON_1 "buttons/start1.png"
@@ -42,13 +44,15 @@
 #define MENU_PATIENTS_BTN_PAT_6_2   "buttons/rw_6.png"
 
 //Game play
-#define GAME_PLAY_BG1            "bgs/bg1.png"
-#define GAME_PLAY_BG2            "bgs/bg2.png"
-#define GAME_PLAY_TABLE          "tools/table.png"
-#define GAME_PLAY_BTN_NEXT_TOOLS_NORMAL     "buttons/btnNextNormal.png"
-#define GAME_PLAY_BTN_NEXT_TOOLS_SELECTED   "buttons/btnNextSelected.png"
-#define GAME_PLAY_BTN_BACK_TOOLS_NORMAL     "buttons/btnBackNormal.png"
-#define GAME_PLAY_BTN_BACK_TOOLS_SELECTED   "buttons/btnBackSelected.png"
+#define GAME_PLAY_BG1                               "bgs/bg1.png"
+#define GAME_PLAY_BG2                               "bgs/bg2.png"
+#define GAME_PLAY_TABLE                             "tools/table.png"
+#define GAME_PLAY_BTN_NEXT_TOOLS_NORMAL             "buttons/btnNextNormal.png"
+#define GAME_PLAY_BTN_NEXT_TOOLS_SELECTED           "buttons/btnNextSelected.png"
+#define GAME_PLAY_BTN_BACK_TOOLS_NORMAL             "buttons/btnBackNormal.png"
+#define GAME_PLAY_BTN_BACK_TOOLS_SELECTED           "buttons/btnBackSelected.png"
+#define GAME_PLAY_BTN_STOP_ADVANCE_LEVEL            "buttons/back_1.png"
+#define GAME_PLAY_BTN_STOP_ADVANCE_LEVEL_SELECTED   "buttons/back_2.png"
 
 //Patient
 //Boy 1
@@ -103,6 +107,11 @@
 #define TOOL_TYPE_WATER_DRUG                11
 #define TOOL_TYPE_INJECTION                 12
 #define TOOL_TYPE_ONG_SOI                   13
+#define TOOL_TYPE_LAZER                     14
+#define TOOL_TYPE_CATCH_BUG_ADVANCE         15
+#define TOOL_TYPE_TAM_BONG_ADVANCE          16
+#define TOOL_TYPE_GEL                       17
+#define TOOL_TYPE_GET_WATER_ADVANCE              18
 
 #define TOOL_SLIDER_BAR_1           "helps/sliderBar1.png"
 #define TOOL_SLIDER_BAR_1_BUTTON    "helps/sliderBar1_Button.png"
@@ -128,9 +137,18 @@
 #define TOOL_SPRAY_CHEMICALS_NORMAL "tools/shachongji1.png"
 #define TOOL_SPRAY_CHEMICALS_USED   "tools/shachongji2.png"
 #define TOOL_DESICATE               "tools/xitMangTai.png"
-
-
+#define TOOL_VONG_TRON              "tools/vongTron.png"
 #define TOOL_SMALL_TABLE            "tools/small_table.png"
+#define TOOL_LAZER                   "tools/laze.png"
+#define TOOL_TIA_LAZER               "tools/laze_tia.png"
+#define TOOL_BOTTLE_GEL             "tools/bottleGel.png"
+#define TOOL_CATCH_BUG_ADVANCE      "tools/catchBugAdvance_1.png"
+#define TOOL_CATCH_BUG_ADVANCE_DONE "tools/catchBugAdvance_2.png"
+#define TOOL_GEL                    "tools/gel.png"
+
+//JoyStick
+#define JOYSTICK_BUTTON             "joysticks/joyStick.png"
+#define JOYSTICK_BASE               "joysticks/joyStickBase.png"
 
 //Helps
 #define HAND_UP_DOWN_HELP           "helps/handUp.png"
@@ -149,6 +167,10 @@
 #define HELP_NOTE_13                "helps/help_12.png"
 #define HELP_NOTE_14                "helps/help_13.png"
 #define HELP_NOTE_15                "helps/help_14.png"
+#define HELP_NOTE_16                "helps/help_15.png"
+#define HELP_NOTE_17                "helps/help_16.png"
+#define HELP_NOTE_18                "helps/help_17.png"
+
 #define HELP_MUI_TEN                "helps/jiantou.png"
 
 //Sounds

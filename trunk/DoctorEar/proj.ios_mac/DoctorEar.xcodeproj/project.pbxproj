@@ -59,6 +59,7 @@
 		5123424A1A027B9F0028782C /* Patient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512342481A027B9F0028782C /* Patient.cpp */; };
 		513E1AD61A01B9BD0051F3CE /* MainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513E1AD41A01B9BD0051F3CE /* MainMenu.cpp */; };
 		513E1ADA1A01BD110051F3CE /* MenuChoosePatients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513E1AD81A01BD110051F3CE /* MenuChoosePatients.cpp */; };
+		516A36E81A0D897F008DF4C5 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516A36E61A0D897F008DF4C5 /* Joystick.cpp */; };
 		516AA4D31A031D8E0067D982 /* MessObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516AA4D11A031D8E0067D982 /* MessObject.cpp */; };
 		516AA4D81A0322F40067D982 /* ToolObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516AA4D61A0322F40067D982 /* ToolObject.cpp */; };
 		516AA4DB1A0324A80067D982 /* Helps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 516AA4D91A0324A80067D982 /* Helps.cpp */; };
@@ -274,6 +275,8 @@
 		513E1AD51A01B9BD0051F3CE /* MainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainMenu.h; path = ../Classes/MainMenu.h; sourceTree = "<group>"; };
 		513E1AD81A01BD110051F3CE /* MenuChoosePatients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MenuChoosePatients.cpp; path = ../Classes/MenuChoosePatients.cpp; sourceTree = "<group>"; };
 		513E1AD91A01BD110051F3CE /* MenuChoosePatients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuChoosePatients.h; path = ../Classes/MenuChoosePatients.h; sourceTree = "<group>"; };
+		516A36E61A0D897F008DF4C5 /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
+		516A36E71A0D897F008DF4C5 /* Joystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joystick.h; sourceTree = "<group>"; };
 		516AA4D11A031D8E0067D982 /* MessObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MessObject.cpp; path = ../Classes/MessObject.cpp; sourceTree = "<group>"; };
 		516AA4D21A031D8E0067D982 /* MessObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MessObject.h; path = ../Classes/MessObject.h; sourceTree = "<group>"; };
 		516AA4D61A0322F40067D982 /* ToolObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ToolObject.cpp; path = ../Classes/ToolObject.cpp; sourceTree = "<group>"; };
@@ -364,6 +367,8 @@
 		15AA9C4015B7EC450033D6C2 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				516A36E61A0D897F008DF4C5 /* Joystick.cpp */,
+				516A36E71A0D897F008DF4C5 /* Joystick.h */,
 				1AFAF8B316D35DE700DB1158 /* AppDelegate.cpp */,
 				1AFAF8B416D35DE700DB1158 /* AppDelegate.h */,
 				1AFAF8B516D35DE700DB1158 /* HelloWorldScene.cpp */,
@@ -727,6 +732,7 @@
 				1AFAF8B716D35DE700DB1158 /* AppDelegate.cpp in Sources */,
 				5172A9E91A0C464D0053A19C /* fakeBug.cpp in Sources */,
 				516AA4D81A0322F40067D982 /* ToolObject.cpp in Sources */,
+				516A36E81A0D897F008DF4C5 /* Joystick.cpp in Sources */,
 				511848C91A024CFA0035013B /* GamePlay.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				1AFAF8B816D35DE700DB1158 /* HelloWorldScene.cpp in Sources */,

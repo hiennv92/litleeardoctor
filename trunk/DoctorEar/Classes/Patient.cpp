@@ -124,8 +124,11 @@ void Patient::createEarHole(){
     sprintf(strEarTmp, "%s_ear_1.png",_stringPathImage.c_str());
     auto earTmp = Sprite::create(strEarTmp);
     earTmp->setScale(2.0f);
+    earTmp->setTag(201);
     earTmp->setPosition(Point(visibleSize.width*0.36f,visibleSize.height*0.61f));
     ((this->getParent())->getParent())->addChild(earTmp,14);
+    
+    _pointSavePositionEarHole = _earHole->getPosition();
 }
 
 void Patient::setPositionSmallEye(Point p){
