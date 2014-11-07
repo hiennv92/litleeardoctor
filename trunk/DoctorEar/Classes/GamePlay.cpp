@@ -89,6 +89,16 @@ bool GamePlay::init(){
     _keepEar->setHandUp();
     _keepEar->setUpNoteHelp();
     
+    //Add Ong soi
+    _ongSoi = Tool::createTool(TOOL_ONG_SOI, TOOL_TYPE_ONG_SOI);
+    _ongSoi->setPosition(Point(visibleSize.width*1.1,visibleSize.height*0.4f));
+    _ongSoi->setScale(2.0f);
+    _ongSoi->_patient = _patient;
+    _ongSoi->_savePositionOriginal = _ongSoi->getPosition();
+    this->addChild(_ongSoi,15);
+    _ongSoi->setUpNoteHelp();
+    _ongSoi->setVisible(false);
+    
     //Add messes and bugs
     this->addTools();
     this->addMessesAndBugs();
@@ -129,6 +139,19 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
             _keepEar->_noteHelp->showHelp(0.0f);
             _keepEar->_isTouch = true;
             return true;
+        }
+    }
+    
+    if(!_ongSoi->_isSet){
+        if (_ongSoi->isVisible()) {
+            cocos2d::Rect rect = _ongSoi->getBoundingBox();
+            if(rect.containsPoint(p)){
+                _ongSoi->_noteHelp->showHelp(0.0f);
+                _ongSoi->_isTouch = true;
+                _btnBackTools->setVisible(false);
+                _btnNextTools->setVisible(false);
+                return true;
+            }
         }
     }
     
@@ -375,6 +398,23 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
         }
     }
     
+    if(!_ongSoi->_isSet){
+        Rect pKeepEar = _ongSoi->getBoundingBox();
+        Rect rect =  Rect(pKeepEar.origin.x,pKeepEar.origin.y,pKeepEar.size.width/5, pKeepEar.size.height*2/3);
+        
+        if(_ongSoi->_isTouch)
+        {
+            _ongSoi->setTouchDotPosition (_ongSoi-> getPosition () + touch-> getDelta ());
+//            if (rect.containsPoint(_patient->_earHole->getPosition())) {
+//                CCLOG("Ong soi Correct");
+//                _ongSoi->setPosition(Point(_ongSoi->_visibleSize.width*0.15f,_ongSoi->_visibleSize.height*0.61f));
+//                _ongSoi->_isTouch = false;
+//                _ongSoi->_isSet = true;
+//            }
+            return;
+        }
+    }
+    
     //Move scissor
     if(_scissor){
         if(_scissor->_isTouch){
@@ -506,9 +546,9 @@ void GamePlay::valueChanged(Ref *sender, cocos2d::extension::Control::EventType 
 
         slider->runAction(Sequence::create(DelayTime::create(0.6f),MoveTo::create(0.5f,Point(-slider->getPosition().x,slider->getPosition().y)), NULL));
         
-//        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
             CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MACHINE_KEEP_EAR);
-//        }
+        }
         
         _isChangeBarSlider = true;
     }
@@ -893,7 +933,10 @@ void GamePlay::showMessesAndBugs(){
 
 #pragma mark - BUTTONS SELECTED
 void GamePlay::backToolsSelected(Ref *pSender){
-    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+    }
+
     if(_pageTools == 2){
         _pageTools = 1;
         _btnBackTools->setVisible(false);
@@ -933,7 +976,10 @@ void GamePlay::backToolsSelected(Ref *pSender){
 }
 
 void GamePlay::nextToolsSelected(Ref *pSender){
-    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+    }
+
     if (_pageTools == 1) {
         _pageTools = 2;
         _btnBackTools->setVisible(true);
@@ -970,30 +1016,74 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _injection->setVisible(false);
         _keepEar->setVisible(false);
         _flashLight->setVisible(false);
-        
         _btnBackTools->setVisible(false);
-        
-        _dichTai->setVisible(false);
-        _mangTai->setVisible(false);
-        _muTai1->setVisible(false);
-        _muTai2->setVisible(false);
-        _rayTai1->setVisible(false);
-        _rayTai2->setVisible(false);
-        _rayTai3->setVisible(false);
-        _longTai6->setVisible(false);
-        _longTai5->setVisible(false);
-        _longTai4->setVisible(false);
-        _longTai3->setVisible(false);
-        _longTai1->setVisible(false);
-        _longTai2->setVisible(false);
-        _bug3->setVisible(false);
-        _bug1->setVisible(false);
-        _bug2->setVisible(false);
-        _bug4->setVisible(false);
-        _nuocTai1->setVisible(false);
-        _munTai1->setVisible(false);
-        _munTai2->setVisible(false);
-        _munTai3->setVisible(false);
         this->removeChildByTag(200);
+
+        if(_dichTai)
+            _dichTai->setVisible(false);
+        
+        if (_mangTai) {
+            _mangTai->setVisible(false);
+        }
+        if (_muTai1) {
+            _muTai1->setVisible(false);
+        }
+        if (_muTai2) {
+            _muTai2->setVisible(false);
+        }
+        if (_rayTai1) {
+            _rayTai1->setVisible(false);
+        }
+        if (_rayTai2) {
+            _rayTai2->setVisible(false);
+        }
+        if (_rayTai3) {
+            _rayTai3->setVisible(false);
+        }
+        if (_longTai1) {
+            _longTai1->setVisible(false);
+        }
+        if (_longTai2) {
+            _longTai2->setVisible(false);
+        }
+        if (_longTai3) {
+            _longTai3->setVisible(false);
+        }
+        if (_longTai4) {
+            _longTai4->setVisible(false);
+        }
+        if (_longTai5) {
+            _longTai5->setVisible(false);
+        }
+        if (_longTai6) {
+            _longTai6->setVisible(false);
+        }
+        if (_bug1) {
+            _bug1->setVisible(false);
+        }
+        if (_bug2) {
+            _bug2->setVisible(false);
+        }
+        if (_bug3) {
+            _bug3->setVisible(false);
+        }
+        if (_bug4) {
+            _bug4->setVisible(false);
+        }
+        if (_nuocTai1) {
+            _nuocTai1->setVisible(false);
+        }
+        if (_munTai1) {
+            _munTai1->setVisible(false);
+        }
+        if (_munTai2) {
+            _munTai2->setVisible(false);
+        }
+        if (_munTai3) {
+            _munTai3->setVisible(false);
+        }
+    
+        _pageTools ++;
+        _ongSoi->setVisible(true);
     }
 }

@@ -37,9 +37,10 @@ public:
     void setInjectionNormal();
     void setToolCatchedBug();
     void setToolCatchNormal();
+    void setTouchAvailable();
     
     int _typeTool, _typeBugCatched, _countNumberBugCatched;
-    bool _isTouch,_isSet,_isTurnOnFlashLight, _isCatchedBug, _isDroppedBug, _ignoreDropBug;
+    bool _isTouch,_isSet,_isTurnOnFlashLight, _isCatchedBug, _isDroppedBug, _ignoreDropBug, _isMoved;
     bool _startMove;//Use for small table
     bool _isDropDrugWater;//Use for drug water
     Patient *_patient;

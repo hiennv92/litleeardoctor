@@ -82,9 +82,9 @@ bool MenuChoosePatients::init(){
 
 
 void MenuChoosePatients::playGameSelected(Ref* pSender){
-//    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SUB_BUTTON);
-//    }
+    }
     CCLOG("PATIENT: %d",((MenuItemImage*)pSender)->getTag());
     AppDelegate::_typePatient = ((MenuItemImage*)pSender)->getTag();
     
@@ -94,9 +94,9 @@ void MenuChoosePatients::playGameSelected(Ref* pSender){
 }
 
 void MenuChoosePatients::returnHome(Ref* pSender){
-//    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
-//    }
+    }
     
     auto newScene = MainMenu::createScene();
     auto trans    = TransitionSplitRows::create(.5f, newScene);

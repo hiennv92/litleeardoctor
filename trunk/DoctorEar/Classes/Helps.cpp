@@ -102,7 +102,8 @@ void Help::showHelp(float delay){
 
 void Help::showNoteHelp(){
     this->setVisible(true);
-    float s = this->getScale();
+//    float s = this->getScale();
+    float s = 2.0f;
     auto action1 = ScaleTo::create(0.1f, s+ 0.3f);
     auto action2 = ScaleTo::create(0.1f, s);
     this->runAction(Sequence::create(action1,action2,NULL));

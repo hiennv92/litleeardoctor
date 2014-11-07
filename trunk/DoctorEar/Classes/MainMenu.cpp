@@ -77,9 +77,9 @@ bool MainMenu::init(){
 
 
 void MainMenu::playGameSelected(Ref* pSender){
-//    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
-//    }
+    }
 
     auto newScene = MenuChoosePatients::createScene();
     auto trans    = TransitionSplitCols::create(.5f, newScene);
@@ -89,7 +89,7 @@ void MainMenu::playGameSelected(Ref* pSender){
 void MainMenu::soundOnOff(Ref* pSender){
     if(_soundOnOff){
         CocosDenshion::SimpleAudioEngine::getInstance()->stopBackgroundMusic();
-//        CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+        CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
         UserDefault::getInstance()->setBoolForKey(SOUND_ON_OFF, false);
         UserDefault::getInstance()->flush();
 

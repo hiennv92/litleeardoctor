@@ -64,7 +64,9 @@ void MessObject::updateMess(float dt){
                 
                 if(this->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2))){
                     if(!_isPlaySoundEffect){
-                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_GET_DIRTY_WATER);
+                        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+                            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_GET_DIRTY_WATER);
+                        }
                         _isPlaySoundEffect = true;
                     }
                     CCLOG("GET Dirty water");
@@ -89,7 +91,9 @@ void MessObject::updateMess(float dt){
                     Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*2/5,pGetMess.origin.y + pGetMess.size.height*4/5,pGetMess.size.width/5, pGetMess.size.height/5);
                     
                     if(rect.intersectsRect(this->getBoundingBox())){
-                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SCISSOR);
+                        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+                            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SCISSOR);
+                        }
                         _tool->setScissorCutAnimation();
                         
                         CCLOG("remove fur");
@@ -105,7 +109,9 @@ void MessObject::updateMess(float dt){
 //                if(this->getBoundingBox().containsPoint(Point(rect.origin.x + rect.size.width/2, rect.origin.y + rect.size.height/2))){
                 if(this->getBoundingBox().intersectsRect(rect)){
                     if(!_isPlaySoundEffect){
-                        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_DECSICATE, true);
+                        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+                            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_DECSICATE, true);
+                        }
                         _isPlaySoundEffect = true;
                     }
                     CCLOG("GET Mang tai");
