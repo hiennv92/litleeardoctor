@@ -30,6 +30,7 @@ void Tool::initOptions(int typeTool){
     _visibleSize = Director::getInstance()->getVisibleSize();
     _typeTool = typeTool;
     _isTouch = false;
+    _isMoved = false;
     //Use for keepear tool and scissor
     _isSet = false;
     //Use for small table
@@ -236,6 +237,10 @@ void Tool::setUpNoteHelp(){
             _noteHelp = Help::createHelp(HELP_NOTE_12, TOOL_TYPE_INJECTION);
             _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.44f));
             break;
+        case TOOL_TYPE_ONG_SOI:
+            _noteHelp = Help::createHelp(HELP_NOTE_13, TOOL_TYPE_ONG_SOI);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.16f,_visibleSize.height*0.7f));
+            break;
             
         default:
             break;
@@ -277,9 +282,11 @@ void Tool::touchEvent(cocos2d::Touch* touch){
     cocos2d::Vec2 p = touch->getLocation();
 //    CCLOG("%f - %f",touch->getLocation().x,touch->getLocation().y);
     auto actionMove = MoveTo::create(0.7f, _savePositionOriginal);
+    auto action = CallFunc::create(CC_CALLBACK_0(Tool::setTouchAvailable,this));
     if(_isTouch && _typeTool != 2){
         _isTouch = false;
         _noteHelp->setVisible(false);
+        _noteHelp->setScale(2.0f);
         _patient->setMouthNormal();
         _patient->setEyeBrowNormal();
 
@@ -292,8 +299,8 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             this->stopAllActions();
         }
         
-        if(_typeTool != TOOL_TYPE_WATER_DRUG && _typeTool != TOOL_TYPE_INJECTION){
-            this->runAction(actionMove);
+        if(_typeTool != TOOL_TYPE_WATER_DRUG && _typeTool != TOOL_TYPE_INJECTION && _isMoved){
+            this->runAction(Sequence::create(actionMove,action, NULL));
         }
         
         if(_typeTool == TOOL_TYPE_CATCH_BUG){
@@ -316,8 +323,10 @@ void Tool::touchEvent(cocos2d::Touch* touch){
         
         if((_typeTool == TOOL_TYPE_WATER_DRUG || _typeTool == TOOL_TYPE_INJECTION)  && !_isSet){
             this->runAction(RotateTo::create(0.7f, 0.0f));
-            this->runAction(actionMove);
-            
+            if (_isMoved) {
+                this->runAction(Sequence::create(actionMove,action, NULL));
+            }
+
             if(((GamePlay*)(this->getParent()))->_pageTools == 1){
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }else if(((GamePlay*)(this->getParent()))->_pageTools == 2){
@@ -330,6 +339,12 @@ void Tool::touchEvent(cocos2d::Touch* touch){
         }
     }
     CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
+}
+
+void Tool::setTouchAvailable(){
+    _isMoved = false;
+    //if type tool is catch bug
+    _isCatchedBug = false;
 }
 
 void Tool::setTouchDotPosition (Vec2 vec)
@@ -349,15 +364,34 @@ void Tool::setTouchDotPosition (Vec2 vec)
             vec.y = _visibleSize.height*0.8f;
         }
         this->setPosition (vec);
-    }else{
+
+    }else if(_typeTool == TOOL_TYPE_ONG_SOI){
+        if(vec.x < _visibleSize.width*0.65f){
+            vec.x = _visibleSize.width*0.65f;
+        }
+        if (vec.x > _visibleSize.width*1.1f) {
+            vec.x = _visibleSize.width*1.1f;
+        }
+        if (vec.y < _visibleSize.height*0.3f) {
+            vec.y = _visibleSize.height*0.3f;
+        }
+        if (vec.y > _visibleSize.height*0.8f ) {
+            vec.y = _visibleSize.height*0.8f;
+        }
         this->setPosition (vec);
     }
+    else{
+        this->setPosition (vec);
+    }
+    this->_isMoved = true;
 }
 
 //Flash light
 void Tool::turnOnFlashLight(Ref *pSender){
     if(!_isTurnOnFlashLight){
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MAIN_BUTTON);
+        }
         
         auto normalImg = Sprite::create(TOOL_DENPIN_BUTTON_ON);
         
@@ -476,7 +510,6 @@ void Tool::setToolCatchedBug(){
 }
 
 void Tool::setToolCatchNormal(){
-    _isCatchedBug = false;
     char str[100] = {0};
     sprintf(str, TOOL_CATCH_BUG);
 

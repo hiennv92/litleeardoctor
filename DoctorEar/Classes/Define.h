@@ -88,6 +88,7 @@
 #define TOOL_KEEP_EAR_1             "tools/ercheng1.png"
 #define TOOL_KEEP_EAR_2             "tools/ercheng2.png"
 #define TOOL_KEEP_EAR_3             "tools/ercheng3.png"
+#define TOOL_ONG_SOI                "tools/ongSoi.png"
 
 #define TOOL_1                              1
 #define TOOL_2                              2
@@ -101,6 +102,7 @@
 #define TOOL_TYPE_TAM_BONG                  10
 #define TOOL_TYPE_WATER_DRUG                11
 #define TOOL_TYPE_INJECTION                 12
+#define TOOL_TYPE_ONG_SOI                   13
 
 #define TOOL_SLIDER_BAR_1           "helps/sliderBar1.png"
 #define TOOL_SLIDER_BAR_1_BUTTON    "helps/sliderBar1_Button.png"
@@ -126,6 +128,7 @@
 #define TOOL_SPRAY_CHEMICALS_NORMAL "tools/shachongji1.png"
 #define TOOL_SPRAY_CHEMICALS_USED   "tools/shachongji2.png"
 #define TOOL_DESICATE               "tools/xitMangTai.png"
+
 
 #define TOOL_SMALL_TABLE            "tools/small_table.png"
 

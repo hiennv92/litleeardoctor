@@ -137,10 +137,11 @@ void Bug::bugMoveTurnAround(){
 void Bug::removeBug(){
     CCLOG("REMOVED BUG");
     _tool->_isDroppedBug = false;
+    _tool->_isCatchedBug = false;
     _tool->setToolCatchNormal();
     this->_isRemove = true;
     this->stopAllActions();
-    this->removeFromParentAndCleanup(true);
+    this->setVisible(false);
 }
 
 void Bug::deleteBug(){
