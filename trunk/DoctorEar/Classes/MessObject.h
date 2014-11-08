@@ -29,7 +29,7 @@ public:
     
     int _typeMess;
     int _stateMess;
-    bool _isRemove, _isCheckingMess, _isPlaySoundEffect;
+    bool _isRemove, _isCheckingMess, _isPlaySoundEffect, _needUseGel;
     Size _visibleSize;
     Tool *_tool;
 };

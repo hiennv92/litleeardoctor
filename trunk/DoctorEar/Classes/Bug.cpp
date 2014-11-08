@@ -33,6 +33,7 @@ void Bug::initOptions(){
     _isTurnAround = false;
     _isCatching = false;
     _isPlaySoundEffect = false;
+    this->setTag(-10);
 }
 
 void Bug::updateBug(float dt){

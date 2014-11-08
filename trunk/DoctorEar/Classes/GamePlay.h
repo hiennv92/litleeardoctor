@@ -24,7 +24,7 @@ public:
     
     cocos2d::Sprite *_spriteTable, *_background, *_backgroundBlackFont, *_earHoleScale,*spriteCircle;
     cocos2d::extension::ControlSlider *slider;
-    cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton;
+    cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton, *_drawButton, *_homeButton, *_saveButton, *_mailButton, *_faceButton;
     
     Patient *_patient;
     Tool *_keepEar, *_flashLight, *_scissor, *_getMess, *_catchBug, *_getWater, *_drugWater, *_injection, *_tamPon, *_desiccate, *_sprayChemicals, *_shakeEar, *_smallTable, *_ongSoi;
@@ -64,6 +64,11 @@ public:
     void nextToolsSelected(cocos2d::Ref* pSender);
     void backToolsSelected(cocos2d::Ref* pSender);
     void stopAdvanceLevel(cocos2d::Ref* pSender);
+    void backHome(cocos2d::Ref* pSender);
+    void drawImage(cocos2d::Ref* pSender);
+    void saveImage(cocos2d::Ref* pSender);
+    void email(cocos2d::Ref* pSender);
+    void facebook(cocos2d::Ref* pSender);
     
     void setupAdvanceLevel();
 };
