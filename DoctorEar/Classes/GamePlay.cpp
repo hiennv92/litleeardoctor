@@ -7,6 +7,7 @@
 #include "GamePlay.h"
 #include "Define.h"
 #include "AppDelegate.h"
+#include "MainMenu.h"
 
 USING_NS_CC;
 
@@ -43,17 +44,17 @@ bool GamePlay::init(){
     _earHoleScale->setScale(2.0f);
     this->addChild(_earHoleScale,7);
     
-    _backgroundBlackFont = Sprite::create(BLACK_BACKGROUND);
-    _backgroundBlackFont->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
-    _backgroundBlackFont->setVisible(false);
-    _backgroundBlackFont->setScale(2.0f);
-    this->addChild(_backgroundBlackFont,15);
-
     spriteCircle = Sprite::create(TOOL_VONG_TRON);
     spriteCircle->setPosition(_background->getPosition());
     spriteCircle->setVisible(false);
     spriteCircle->setScale(2.0f);
     this->addChild(spriteCircle,16);
+    
+    _backgroundBlackFont = Sprite::create(BLACK_BACKGROUND);
+    _backgroundBlackFont->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
+    _backgroundBlackFont->setVisible(false);
+    _backgroundBlackFont->setScale(2.0f);
+    this->addChild(_backgroundBlackFont,15);
     
     _spriteTable = Sprite::create(GAME_PLAY_TABLE);
     _spriteTable->setPosition(visibleSize.width/2,0);
@@ -129,6 +130,7 @@ bool GamePlay::init(){
     _joystickBase->setScale(2.0f);
     _joystickButton->_toolOngSoi = _backgroundBlackFont;
     _joystickButton->_circle = spriteCircle;
+    _joystickButton->_circle = spriteCircle;
     this->addChild(_joystickBase,16);
     this->addChild(_joystickButton,16);
     
@@ -141,20 +143,43 @@ bool GamePlay::init(){
     _btnNextTools   = MenuItemImage::create(GAME_PLAY_BTN_NEXT_TOOLS_NORMAL,GAME_PLAY_BTN_NEXT_TOOLS_SELECTED, CC_CALLBACK_1(GamePlay::nextToolsSelected, this));
     _btnBackTools   = MenuItemImage::create(GAME_PLAY_BTN_BACK_TOOLS_NORMAL,GAME_PLAY_BTN_BACK_TOOLS_SELECTED, CC_CALLBACK_1(GamePlay::backToolsSelected, this));
     _stopAdvanceLevelButton = MenuItemImage::create(GAME_PLAY_BTN_STOP_ADVANCE_LEVEL,GAME_PLAY_BTN_STOP_ADVANCE_LEVEL_SELECTED, CC_CALLBACK_1(GamePlay::stopAdvanceLevel,this));
+    _drawButton = MenuItemImage::create(GAME_PLAY_BTN_DRAW,GAME_PLAY_BTN_DRAW_SELECTED, CC_CALLBACK_1(GamePlay::drawImage,this));
+    _homeButton = MenuItemImage::create(GAME_PLAY_BTN_BACK_HOME,GAME_PLAY_BTN_BACK_HOME_SELECTED, CC_CALLBACK_1(GamePlay::backHome,this));
+    _saveButton = MenuItemImage::create(GAME_PLAY_BTN_SAVE,GAME_PLAY_BTN_SAVE_SELECTED, CC_CALLBACK_1(GamePlay::saveImage,this));
+    _mailButton = MenuItemImage::create(GAME_PLAY_BTN_MAIL,GAME_PLAY_BTN_MAIL_SELECTED, CC_CALLBACK_1(GamePlay::email,this));
+    _faceButton = MenuItemImage::create(GAME_PLAY_BTN_FB,GAME_PLAY_BTN_FB_SELECTED, CC_CALLBACK_1(GamePlay::facebook,this));
+    
     
     _btnNextTools->setPosition(visibleSize.width*0.9f,visibleSize.height*0.85f);
     _btnBackTools->setPosition(visibleSize.width*0.1f,visibleSize.height*0.85f);
     _stopAdvanceLevelButton->setPosition(_btnBackTools->getPosition());
+    _drawButton->setPosition(visibleSize.width*0.15f,visibleSize.height*0.8f);
+    _drawButton->setVisible(false);
+    _homeButton->setPosition(visibleSize.width*0.17f,visibleSize.height*0.07f);
+    _homeButton->setVisible(false);
+    _saveButton->setPosition(visibleSize.width*0.39f,visibleSize.height*0.07f);
+    _saveButton->setVisible(false);
+    _mailButton->setPosition(visibleSize.width*0.61f,visibleSize.height*0.07f);
+    _mailButton->setVisible(false);
+    _faceButton->setPosition(visibleSize.width*0.83f,visibleSize.height*0.07f);
+    _faceButton->setVisible(false);
+    
     _btnNextTools->setScale(2.0f);
     _btnBackTools->setScale(2.0f);
+    _drawButton->setScale(1.8f);
+    _homeButton->setScale(1.8f);
+    _saveButton->setScale(1.8f);
+    _mailButton->setScale(1.8f);
+    _faceButton->setScale(1.8f);
     _stopAdvanceLevelButton->setScale(2.0f);
+
     _btnBackTools->setVisible(false);
     _btnNextTools->setVisible(false);
     _stopAdvanceLevelButton->setVisible(false);
     _pageTools = 1;
 
     //Menu
-    auto menu = Menu::create(_btnNextTools,_btnBackTools,_stopAdvanceLevelButton, NULL);
+    auto menu = Menu::create(_btnNextTools,_btnBackTools,_stopAdvanceLevelButton,_drawButton,_homeButton,_saveButton,_mailButton,_faceButton, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu,16);
     
@@ -426,6 +451,10 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         if (_lazer->isVisible()) {
             cocos2d::Rect rectScissor = _lazer->getBoundingBox();
             if(rectScissor.containsPoint(p)){
+                if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_LAZER, true);
+                }
+                
                 _lazer->_isTouch = true;
                 _lazer->_noteHelp->showHelp(0.0f);
                 _lazer->_lazer->setVisible(true);
@@ -451,6 +480,12 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
             if(rectScissor.containsPoint(p)){
                 _tamponAdvance->_isTouch = true;
                 _tamponAdvance->_noteHelp->showHelp(0.0f);
+                
+                _dirtyWater1->_tool = _tamponAdvance;
+                _dirtyWater2->_tool = _tamponAdvance;
+                _dirtyWater3->_tool = _tamponAdvance;
+                _dirtyWater4->_tool = _tamponAdvance;
+
                 return true;
             }
         }
@@ -473,6 +508,12 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
             if(rectScissor.containsPoint(p)){
                 _getWaterAdvance->_isTouch = true;
                 _getWaterAdvance->_noteHelp->showHelp(0.0f);
+                
+                _dirtyWater1->_tool = _getWaterAdvance;
+                _dirtyWater2->_tool = _getWaterAdvance;
+                _dirtyWater3->_tool = _getWaterAdvance;
+                _dirtyWater4->_tool = _getWaterAdvance;
+
                 return true;
             }
         }
@@ -638,6 +679,7 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
     
     if(_tamponAdvance){
         if(_tamponAdvance->_isTouch){
+            _tamponAdvance->_isMoveClean = true;
             _tamponAdvance->setTouchDotPosition (_tamponAdvance-> getPosition () + touch->getDelta ());
             return;
         }
@@ -1168,43 +1210,48 @@ void GamePlay::addMessesAndBugsAdvance(){
         }
     }
   
+    int tag = -20;
     _bigBug1->setPosition(visibleSize.width*0.46f, visibleSize.height* 0.65f);
     _bigBug1->_typeMove = 2;
     _bigBug1->_savePosition = _bigBug1->getPosition();
     _bigBug1->_pointFinish = Point(_bigBug1->_savePosition.x - 60, _bigBug1->_savePosition.y);
-    _bigBug1->bugMove();
+//    _bigBug1->bugMove();
     _bigBug1->_tool = _catchBugAdvance;
     _bigBug1->setScale(2.0f);
     _bigBug1->setRotation(90);
+    _bigBug1->setTag(tag);
     this->addChild(_bigBug1,13);
     
     _bigBug2->setPosition(visibleSize.width*0.20f, visibleSize.height* 0.56f);
     _bigBug2->_typeBug = 1;
     _bigBug2->_savePosition = _bigBug2->getPosition();
     _bigBug2->_pointFinish = Point(_bigBug2->_savePosition.x + 60, _bigBug2->_savePosition.y + 60);
-    _bigBug1->bugMove();
+//    _bigBug2->bugMove();
     _bigBug2->_tool = _catchBugAdvance;
     _bigBug2->setRotation(-135);
     _bigBug2->setScale(2.0f);
+    _bigBug2->setTag(tag);
     this->addChild(_bigBug2,13);
     
     _bigBug3->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.45f);
     _bigBug3->_typeMove = 1;
     _bigBug3->_savePosition = _bigBug3->getPosition();
     _bigBug3->_pointFinish = Point(_bigBug3->_savePosition.x - 60, _bigBug3->_savePosition.y + 60);
-    _bigBug3->bugMove();
+//    _bigBug3->bugMove();
     _bigBug3->_tool = _catchBugAdvance;
     _bigBug3->setRotation(135.0f);
     _bigBug3->setScale(2.0f);
+    _bigBug3->setTag(tag);
     this->addChild(_bigBug3,13);
     
     _bigBug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.58f);
     _bigBug4->_typeMove = 2;
     _bigBug4->_savePosition = _bigBug4->getPosition();
     _bigBug4->_pointFinish = Point(_bigBug4->_savePosition.x - 60, _bigBug4->_savePosition.y + 30);
-    _bigBug4->bugMove();
+//    _bigBug4->bugMove();
     _bigBug4->_tool = _catchBugAdvance;
     _bigBug4->setScale(2.0f);
+    _bigBug4->setTag(tag);
     _bigBug4->setRotation(105.0f);
     this->addChild(_bigBug4,13);
     
@@ -1257,7 +1304,11 @@ void GamePlay::addMessesAndBugsAdvance(){
     _muTaiAd2->setScale(2.0f);
     _muTaiAd3->setScale(2.0f);
     _muTaiAd4->setScale(2.0f);
-    
+    _muTaiAd1->setTag(tag);
+    _muTaiAd2->setTag(tag);
+    _muTaiAd3->setTag(tag);
+    _muTaiAd4->setTag(tag);
+
     _muTaiAd1->_tool = _lazer;
     _muTaiAd2->_tool = _lazer;
     _muTaiAd3->_tool = _lazer;
@@ -1274,6 +1325,35 @@ void GamePlay::addMessesAndBugsAdvance(){
     this->addChild(_muTaiAd4,13);
     
     //Add dirty water
+    _dirtyWater1 = MessObject::createMess(MESS_NAM_TAI_1, MESS_TYPE_NAM_MOC);
+    _dirtyWater2 = MessObject::createMess(MESS_NAM_TAI_2, MESS_TYPE_NAM_MOC);
+    _dirtyWater3 = MessObject::createMess(MESS_NAM_TAI_1, MESS_TYPE_NAM_MOC);
+    _dirtyWater4 = MessObject::createMess(MESS_NAM_TAI_2, MESS_TYPE_NAM_MOC);
+    
+    _dirtyWater1->setPosition(visibleSize.width*0.3f, visibleSize.height*0.68f);
+    _dirtyWater2->setPosition(visibleSize.width*0.7f, visibleSize.height*0.7f);
+    _dirtyWater3->setPosition(visibleSize.width*0.32f, visibleSize.height*0.4f);
+    _dirtyWater4->setPosition(visibleSize.width*0.6f, visibleSize.height*0.25f);
+    
+    _dirtyWater1->setScale(2.0f);
+    _dirtyWater2->setScale(2.0f);
+    _dirtyWater3->setScale(2.0f);
+    _dirtyWater4->setScale(2.0f);
+    
+    _dirtyWater1->_tool = _getWaterAdvance;
+    _dirtyWater2->_tool = _getWaterAdvance;
+    _dirtyWater3->_tool = _getWaterAdvance;
+    _dirtyWater4->_tool = _getWaterAdvance;
+
+    _dirtyWater1->setTag(tag);
+    _dirtyWater2->setTag(tag);
+    _dirtyWater3->setTag(tag);
+    _dirtyWater4->setTag(tag);
+    
+    this->addChild(_dirtyWater1,13);
+    this->addChild(_dirtyWater2,13);
+    this->addChild(_dirtyWater3,13);
+    this->addChild(_dirtyWater4,13);
 }
 
 void GamePlay::showMessesAndBugs(){
@@ -1391,7 +1471,7 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _keepEar->setVisible(false);
         _flashLight->setVisible(false);
         _btnBackTools->setVisible(false);
-        this->removeChildByTag(200);
+        this->getChildByTag(200)->setVisible(false);
 
         if(_dichTai)
             _dichTai->setVisible(false);
@@ -1433,27 +1513,31 @@ void GamePlay::nextToolsSelected(Ref *pSender){
             _longTai6->setVisible(false);
         }
         if (_bug1) {
+            _bug1->stopAllActions();
             _bug1->setVisible(false);
         }
         if (_bug2) {
+            _bug2->stopAllActions();
             _bug2->setVisible(false);
         }
-        if (_bug3) {
+        if (_bug3){
+            _bug3->stopAllActions();
             _bug3->setVisible(false);
         }
-        if (_bug4) {
+        if (_bug4){
+            _bug4->stopAllActions();
             _bug4->setVisible(false);
         }
-        if (_nuocTai1) {
+        if (_nuocTai1){
             _nuocTai1->setVisible(false);
         }
-        if (_munTai1) {
+        if (_munTai1){
             _munTai1->setVisible(false);
         }
-        if (_munTai2) {
+        if (_munTai2){
             _munTai2->setVisible(false);
         }
-        if (_munTai3) {
+        if (_munTai3){
             _munTai3->setVisible(false);
         }
     
@@ -1461,6 +1545,33 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _ongSoi->setVisible(true);
         _patient->_earHole->setScale(1.3f);
         _patient->_earHole->setPosition(_patient->_pointSavePositionEarHole);
+    }
+    else if(_pageTools == 3){
+        for (auto mess : this->getChildren()) {
+            if (mess->getTag() == -10) {
+                if (!((MessObject*)mess)->_isRemove) {
+                    mess->setVisible(true);
+                }
+            }else if(mess->getTag() == -20){
+                mess->setVisible(false);
+            }
+        }
+
+        _keepEar->setVisible(true);
+        _flashLight->setVisible(true);
+        _btnNextTools->setVisible(false);
+        _ongSoi->setVisible(false);
+
+        this->getChildByTag(200)->setVisible(true);
+        
+        _patient->_earHole->setScale(2.0f);;
+        _patient->_earHole->setPosition(Point(_patient->_earHole->getPosition().x - 15,_patient->_earHole->getPosition().y + 14));
+        
+        _saveButton->setVisible(true);
+        _homeButton->setVisible(true);
+        _faceButton->setVisible(true);
+        _mailButton->setVisible(true);
+        _drawButton->setVisible(true);
     }
 }
 
@@ -1490,6 +1601,39 @@ void GamePlay::stopAdvanceLevel(Ref *pSender){
     _joystickButton->setVisible(false);
     _joystickBase->setVisible(false);
 //    this->getChildByTag(202)->setVisible(false);//Joystick
+    
+    for (auto mess : this->getChildren()) {
+        if(mess->getTag() == -20){
+            mess->setVisible(false);
+        }
+    }
+
+}
+
+void GamePlay::backHome(Ref *pSender){
+    if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_SUB_BUTTON);
+    }
+    
+    auto newScene = MainMenu::createScene();
+    auto trans    = TransitionSplitRows::create(.5f, newScene);
+    Director::getInstance()->replaceScene(trans);
+}
+
+void GamePlay::saveImage(Ref *pSender){
+    
+}
+
+void GamePlay::drawImage(Ref *pSender){
+    
+}
+
+void GamePlay::email(Ref *pSender){
+    
+}
+
+void GamePlay::facebook(Ref *pSender){
+    
 }
 
 void GamePlay::setupAdvanceLevel(){
@@ -1502,8 +1646,8 @@ void GamePlay::setupAdvanceLevel(){
     _background->setVisible(false);
     this->getChildByTag(201)->setVisible(false);//Ear tmp
     
-//    _backgroundBlackFont->setVisible(true);
-//    spriteCircle->setVisible(true);
+    _backgroundBlackFont->setVisible(true);
+    spriteCircle->setVisible(true);
     _earHoleScale->setVisible(true);
     _stopAdvanceLevelButton->setVisible(true);
     _joystickBase->setVisible(true);

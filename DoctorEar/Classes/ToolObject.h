@@ -52,12 +52,14 @@ public:
     void setToolCatchNormal();
     void setTouchAvailable();
     void setupLazer();
+    void setMoveCleanFalse();
     
     int _typeTool, _typeBugCatched, _countNumberBugCatched;
     bool _isTouch,_isSet,_isTurnOnFlashLight, _isCatchedBug, _isDroppedBug, _ignoreDropBug, _isMoved;
+    bool _isMoveClean;//Use for tampon advance;
     bool _startMove;//Use for small table
     bool _isDropDrugWater;//Use for drug water
-    bool _upDown, _leftRight;//Use for joystick
+    bool _up, _down, _right, _left;
     Patient *_patient;
     Size _visibleSize;
     Point _savePositionOriginal;

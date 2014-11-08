@@ -53,6 +53,16 @@
 #define GAME_PLAY_BTN_BACK_TOOLS_SELECTED           "buttons/btnBackSelected.png"
 #define GAME_PLAY_BTN_STOP_ADVANCE_LEVEL            "buttons/back_1.png"
 #define GAME_PLAY_BTN_STOP_ADVANCE_LEVEL_SELECTED   "buttons/back_2.png"
+#define GAME_PLAY_BTN_DRAW                          "buttons/ui_draw_button1.png"
+#define GAME_PLAY_BTN_DRAW_SELECTED                 "buttons/ui_draw_button2.png"
+#define GAME_PLAY_BTN_BACK_HOME                     "buttons/ui_button_home.png"
+#define GAME_PLAY_BTN_BACK_HOME_SELECTED            "buttons/ui_button_homea.png"
+#define GAME_PLAY_BTN_FB                            "buttons/ui_button_fb.png"
+#define GAME_PLAY_BTN_FB_SELECTED                   "buttons/ui_button_fba.png"
+#define GAME_PLAY_BTN_SAVE                          "buttons/ui_button_xc.png"
+#define GAME_PLAY_BTN_SAVE_SELECTED                 "buttons/ui_button_xca.png"
+#define GAME_PLAY_BTN_MAIL                          "buttons/ui_button_yj.png"
+#define GAME_PLAY_BTN_MAIL_SELECTED                 "buttons/ui_button_yja.png"
 
 //Patient
 //Boy 1
@@ -181,6 +191,8 @@
 #define SOUND_GET_DIRTY_WATER       "sounds/getDirtyWaterSound.mp3"
 #define SOUND_SCISSOR               "sounds/scissorSound.mp3"
 #define SOUND_DECSICATE             "sounds/decsicateSound.mp3"
+#define SOUND_LAZER                 "sounds/laser.mp3"
+#define SOUND_BURN                  "sounds/burn.mp3"
 
 //Mess
 #define MESS_RAY_TAI_1              "mess/rayTai1.png"

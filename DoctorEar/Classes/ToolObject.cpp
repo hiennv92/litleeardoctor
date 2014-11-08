@@ -44,6 +44,13 @@ void Tool::initOptions(int typeTool){
     _ignoreDropBug = false;
     _countNumberBugCatched = 0;
     
+    _isMoveClean = false;
+    //
+    _right = false;
+    _left = false;
+    _down = false;
+    _up = false;
+    
     if(_typeTool == 100 || _typeTool == 200){
         this->schedule(schedule_selector(Tool::updateTool));
         _startMove = false;
@@ -130,31 +137,52 @@ void Tool::updateTool(float dt){
 
     if (_typeTool == 200) {
         if(_isTouch){
-            if (_leftRight) {
-                _velocityMoveOngSoi = Point(2.0f,_velocityMoveOngSoi.y);
+            if (_right && !_left) {
+                _velocityMoveOngSoi = Point(2.0f,0);
+            }else if(!_right && _left){
+                _velocityMoveOngSoi = Point(-2.0f,0);
             }else{
-                _velocityMoveOngSoi = Point(-2.0f,_velocityMoveOngSoi.y);
+                _velocityMoveOngSoi = Point(0,_velocityMoveOngSoi.y);
             }
             
-            if (_upDown) {
-                _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,2.0f);
+            if (_up && !_down) {
+                _velocityMoveOngSoi = Point(0,2.0f);
+            }else if(!_up && _down){
+                _velocityMoveOngSoi = Point(0,-2.0f);
             }else{
-                _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,-2.0f);
+                _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,0);
             }
         }else{
             _velocityMoveOngSoi = Point(0.0f,0.0f);
+            _up = false;
+            _down = false;
+            _right = false;
+            _left = false;
         }
         
+        //
+        Point pointTmp = _toolOngSoi->getPosition() + _velocityMoveOngSoi;
         
-        if (_toolOngSoi->getPositionY() < _toolOngSoi->getContentSize().height/6.2f || _toolOngSoi->getPositionY() > _visibleSize.height - _toolOngSoi->getContentSize().height/4) {
-            _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,0.0f);
+        if (pointTmp.y < _toolOngSoi->getContentSize().height/6.2f){
+            _down = false;
+            _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,0);
         }
-        
-        if (_toolOngSoi->getPositionX() < _toolOngSoi->getContentSize().width /4.9f || _toolOngSoi->getPositionX() > _visibleSize.width - _toolOngSoi->getContentSize().width/4.9f){
-            _velocityMoveOngSoi = Point(0.0f,_velocityMoveOngSoi.y);
+        else if(pointTmp.y > _visibleSize.height - _toolOngSoi->getContentSize().height/4) {
+            _up = false;
+            _velocityMoveOngSoi = Point(_velocityMoveOngSoi.x,0);
         }
-
+        else if (pointTmp.x < _toolOngSoi->getContentSize().width /4.9f){
+            _left = false;
+            _velocityMoveOngSoi = Point(0,_velocityMoveOngSoi.y);
+        }
+        else if(pointTmp.x > _visibleSize.width - _toolOngSoi->getContentSize().width/4.9f){
+            _right = false;
+            _velocityMoveOngSoi = Point(0,_velocityMoveOngSoi.y);
+        }else{
+            
+        }
         _toolOngSoi->setPosition(_toolOngSoi->getPosition() + _velocityMoveOngSoi);
+        _circle->setPosition(_circle->getPosition() + _velocityMoveOngSoi);
     }
 }
 
@@ -347,6 +375,7 @@ void Tool::touchEvent(cocos2d::Touch* touch){
     auto action = CallFunc::create(CC_CALLBACK_0(Tool::setTouchAvailable,this));
     if(_isTouch && _typeTool != 2 && _typeTool != 200){
         _isTouch = false;
+        _isMoveClean = false;
         _noteHelp->setVisible(false);
         _noteHelp->setScale(2.0f);
         _patient->setMouthNormal();
@@ -486,66 +515,111 @@ void Tool::setTouchDotPosition (Vec2 vec)
         this->setPosition (vec);
     }
     this->_isMoved = true;
+
+    auto action = CallFunc::create(CC_CALLBACK_0(Tool::setMoveCleanFalse,this));
+    this->runAction(Sequence::create(DelayTime::create(0.2f),action, NULL));
+}
+
+void Tool::setMoveCleanFalse(){
+    this->_isMoveClean = false;
 }
 
 void Tool::changeAngle()
 {
-    float x =  fabsf(this->getPositionX() - _savePositionOriginal.x);
-    float y =  fabsf(this->getPositionY() - _savePositionOriginal.y);
+//    if(this->getPositionX() >= _savePositionOriginal.x && (this->getPositionY() < _savePositionOriginal.y + 10*cosf(45) || this->getPositionY() > _savePositionOriginal.y - 10*cosf(45))){
+////        CCLOG("PHAI");
+//        _right = true;
+//        _left = false;
+//        _up = false;
+//        _down = false;
+//    }else if(this->getPositionX() < _savePositionOriginal.x && (this->getPositionY() < _savePositionOriginal.y + 10*cosf(45) || this->getPositionY() > _savePositionOriginal.y - 10*cosf(45))){
+////        CCLOG("TRAI");
+//        _right = false;
+//        _left = true;
+//        _up = false;
+//        _down = false;
+//    }
     
-//    auto angle = CC_RADIANS_TO_DEGREES(atanf(y/x));
+    float x1 = this->getPosition().x;
+    float x2 = _savePositionOriginal.x;
+    float y1 = this->getPosition().y;
+    float y2 = _savePositionOriginal.y;
+    float tan;
+    float angle = 0;
     
-    if(this->getPositionX() >= _savePositionOriginal.x){
-        CCLOG("PHAI");
-        _leftRight = true;
-    }else{
-        CCLOG("TRAI");
-        _leftRight = false;
+    if(this->getPositionX() < _savePositionOriginal.x && this->getPositionY() <= _savePositionOriginal.y){
+
+        tan = ((x2-x1)/(y2-y1));
+        angle = atanf(tan);
+        angle = (90 - angle*180/M_PI) - 180;
+ 
+    }else if(this->getPositionX() < _savePositionOriginal.x && this->getPositionY() > _savePositionOriginal.y){
+        tan = ((y1-y2)/(x2-x1));
+        angle = atanf(tan);
+        
+        angle = 180 - angle*180/M_PI;
+    }else if(this->getPositionX() > _savePositionOriginal.x && this->getPositionY() > _savePositionOriginal.y){
+        tan = ((y1-y2)/(x1-x2));
+        angle = atanf(tan);
+        
+        angle = angle*180/M_PI;
+
+        
+    }else if(this->getPositionX() > _savePositionOriginal.x && this->getPositionY() < _savePositionOriginal.y){
+        tan = ((x1-x2)/(y2-y1));
+        angle = atanf(tan);
+        
+        angle = angle*180/M_PI - 90;
+    }
+
+    if((angle <= 45 && angle > 0) ||(angle < 0 && angle > -45)){
+        _right = true;
+        _left = false;
+        _up = false;
+        _down = false;
+    }else if(angle <= -45 && angle > -135){
+        _right = false;
+        _left = false;
+        _up = false;
+        _down = true;
+    }else if((angle <= -135 && angle >= -180) || (angle <= 180 && angle > 135)){
+        _right = false;
+        _left = true;
+        _up = false;
+        _down = false;
+    }else if(angle <= 135 && angle > 45){
+        _right = false;
+        _left = false;
+        _up = true;
+        _down = false;
     }
     
-    if (this->getPositionY() >= _savePositionOriginal.y) {
-        CCLOG("LEN");
-        _upDown = true;
-    }else{
-        CCLOG("XUONG");
-        _upDown = false;
+    if(angle == 0){
+        if (x1 > x2 && y1 == y2) {
+            _right = true;
+            _left = false;
+            _up = false;
+            _down = false;
+        }
+        else if(x1 < x2 && y1 == y2){
+            _right = false;
+            _left = true;
+            _up = false;
+            _down = false;
+        }
+        else if(x1 == x2 && y1 > y2){
+            _right = false;
+            _left = false;
+            _up = true;
+            _down = false;
+        }else if(x1 == x2 && y1 < y2){
+            _right = false;
+            _left = false;
+            _up = false;
+            _down = true;
+        }
     }
-    
 //    CCLOG("ANGLE: %f",angle);
-//
-//    if (angle > -22.5 && angle < 22.5 )
-//    {
-//        _direction = D_RIGHT;
-//    }
-//    else  if (angle> 22.5 && angle < 67.5 )
-//    {
-//        _direction = D_RIGHT_UP;
-//    }
-//    else  if (angle> 67.5 && angle < 112.5 )
-//    {
-//        _direction = D_UP;
-//    }
-//    else  if (angle> 112.5 && angle < 157.5 )
-//    {
-//        _direction = D_LEFT_UP;
-//    }
-//    else  if ((angle> 157.5 && angle < 180 ) || (angle <- 157.5 && angle> - 180 ))
-//    {
-//        _direction = D_LEFT;
-//    }
-//    else  if (angle <-112.5 && angle> - 157.5 )
-//    {
-//        _direction = D_LEFT_DOWN;
-//    }
-//    else  if (angle <-67.5 && angle> - 112.5 )
-//    {
-//        _direction = D_DOWN;
-//    }
-//    else  if (angle <-22.5 && angle> - 67.5 )
-//    {
-//        _direction = D_RIGHT_DOWN;
-//    }
-//    callDirectionFun ();
 }
 
 
