@@ -38,6 +38,8 @@ public:
     Bug *_bug1, *_bug2, *_bug3, *_bug4;
     
     //Messes and Bugs advance level
+    MessObject *_muTaiAd1, *_muTaiAd2, *_muTaiAd3, *_muTaiAd4, *_dirtyWater1, *_dirtyWater2, *_dirtyWater3, *_dirtyWater4;
+    Bug *_bigBug1, *_bigBug2, *_bigBug3, *_bigBug4;
     
     int _tag, _pageTools;
     bool _isChangeBarSlider;
@@ -57,6 +59,7 @@ public:
     void addTools();
     void showTools();
     void addMessesAndBugs();
+    void addMessesAndBugsAdvance();
     void showMessesAndBugs();
     void nextToolsSelected(cocos2d::Ref* pSender);
     void backToolsSelected(cocos2d::Ref* pSender);

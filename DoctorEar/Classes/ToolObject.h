@@ -51,6 +51,7 @@ public:
     void setToolCatchedBug();
     void setToolCatchNormal();
     void setTouchAvailable();
+    void setupLazer();
     
     int _typeTool, _typeBugCatched, _countNumberBugCatched;
     bool _isTouch,_isSet,_isTurnOnFlashLight, _isCatchedBug, _isDroppedBug, _ignoreDropBug, _isMoved;
@@ -65,7 +66,7 @@ public:
     
     Help *_handHelp, *_noteHelp, *_muiTen;
     Sprite *_dropDrug;
-    Sprite *_toolOngSoi, *_circle;
+    Sprite *_toolOngSoi, *_circle, *_lazer;
     Tool *_toolCatchBug;
     
     //Touchs
