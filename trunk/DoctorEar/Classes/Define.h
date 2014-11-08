@@ -111,7 +111,7 @@
 #define TOOL_TYPE_CATCH_BUG_ADVANCE         15
 #define TOOL_TYPE_TAM_BONG_ADVANCE          16
 #define TOOL_TYPE_GEL                       17
-#define TOOL_TYPE_GET_WATER_ADVANCE              18
+#define TOOL_TYPE_GET_WATER_ADVANCE         18
 
 #define TOOL_SLIDER_BAR_1           "helps/sliderBar1.png"
 #define TOOL_SLIDER_BAR_1_BUTTON    "helps/sliderBar1_Button.png"

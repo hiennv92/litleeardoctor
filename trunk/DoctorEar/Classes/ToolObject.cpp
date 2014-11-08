@@ -48,6 +48,10 @@ void Tool::initOptions(int typeTool){
         this->schedule(schedule_selector(Tool::updateTool));
         _startMove = false;
     }
+    
+    if (_typeTool == TOOL_TYPE_LAZER) {
+        this->setupLazer();
+    }
 }
 
 //Use for small table
@@ -86,10 +90,10 @@ void Tool::updateTool(float dt){
                 fakeBug *fBug = fakeBug::createBug(str1);
                 switch (_countNumberBugCatched) {
                     case 1:
-                        fBug->setRotation(-90);
+                        fBug->setRotation(90);
                         fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
                         fBug->_savePosition = fBug->getPosition();
-                        fBug->_pointFinish = Point(fBug->_savePosition.x - 80, fBug->_savePosition.y);
+                        fBug->_pointFinish = Point(fBug->_savePosition.x - 100, fBug->_savePosition.y);
                         break;
                     case 2:
                         fBug->setRotation(-135);
@@ -98,13 +102,13 @@ void Tool::updateTool(float dt){
                         fBug->_pointFinish = Point(fBug->_savePosition.x + 50, fBug->_savePosition.y + 50);
                         break;
                     case 3:
-                        fBug->setRotation(-45);
+                        fBug->setRotation(135);
                         fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/4 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/6));
                         fBug->_savePosition = fBug->getPosition();
                         fBug->_pointFinish = Point(fBug->_savePosition.x - 50, fBug->_savePosition.y + 50);
                         break;
                     case 4:
-                        fBug->setRotation(-75);
+                        fBug->setRotation(105);
                         fBug->setPosition(Point(arc4random()%(int)this->getContentSize().width/2 + this->getContentSize().width/2, arc4random()%(int)this->getContentSize().height/4 + this->getContentSize().height/4));
                         fBug->_savePosition = fBug->getPosition();
                         fBug->_pointFinish = Point(fBug->_savePosition.x - 60, fBug->_savePosition.y + 30);
@@ -275,31 +279,38 @@ void Tool::setUpNoteHelp(){
             break;
         case TOOL_TYPE_LAZER:
             _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
-            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            _noteHelp->setPosition(Point(_visibleSize.width*0.88f,_visibleSize.height*0.85f));
             break;
         case TOOL_TYPE_CATCH_BUG_ADVANCE:
-            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
-            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            _noteHelp = Help::createHelp(HELP_NOTE_14, TOOL_TYPE_CATCH_BUG_ADVANCE);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.88f,_visibleSize.height*0.85f));
             break;
         case TOOL_TYPE_TAM_BONG_ADVANCE:
-            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
-            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            _noteHelp = Help::createHelp(HELP_NOTE_15, TOOL_TYPE_TAM_BONG_ADVANCE);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.88f,_visibleSize.height*0.85f));
             break;
         case TOOL_TYPE_GEL:
-            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
-            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            _noteHelp = Help::createHelp(HELP_NOTE_18, TOOL_TYPE_GEL);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.88f,_visibleSize.height*0.85f));
             break;
         case TOOL_TYPE_GET_WATER_ADVANCE:
-            _noteHelp = Help::createHelp(HELP_NOTE_17, TOOL_TYPE_LAZER);
-            _noteHelp->setPosition(Point(_visibleSize.width*0.8f,_visibleSize.height*0.9f));
+            _noteHelp = Help::createHelp(HELP_NOTE_16, TOOL_TYPE_GET_WATER_ADVANCE);
+            _noteHelp->setPosition(Point(_visibleSize.width*0.88f,_visibleSize.height*0.85f));
             break;
         default:
             break;
     }
     
     _noteHelp->setScale(2.0f);
-    (this->getParent())->addChild(_noteHelp,15);
+    (this->getParent())->addChild(_noteHelp,17);
     _noteHelp->setVisible(false);
+}
+
+void Tool::setupLazer(){
+    _lazer = Sprite::create(TOOL_TIA_LAZER);
+    this->addChild(_lazer,15);
+    _lazer->setPosition(Point(this->getContentSize().width*0.65f,this->getContentSize().height*1.1f));
+    _lazer->setVisible(false);
 }
 
 #pragma mark - TOUCH HANDLE
@@ -346,6 +357,10 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             this->setScissorClose();
         }
         
+        if(_typeTool == TOOL_TYPE_LAZER){
+            _lazer->setVisible(false);
+        }
+        
         if(_typeTool == TOOL_TYPE_SHAKE_EAR){
             this->stopAllActions();
         }
@@ -363,7 +378,7 @@ void Tool::touchEvent(cocos2d::Touch* touch){
             }
         }
         
-        if(_typeTool >= TOOL_TYPE_SCISSOR && _typeTool != TOOL_TYPE_WATER_DRUG){
+        if(_typeTool >= TOOL_TYPE_SCISSOR && _typeTool != TOOL_TYPE_WATER_DRUG && _typeTool < TOOL_TYPE_LAZER){
             if(((GamePlay*)(this->getParent()))->_pageTools == 1){
                 ((GamePlay*)(this->getParent()))->_btnNextTools->setVisible(true);
             }else if(((GamePlay*)(this->getParent()))->_pageTools == 2){
@@ -443,6 +458,18 @@ void Tool::setTouchDotPosition (Vec2 vec)
         }
         this->setPosition (vec);
     }
+    else if(_typeTool == TOOL_TYPE_LAZER){
+        if (vec.y > _visibleSize.height*0.3f ) {
+            vec.y = _visibleSize.height*0.3f;
+        }
+        this->setPosition (vec);
+    }
+    else if(_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE){
+        if (vec.y > _visibleSize.height*0.3f ) {
+            vec.y = _visibleSize.height*0.3f;
+        }
+        this->setPosition (vec);
+    }
     else if(_typeTool == 200) {
         float x =  fabsf(vec.x - _savePositionOriginal.x);
         float y =  fabsf(vec.y - _savePositionOriginal.y);
@@ -463,8 +490,8 @@ void Tool::setTouchDotPosition (Vec2 vec)
 
 void Tool::changeAngle()
 {
-//    float x =  fabsf(this->getPositionX() - _savePositionOriginal.x);
-//    float y =  fabsf(this->getPositionY() - _savePositionOriginal.y);
+    float x =  fabsf(this->getPositionX() - _savePositionOriginal.x);
+    float y =  fabsf(this->getPositionY() - _savePositionOriginal.y);
     
 //    auto angle = CC_RADIANS_TO_DEGREES(atanf(y/x));
     
@@ -635,10 +662,15 @@ void Tool::setInjectionNormal(){
 void Tool::setToolCatchedBug(){
     _isCatchedBug = true;
     char str[100] = {0};
-    if (_typeBugCatched == 1) {
-        sprintf(str, TOOL_CATCH_BUG_2);
-    }else{
-        sprintf(str, TOOL_CATCH_BUG_1);
+    if(_typeTool == TOOL_TYPE_CATCH_BUG){
+        if (_typeBugCatched == 1) {
+            sprintf(str, TOOL_CATCH_BUG_2);
+        }else{
+            sprintf(str, TOOL_CATCH_BUG_1);
+        }
+
+    }else if(_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE){
+        sprintf(str, TOOL_CATCH_BUG_ADVANCE_DONE);
     }
 
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);

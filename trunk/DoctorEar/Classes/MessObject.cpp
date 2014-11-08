@@ -152,25 +152,36 @@ void MessObject::updateMess(float dt){
                 }
             }
             
-            if (_typeMess == MESS_TYPE_MU_TAI && !_tool->_isSet && _isCheckingMess) {
-                Rect pGetMess = _tool->getBoundingBox();
-                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*3/4,pGetMess.size.width/3, pGetMess.size.height/4);
-                if(this->getBoundingBox().intersectsRect(rect)){
-                    CCLOG("Set hut mu");
-                    _isCheckingMess = false;
-                    _tool->runAction(MoveTo::create(0.3f, Point(this->getPositionX(),this->getPositionY() - 130)));
-                    _tool->_isSet = true;
-                    
-                    auto action = CallFunc::create(CC_CALLBACK_0(Tool::showMuiTen,_tool));
-                    _tool->runAction(Sequence::create(DelayTime::create(0.4f),action, NULL));
+            if (_typeMess == MESS_TYPE_MU_TAI) {
+                if(_tool->_typeTool == TOOL_TYPE_INJECTION && !_tool->_isSet && _isCheckingMess){
+                    Rect pGetMess = _tool->getBoundingBox();
+                    Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*3/4,pGetMess.size.width/3, pGetMess.size.height/4);
+                    if(this->getBoundingBox().intersectsRect(rect)){
+                        CCLOG("Set hut mu");
+                        _isCheckingMess = false;
+                        _tool->runAction(MoveTo::create(0.3f, Point(this->getPositionX(),this->getPositionY() - 130)));
+                        _tool->_isSet = true;
+                        
+                        auto action = CallFunc::create(CC_CALLBACK_0(Tool::showMuiTen,_tool));
+                        _tool->runAction(Sequence::create(DelayTime::create(0.4f),action, NULL));
+                    }
+                    else if(_tool->_typeTool == TOOL_TYPE_INJECTION && _tool->_isSet && !_isCheckingMess){
+                        if(_tool->_isDropDrugWater){
+                            this->removeMess();
+                            _tool->_isDropDrugWater = false;
+                        }
+                    }
+                }else if(_tool->_typeTool == TOOL_TYPE_LAZER){
+                    Rect pGetMess = _tool->getBoundingBox();
+                    Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*4/7,pGetMess.origin.y + pGetMess.size.height + _tool->_lazer->getContentSize().height*1.2f,pGetMess.size.width /7, _tool->_lazer->getContentSize().height/10);
+                    if(rect.intersectsRect(this->getBoundingBox())){
+                        CCLOG("GET MU BY LAZER");
+                        this->_isRemove = true;
+                        removeMess();
+                    }
                 }
             }
-            else if(_typeMess == MESS_TYPE_MU_TAI && _tool->_isSet && !_isCheckingMess){
-                if(_tool->_isDropDrugWater){
-                    this->removeMess();
-                    _tool->_isDropDrugWater = false;
-                }
-            }
+            
         }
     }
 }
@@ -197,7 +208,7 @@ void MessObject::removeMess(){
             this->setVisible(false);
             CCLOG("REMOVE DIRTY WATER");
             this->stopAllActions();
-            this->removeFromParentAndCleanup(true);
+//            this->removeFromParentAndCleanup(true);
         }
         
     }
@@ -220,7 +231,7 @@ void MessObject::removeMess(){
             CCLOG("REMOVE MANG TAI");
             CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
             this->stopAllActions();
-            this->removeFromParentAndCleanup(true);
+//            this->removeFromParentAndCleanup(true);
         }
     }
     else if(_typeMess == MESS_TYPE_NUOC_BAN){
@@ -237,7 +248,7 @@ void MessObject::removeMess(){
             this->setVisible(false);
             CCLOG("REMOVE Nuoc ban");
             this->stopAllActions();
-            this->removeFromParentAndCleanup(true);
+//            this->removeFromParentAndCleanup(true);
         }
     }
     else if(_typeMess == MESS_TYPE_MUN){
@@ -259,18 +270,28 @@ void MessObject::removeMess(){
 }
 
 void MessObject::deleteMess(){
-    this->_isRemove = true;
-    this->setVisible(false);
-    _tool->_isSet = false;
-    _tool->_muiTen->setVisible(false);
-    _tool->_isDropDrugWater = false;
-    if(_typeMess == MESS_TYPE_MU_TAI){
-        _tool->setInjectionNormal();
-        _tool->_isTouch = false;
-        _tool->_noteHelp->setVisible(false);
-        _tool->_patient->setMouthNormal();
-        auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
-        _tool->runAction(actionMove);
+    if (_tool->_typeTool != TOOL_TYPE_LAZER) {
+        this->_isRemove = true;
+        this->setVisible(false);
+        
+        _tool->_isSet = false;
+        _tool->_muiTen->setVisible(false);
+        _tool->_isDropDrugWater = false;
+        if(_typeMess == MESS_TYPE_MU_TAI){
+            _tool->setInjectionNormal();
+            _tool->_isTouch = false;
+            _tool->_noteHelp->setVisible(false);
+            _tool->_patient->setMouthNormal();
+            auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
+            _tool->runAction(actionMove);
+        }
+    }else{
+        this->_isRemove = true;
+        char str[100] = {0};
+        sprintf(str, MESS_SEO);
+        this->setOpacity(225.0f);
+        Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
+        this->setTexture(texture);
     }
 }
 

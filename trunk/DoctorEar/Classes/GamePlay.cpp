@@ -422,6 +422,62 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
         }
     }
     
+    if(_lazer){
+        if (_lazer->isVisible()) {
+            cocos2d::Rect rectScissor = _lazer->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _lazer->_isTouch = true;
+                _lazer->_noteHelp->showHelp(0.0f);
+                _lazer->_lazer->setVisible(true);
+                return true;
+            }
+        }
+    }
+    
+    if(_catchBugAdvance){
+        if (_catchBugAdvance->isVisible()) {
+            cocos2d::Rect rectScissor = _catchBugAdvance->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _catchBugAdvance->_isTouch = true;
+                _catchBugAdvance->_noteHelp->showHelp(0.0f);
+                return true;
+            }
+        }
+    }
+    
+    if(_tamponAdvance){
+        if (_tamponAdvance->isVisible()) {
+            cocos2d::Rect rectScissor = _tamponAdvance->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _tamponAdvance->_isTouch = true;
+                _tamponAdvance->_noteHelp->showHelp(0.0f);
+                return true;
+            }
+        }
+    }
+    
+    if(_bottleGel){
+        if (_bottleGel->isVisible()) {
+            cocos2d::Rect rectScissor = _bottleGel->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _bottleGel->_isTouch = true;
+                _bottleGel->_noteHelp->showHelp(0.0f);
+                return true;
+            }
+        }
+    }
+    
+    if(_getWaterAdvance){
+        if (_getWaterAdvance->isVisible()) {
+            cocos2d::Rect rectScissor = _getWaterAdvance->getBoundingBox();
+            if(rectScissor.containsPoint(p)){
+                _getWaterAdvance->_isTouch = true;
+                _getWaterAdvance->_noteHelp->showHelp(0.0f);
+                return true;
+            }
+        }
+    }
+    
     return true;
 }
 
@@ -562,6 +618,41 @@ void GamePlay::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
     if(_joystickButton){
         if(_joystickButton->_isTouch){
             _joystickButton->setTouchDotPosition(_joystickButton->getPosition() + touch->getDelta());
+            return;
+        }
+    }
+    
+    if(_lazer){
+        if(_lazer->_isTouch){
+            _lazer->setTouchDotPosition (_lazer-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    if(_catchBugAdvance){
+        if(_catchBugAdvance->_isTouch){
+            _catchBugAdvance->setTouchDotPosition (_catchBugAdvance-> getPosition () + touch->getDelta ());
+            return;
+        }
+    }
+    
+    if(_tamponAdvance){
+        if(_tamponAdvance->_isTouch){
+            _tamponAdvance->setTouchDotPosition (_tamponAdvance-> getPosition () + touch->getDelta ());
+            return;
+        }
+    }
+    
+    if(_bottleGel){
+        if(_bottleGel->_isTouch){
+            _bottleGel->setTouchDotPosition (_bottleGel-> getPosition () + touch-> getDelta ());
+            return;
+        }
+    }
+    
+    if(_getWaterAdvance){
+        if(_getWaterAdvance->_isTouch){
+            _getWaterAdvance->setTouchDotPosition (_getWaterAdvance-> getPosition () + touch->getDelta ());
             return;
         }
     }
@@ -739,7 +830,7 @@ void GamePlay::addTools(){
     _injection->setMuiTen();
     
     //TOOLS ADVANCE
-    _lazer = Tool::createTool(TOOL_LAZER, TOOL_TYPE_SCISSOR);
+    _lazer = Tool::createTool(TOOL_LAZER, TOOL_TYPE_LAZER);
     this->addChild(_lazer,15);
     _lazer->setPosition(Point(visibleSize.width*0.05f, -visibleSize.height*0.05f));
     _lazer->setScale(2.0f);
@@ -771,9 +862,9 @@ void GamePlay::addTools(){
     _bottleGel->_savePositionOriginal = _bottleGel->getPosition();
     _bottleGel->setUpNoteHelp();
     
-    _getWaterAdvance = Tool::createTool(TOOL_GET_WATER, TOOL_TYPE_GEL);
+    _getWaterAdvance = Tool::createTool(TOOL_GET_WATER, TOOL_TYPE_GET_WATER_ADVANCE);
     this->addChild(_getWaterAdvance,15);
-    _getWaterAdvance->setPosition(Point(visibleSize.width*0.92f, -visibleSize.height*0.16f));
+    _getWaterAdvance->setPosition(Point(visibleSize.width*0.92f, -visibleSize.height*0.20f));
     _getWaterAdvance->setScale(2.0f);
     _getWaterAdvance->_patient = _patient;
     _getWaterAdvance->_savePositionOriginal = _getWaterAdvance->getPosition();
@@ -874,7 +965,7 @@ void GamePlay::addMessesAndBugs(){
     this->addChild(_bug2,13);
     
     _bug3 = Bug::createBug(str2);
-    _bug3->setRotation(-45.0f);
+    _bug3->setRotation(135.0f);
     _bug3->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.45f);
     _bug3->animationBug(2);
     _bug3->_typeMove = 1;
@@ -887,7 +978,7 @@ void GamePlay::addMessesAndBugs(){
     
     _bug4 = Bug::createBug(str2);
     _bug4->setScale(0.2f);
-    _bug4->setRotation(-75.0f);
+    _bug4->setRotation(105.0f);
     _bug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.58f);
     _bug4->animationBug(2);
     _bug4->_typeMove = 2;
@@ -1020,6 +1111,169 @@ void GamePlay::addMessesAndBugs(){
     _bug1->setVisible(false);
     _bug2->setVisible(false);
     _bug4->setVisible(false);
+}
+
+void GamePlay::addMessesAndBugsAdvance(){
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+
+    char str1[100] = {0};
+    sprintf(str1, "%s_1.png",BUG_BLUE_BUG);
+    
+    char str2[100] = {0};
+    sprintf(str2, "%s_1.png",BUG_RED_BUG);
+    
+    int n = arc4random()%2;
+    
+    for (int i = 0; i< 4; i++) {
+        n = arc4random()%2;
+        switch (i) {
+            case 0:
+                if (n == 0) {
+                    _bigBug1 = Bug::createBug(str1);
+                }else{
+                    _bigBug1 = Bug::createBug(str2);
+                }
+                _bigBug1->_typeBug = n + 1;
+                _bigBug1->animationBug(n+1);
+                break;
+            case 1:
+                if (n == 0) {
+                    _bigBug2 = Bug::createBug(str1);
+                }else{
+                    _bigBug2 = Bug::createBug(str2);
+                }
+                _bigBug2->_typeBug = n + 1;
+                _bigBug2->animationBug(n+1);
+                break;
+            case 2:
+                if (n == 0) {
+                    _bigBug3 = Bug::createBug(str1);
+                }else{
+                    _bigBug3 = Bug::createBug(str2);
+                }
+                _bigBug3->_typeBug = n + 1;
+                _bigBug3->animationBug(n+1);
+                break;
+            case 3:
+                if (n == 0) {
+                    _bigBug4 = Bug::createBug(str1);
+                }else{
+                    _bigBug4 = Bug::createBug(str2);
+                }
+                _bigBug4->_typeBug = n + 1;
+                _bigBug4->animationBug(n+1);
+                break;
+            default:
+                break;
+        }
+    }
+  
+    _bigBug1->setPosition(visibleSize.width*0.46f, visibleSize.height* 0.65f);
+    _bigBug1->_typeMove = 2;
+    _bigBug1->_savePosition = _bigBug1->getPosition();
+    _bigBug1->_pointFinish = Point(_bigBug1->_savePosition.x - 60, _bigBug1->_savePosition.y);
+    _bigBug1->bugMove();
+    _bigBug1->_tool = _catchBugAdvance;
+    _bigBug1->setScale(2.0f);
+    _bigBug1->setRotation(90);
+    this->addChild(_bigBug1,13);
+    
+    _bigBug2->setPosition(visibleSize.width*0.20f, visibleSize.height* 0.56f);
+    _bigBug2->_typeBug = 1;
+    _bigBug2->_savePosition = _bigBug2->getPosition();
+    _bigBug2->_pointFinish = Point(_bigBug2->_savePosition.x + 60, _bigBug2->_savePosition.y + 60);
+    _bigBug1->bugMove();
+    _bigBug2->_tool = _catchBugAdvance;
+    _bigBug2->setRotation(-135);
+    _bigBug2->setScale(2.0f);
+    this->addChild(_bigBug2,13);
+    
+    _bigBug3->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.45f);
+    _bigBug3->_typeMove = 1;
+    _bigBug3->_savePosition = _bigBug3->getPosition();
+    _bigBug3->_pointFinish = Point(_bigBug3->_savePosition.x - 60, _bigBug3->_savePosition.y + 60);
+    _bigBug3->bugMove();
+    _bigBug3->_tool = _catchBugAdvance;
+    _bigBug3->setRotation(135.0f);
+    _bigBug3->setScale(2.0f);
+    this->addChild(_bigBug3,13);
+    
+    _bigBug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.58f);
+    _bigBug4->_typeMove = 2;
+    _bigBug4->_savePosition = _bigBug4->getPosition();
+    _bigBug4->_pointFinish = Point(_bigBug4->_savePosition.x - 60, _bigBug4->_savePosition.y + 30);
+    _bigBug4->bugMove();
+    _bigBug4->_tool = _catchBugAdvance;
+    _bigBug4->setScale(2.0f);
+    _bigBug4->setRotation(105.0f);
+    this->addChild(_bigBug4,13);
+    
+    //Add mu tai
+    n = arc4random()%3;
+    for (int i = 0; i<4; i++) {
+        n = arc4random()%3;
+        switch (i) {
+            case 0:
+                if (n == 0) {
+                    _muTaiAd1 = MessObject::createMess(MESS_MU_TAI_TO_1, MESS_TYPE_MU_TAI);
+                }else if(n == 1){
+                    _muTaiAd1 = MessObject::createMess(MESS_MU_TAI_TO_2, MESS_TYPE_MU_TAI);
+                }else{
+                    _muTaiAd1 = MessObject::createMess(MESS_MU_TAI_TO_3, MESS_TYPE_MU_TAI);
+                }
+                break;
+            case 1:
+                if (n == 0) {
+                    _muTaiAd2 = MessObject::createMess(MESS_MU_TAI_TO_1, MESS_TYPE_MU_TAI);
+                }else if(n == 1){
+                    _muTaiAd2 = MessObject::createMess(MESS_MU_TAI_TO_2, MESS_TYPE_MU_TAI);
+                }else{
+                    _muTaiAd2 = MessObject::createMess(MESS_MU_TAI_TO_3, MESS_TYPE_MU_TAI);
+                }
+                break;
+            case 2:
+                if (n == 0) {
+                    _muTaiAd3 = MessObject::createMess(MESS_MU_TAI_TO_1, MESS_TYPE_MU_TAI);
+                }else if(n == 1){
+                    _muTaiAd3 = MessObject::createMess(MESS_MU_TAI_TO_2, MESS_TYPE_MU_TAI);
+                }else{
+                    _muTaiAd3 = MessObject::createMess(MESS_MU_TAI_TO_3, MESS_TYPE_MU_TAI);
+                }
+                break;
+            case 3:
+                if (n == 0) {
+                    _muTaiAd4 = MessObject::createMess(MESS_MU_TAI_TO_1, MESS_TYPE_MU_TAI);
+                }else if(n == 1){
+                    _muTaiAd4 = MessObject::createMess(MESS_MU_TAI_TO_2, MESS_TYPE_MU_TAI);
+                }else{
+                    _muTaiAd4 = MessObject::createMess(MESS_MU_TAI_TO_3, MESS_TYPE_MU_TAI);
+                }                break;
+            default:
+                break;
+        }
+    }
+    
+    _muTaiAd1->setScale(2.0f);
+    _muTaiAd2->setScale(2.0f);
+    _muTaiAd3->setScale(2.0f);
+    _muTaiAd4->setScale(2.0f);
+    
+    _muTaiAd1->_tool = _lazer;
+    _muTaiAd2->_tool = _lazer;
+    _muTaiAd3->_tool = _lazer;
+    _muTaiAd4->_tool = _lazer;
+    
+    _muTaiAd1->setPosition(visibleSize.width*0.25f, visibleSize.height*0.7f);
+    _muTaiAd2->setPosition(visibleSize.width*0.75f, visibleSize.height*0.75f);
+    _muTaiAd3->setPosition(visibleSize.width*0.3f, visibleSize.height*0.5f);
+    _muTaiAd4->setPosition(visibleSize.width*0.65f, visibleSize.height*0.3f);
+
+    this->addChild(_muTaiAd1,13);
+    this->addChild(_muTaiAd2,13);
+    this->addChild(_muTaiAd3,13);
+    this->addChild(_muTaiAd4,13);
+    
+    //Add dirty water
 }
 
 void GamePlay::showMessesAndBugs(){
@@ -1248,8 +1502,8 @@ void GamePlay::setupAdvanceLevel(){
     _background->setVisible(false);
     this->getChildByTag(201)->setVisible(false);//Ear tmp
     
-    _backgroundBlackFont->setVisible(true);
-    spriteCircle->setVisible(true);
+//    _backgroundBlackFont->setVisible(true);
+//    spriteCircle->setVisible(true);
     _earHoleScale->setVisible(true);
     _stopAdvanceLevelButton->setVisible(true);
     _joystickBase->setVisible(true);
@@ -1262,4 +1516,6 @@ void GamePlay::setupAdvanceLevel(){
     _lazer->setVisible(true);
     _catchBugAdvance->setVisible(true);
     _bottleGel->setVisible(true);
+    
+    this->addMessesAndBugsAdvance();
 }
