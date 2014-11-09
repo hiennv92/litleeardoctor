@@ -22,7 +22,7 @@ public:
     static cocos2d::Scene* createScene();
     virtual bool init();
     
-    cocos2d::Sprite *_spriteTable, *_background, *_backgroundBlackFont, *_earHoleScale,*spriteCircle;
+    cocos2d::Sprite *_spriteTable, *_background, *_backgroundBlackFont, *_earHoleScale,*spriteCircle, *_darkBackground;
     cocos2d::extension::ControlSlider *slider;
     cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton, *_drawButton, *_homeButton, *_saveButton, *_mailButton, *_faceButton;
     
@@ -43,7 +43,8 @@ public:
     
     int _tag, _pageTools;
     bool _isChangeBarSlider;
-    
+    PointArray* _array;
+
     CREATE_FUNC(GamePlay);
 
     //Touch handle

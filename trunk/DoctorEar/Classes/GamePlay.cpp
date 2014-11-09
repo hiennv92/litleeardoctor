@@ -41,8 +41,15 @@ bool GamePlay::init(){
     _earHoleScale = Sprite::create(EARHOLE_SCALE);
     _earHoleScale->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
     _earHoleScale->setVisible(false);
-    _earHoleScale->setScale(2.0f);
+    _earHoleScale->setScale(visibleSize.width/_earHoleScale->getContentSize().width, visibleSize.height/_earHoleScale->getContentSize().height);
     this->addChild(_earHoleScale,7);
+    
+    _darkBackground = Sprite::create("all/blackFont2.png");
+    _darkBackground->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
+    _darkBackground->setVisible(false);
+    _darkBackground->setScale(visibleSize.width/_darkBackground->getContentSize().width, visibleSize.height/_darkBackground->getContentSize().height);
+    this->addChild(_darkBackground,16);
+    _darkBackground->setOpacity(100);
     
     spriteCircle = Sprite::create(TOOL_VONG_TRON);
     spriteCircle->setPosition(_background->getPosition());
@@ -310,12 +317,16 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
                 _patient->setMouthScare();
                 _patient->setEyeBrowScare();
                 
+                _bug1->_tool = _catchBug;
+                _bug2->_tool = _catchBug;
+                _bug3->_tool = _catchBug;
+                _bug4->_tool = _catchBug;
+                
                 //Call small table
                 _smallTable->_startMove = true;
                 _smallTable->_isTouch = true;
                 return true;
             }
-
         }
     }
     
@@ -364,6 +375,11 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
                 _sprayChemicals->_noteHelp->showHelp(0.0f);
                 _patient->setMouthSmile();
                 _patient->setEyeBrowSmile();
+                
+                _bug1->_tool = _sprayChemicals;
+                _bug2->_tool = _sprayChemicals;
+                _bug3->_tool = _sprayChemicals;
+                _bug4->_tool = _sprayChemicals;
                 
                 return true;
             }
@@ -1211,48 +1227,102 @@ void GamePlay::addMessesAndBugsAdvance(){
     }
   
     int tag = -20;
-    _bigBug1->setPosition(visibleSize.width*0.46f, visibleSize.height* 0.65f);
-    _bigBug1->_typeMove = 2;
-    _bigBug1->_savePosition = _bigBug1->getPosition();
-    _bigBug1->_pointFinish = Point(_bigBug1->_savePosition.x - 60, _bigBug1->_savePosition.y);
-//    _bigBug1->bugMove();
+
     _bigBug1->_tool = _catchBugAdvance;
     _bigBug1->setScale(2.0f);
-    _bigBug1->setRotation(90);
+    _bigBug1->setRotation(-90);
     _bigBug1->setTag(tag);
+    auto array1 = PointArray::create(20);
+    array1->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    array1->addControlPoint(Vec2(visibleSize.width*0.45f, visibleSize.height*0.2f));
+    array1->addControlPoint(Vec2(visibleSize.width*0.6,visibleSize.height*0.25));
+    array1->addControlPoint(Vec2(visibleSize.width*0.7, visibleSize.height*0.45f));
+    array1->addControlPoint(Vec2(visibleSize.width*0.6,visibleSize.height*0.65));
+    array1->addControlPoint(Vec2(visibleSize.width*0.45, visibleSize.height*0.72f));
+    array1->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.65));
+    array1->addControlPoint(Vec2(visibleSize.width*0.15f, visibleSize.height*0.4f));
+    array1->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    _bigBug1->setPosition(Vec2(50,50));
+    _bigBug1->_savePosition = _bigBug1->getPosition();
+    _bigBug1->_arrayPointMove = array1;
+    _bigBug1->_originalRotate = -90;
+    _bigBug1->_deltaRotate = -300;
+    _bigBug1->bugMoveInCircle();
+    array1->retain();
     this->addChild(_bigBug1,13);
     
-    _bigBug2->setPosition(visibleSize.width*0.20f, visibleSize.height* 0.56f);
-    _bigBug2->_typeBug = 1;
-    _bigBug2->_savePosition = _bigBug2->getPosition();
-    _bigBug2->_pointFinish = Point(_bigBug2->_savePosition.x + 60, _bigBug2->_savePosition.y + 60);
-//    _bigBug2->bugMove();
     _bigBug2->_tool = _catchBugAdvance;
-    _bigBug2->setRotation(-135);
+    _bigBug2->setRotation(-235);
     _bigBug2->setScale(2.0f);
     _bigBug2->setTag(tag);
+    auto array2 = PointArray::create(20);
+    array2->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    array2->addControlPoint(Vec2(visibleSize.width*0.15f, visibleSize.height*0.4f));
+    array2->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.65));
+    array2->addControlPoint(Vec2(visibleSize.width*0.45, visibleSize.height*0.72f));
+    array2->addControlPoint(Vec2(visibleSize.width*0.6,visibleSize.height*0.65));
+    array2->addControlPoint(Vec2(visibleSize.width*0.7, visibleSize.height*0.45f));
+    array2->addControlPoint(Vec2(visibleSize.width*0.6,visibleSize.height*0.25));
+    array2->addControlPoint(Vec2(visibleSize.width*0.45f, visibleSize.height*0.2f));
+    array2->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    _bigBug2->setPosition(Vec2(50,50));
+    _bigBug2->_savePosition = _bigBug2->getPosition();
+    _bigBug2->_arrayPointMove = array2;
+    _bigBug2->_originalRotate = -225;
+    _bigBug2->_deltaRotate  = 320;
+    _bigBug2->bugMoveInCircle();
+    array2->retain();
     this->addChild(_bigBug2,13);
     
-    _bigBug3->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.45f);
-    _bigBug3->_typeMove = 1;
-    _bigBug3->_savePosition = _bigBug3->getPosition();
-    _bigBug3->_pointFinish = Point(_bigBug3->_savePosition.x - 60, _bigBug3->_savePosition.y + 60);
-//    _bigBug3->bugMove();
+    _bigBug3->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.75f);
     _bigBug3->_tool = _catchBugAdvance;
-    _bigBug3->setRotation(135.0f);
+    _bigBug3->setRotation(-225.0f);
     _bigBug3->setScale(2.0f);
     _bigBug3->setTag(tag);
+    _bigBug2->_tool = _catchBugAdvance;
+    _bigBug2->setScale(2.0f);
+    _bigBug2->setTag(tag);
+    
+    auto array3 = PointArray::create(20);
+    array3->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    array3->addControlPoint(Vec2(visibleSize.width*0.15f, visibleSize.height*0.4f));
+    array3->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.6));
+    array3->addControlPoint(Vec2(visibleSize.width*0.35, visibleSize.height*0.65f));
+    array3->addControlPoint(Vec2(visibleSize.width*0.45,visibleSize.height*0.55));
+    array3->addControlPoint(Vec2(visibleSize.width*0.55, visibleSize.height*0.45f));
+    array3->addControlPoint(Vec2(visibleSize.width*0.45,visibleSize.height*0.25));
+    array3->addControlPoint(Vec2(visibleSize.width*0.35f, visibleSize.height*0.2f));
+    array3->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    _bigBug3->setPosition(Vec2(100,100));
+    _bigBug3->_savePosition = _bigBug3->getPosition();
+    _bigBug3->_arrayPointMove = array3;
+    _bigBug3->_originalRotate = -225;
+    _bigBug3->_deltaRotate  = 320;
+    _bigBug3->bugMoveInCircle();
+    array3->retain();
     this->addChild(_bigBug3,13);
     
-    _bigBug4->setPosition(visibleSize.width*0.45f, visibleSize.height* 0.58f);
-    _bigBug4->_typeMove = 2;
-    _bigBug4->_savePosition = _bigBug4->getPosition();
-    _bigBug4->_pointFinish = Point(_bigBug4->_savePosition.x - 60, _bigBug4->_savePosition.y + 30);
-//    _bigBug4->bugMove();
     _bigBug4->_tool = _catchBugAdvance;
     _bigBug4->setScale(2.0f);
     _bigBug4->setTag(tag);
-    _bigBug4->setRotation(105.0f);
+    _bigBug4->setRotation(-90.0f);
+    auto array4 = PointArray::create(20);
+    array4->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    array4->addControlPoint(Vec2(visibleSize.width*0.35f, visibleSize.height*0.2f));
+    array4->addControlPoint(Vec2(visibleSize.width*0.45,visibleSize.height*0.25));
+    array4->addControlPoint(Vec2(visibleSize.width*0.67, visibleSize.height*0.45f));
+    array4->addControlPoint(Vec2(visibleSize.width*0.55,visibleSize.height*0.65));
+    array4->addControlPoint(Vec2(visibleSize.width*0.45, visibleSize.height*0.72f));
+    array4->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.65));
+    array4->addControlPoint(Vec2(visibleSize.width*0.15f, visibleSize.height*0.4f));
+    array4->addControlPoint(Vec2(visibleSize.width*0.25f, visibleSize.height*0.25));
+    _bigBug4->setPosition(Vec2(100,0));
+    _bigBug4->_savePosition = _bigBug4->getPosition();
+    _bigBug4->_arrayPointMove = array1;
+    _bigBug4->_originalRotate = -90;
+    _bigBug4->_deltaRotate = -300;
+    _bigBug4->bugMoveInCircle();
+    array4->retain();
     this->addChild(_bigBug4,13);
     
     //Add mu tai
@@ -1564,7 +1634,11 @@ void GamePlay::nextToolsSelected(Ref *pSender){
 
         this->getChildByTag(200)->setVisible(true);
         
-        _patient->_earHole->setScale(2.0f);;
+//        _patient->setOpenEye();
+//        _patient->stopAllActions();
+//        _patient->unscheduleAllSelectors();
+        
+        _patient->_earHole->setScale(2.0f);
         _patient->_earHole->setPosition(Point(_patient->_earHole->getPosition().x - 15,_patient->_earHole->getPosition().y + 14));
         
         _saveButton->setVisible(true);
@@ -1600,6 +1674,7 @@ void GamePlay::stopAdvanceLevel(Ref *pSender){
     _bottleGel->setVisible(false);
     _joystickButton->setVisible(false);
     _joystickBase->setVisible(false);
+    _darkBackground->setVisible(false);
 //    this->getChildByTag(202)->setVisible(false);//Joystick
     
     for (auto mess : this->getChildren()) {
@@ -1660,6 +1735,7 @@ void GamePlay::setupAdvanceLevel(){
     _lazer->setVisible(true);
     _catchBugAdvance->setVisible(true);
     _bottleGel->setVisible(true);
+    _darkBackground->setVisible(true);
     
     this->addMessesAndBugsAdvance();
 }

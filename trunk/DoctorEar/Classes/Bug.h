@@ -26,11 +26,16 @@ public:
     void deleteBug();
     void callCheckAgain();
     void bugMove();
+    void bugMoveInCircle();
     void bugMoveTurnAround();
+    void stopBugMoveAround();
+
     void animationBug(int typeBug);
 
     int _stateBUg, _typeMove, _typeBug;
+    float _originalRotate,_deltaRotate;
     Point _savePosition, _pointFinish;
+    PointArray *_arrayPointMove;
     bool _isRemove,_isCatching, _isCheckingBug, _isPlaySoundEffect;
     bool _isTurnAround;
     Size _visibleSize;
