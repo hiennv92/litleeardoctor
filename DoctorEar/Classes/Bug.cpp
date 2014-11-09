@@ -39,29 +39,47 @@ void Bug::initOptions(){
 void Bug::updateBug(float dt){
     if(_tool){
         if(_tool->_isTouch && !_isRemove && !_tool->_isCatchedBug){
-            Rect pGetMess = _tool->getBoundingBox();
-            Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
-            if(rect.intersectsRect(this->getBoundingBox())){
-                CCLOG("Catch a bug");
-                this->setVisible(false);
-                this->_isCatching = true;
-                _tool->_typeBugCatched = _typeBug;
-                _tool->setToolCatchedBug();
+            if(_tool->_typeTool == TOOL_TYPE_SPRAY_CHEMICALs){
+                Rect pGetMess = _tool->getBoundingBox();
+                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width*0.6f,pGetMess.origin.y + pGetMess.size.height*0.9f,pGetMess.size.width*0.3f, pGetMess.size.height*0.1f);
+                if(rect.intersectsRect(this->getBoundingBox())){
+                    ParticleSystemQuad* particle = ParticleSystemQuad::create("yaoji.plist");
+                    this->getParent()->addChild(particle,15);
+                    particle->setScale(2.0f);
+                    particle->setPosition(this->getPosition());
+                    
+                    removeBug();
+                }
+            }else{
+                Rect pGetMess = _tool->getBoundingBox();
+                Rect rect =  Rect(pGetMess.origin.x + pGetMess.size.width/3,pGetMess.origin.y + pGetMess.size.height*5/6,pGetMess.size.width /3, pGetMess.size.height/6);
+                if(rect.intersectsRect(this->getBoundingBox())){
+                    CCLOG("Catch a bug");
+                    this->setVisible(false);
+                    this->_isCatching = true;
+                    _tool->_typeBugCatched = _typeBug;
+                    _tool->setToolCatchedBug();
+                }
             }
         }
-
+        
         if(this->_isCatching && _tool->_isCatchedBug && !_isRemove){
-            if(_tool->_isDroppedBug){
-                removeBug();
-            }
-            
-            if(_tool->_ignoreDropBug){
-                CCLOG("Release bug");
-                _tool->_ignoreDropBug = false;
-                _tool->setToolCatchNormal();
+            if(_tool->_typeTool == TOOL_TYPE_CATCH_BUG){
+                if(_tool->_isDroppedBug){
+                    removeBug();
+                }
                 
-                this->setVisible(true);
-                this->_isCatching = false;
+                if(_tool->_ignoreDropBug){
+                    CCLOG("Release bug");
+                    _tool->_ignoreDropBug = false;
+                    _tool->setToolCatchNormal();
+                    
+                    this->setVisible(true);
+                    this->_isCatching = false;
+                }
+            }
+            else if(_tool->_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE){
+                removeBug();
             }
         }
     }
@@ -135,11 +153,46 @@ void Bug::bugMoveTurnAround(){
     }
 }
 
+void Bug::bugMoveInCircle(){
+    auto actionCallBack = CallFunc::create(CC_CALLBACK_0(Bug::stopBugMoveAround,this));
+    auto action = CardinalSplineBy::create(100, _arrayPointMove, 0);
+    auto seq = Sequence::create(action,actionCallBack,nullptr);
+    auto rotate = Sequence::create(RotateBy::create(100, _deltaRotate), NULL);
+    this->runAction(seq);
+    this->runAction(rotate);
+    
+}
+
+void Bug::stopBugMoveAround(){
+    this->stopAllActions();
+    this->setPosition(_savePosition);
+    this->setRotation(_originalRotate);
+    this->animationBug(_typeBug);
+    this->bugMoveInCircle();
+}
+
 void Bug::removeBug(){
     CCLOG("REMOVED BUG");
-    _tool->_isDroppedBug = false;
-    _tool->_isCatchedBug = false;
-    _tool->setToolCatchNormal();
+    if (_tool->_typeTool == TOOL_TYPE_CATCH_BUG) {
+        _tool->setToolCatchNormal();
+        _tool->_isCatchedBug = false;
+        _tool->_isDroppedBug = false;
+    }else if(_tool->_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE){
+//        CC_SAFE_RELEASE(_arrayPointMove);
+
+        auto spriteTmp = Sprite::createWithSpriteFrame(this->getSpriteFrame());
+        _tool->addChild(spriteTmp,15);
+        spriteTmp->setPosition(_tool->getContentSize().width*0.6, _tool->getContentSize().height);
+        spriteTmp->setRotation(this->getRotation());
+    }else if(_tool->_typeTool == TOOL_TYPE_SPRAY_CHEMICALs){
+        auto spriteTmp = Sprite::createWithSpriteFrame(this->getSpriteFrame());
+        this->getParent()->addChild(spriteTmp,15);
+        spriteTmp->setPosition(this->getPosition());
+        spriteTmp->setScale(1.3f);
+        spriteTmp->setRotation(this->getRotation());
+        spriteTmp->runAction(Sequence::create(MoveTo::create(1.0f, Point(this->getPositionX(),-100)), NULL));
+    }
+    
     this->_isRemove = true;
     this->stopAllActions();
     this->setVisible(false);

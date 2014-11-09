@@ -395,7 +395,12 @@ void Tool::touchEvent(cocos2d::Touch* touch){
         }
         
         if(_typeTool != TOOL_TYPE_WATER_DRUG && _typeTool != TOOL_TYPE_INJECTION && _isMoved){
-            this->runAction(Sequence::create(actionMove,action, NULL));
+            if(_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE && _isCatchedBug){
+                auto actionMove1 = MoveTo::create(0.7f, Point(_savePositionOriginal.x,_savePositionOriginal.y - this->getContentSize().height/2));
+                this->runAction(Sequence::create(actionMove1,action,actionMove, NULL));
+            }else{
+                this->runAction(Sequence::create(actionMove,action, NULL));
+            }
         }
         
         if(_typeTool == TOOL_TYPE_CATCH_BUG){
@@ -444,6 +449,7 @@ void Tool::touchEvent(cocos2d::Touch* touch){
         _isTouch = false;
         this->runAction(Sequence::create(MoveTo::create(0.2f, _savePositionOriginal),action, NULL));
     }
+    
     CocosDenshion::SimpleAudioEngine::getInstance()->stopAllEffects();
 }
 
@@ -451,6 +457,10 @@ void Tool::setTouchAvailable(){
     _isMoved = false;
     //if type tool is catch bug
     _isCatchedBug = false;
+    if (_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE) {
+        this->setToolCatchNormal();
+        this->removeAllChildren();
+    }
 }
 
 void Tool::setTouchDotPosition (Vec2 vec)
@@ -753,7 +763,11 @@ void Tool::setToolCatchedBug(){
 
 void Tool::setToolCatchNormal(){
     char str[100] = {0};
-    sprintf(str, TOOL_CATCH_BUG);
+    if(_typeTool == TOOL_TYPE_CATCH_BUG){
+        sprintf(str, TOOL_CATCH_BUG);
+    }else if(_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE){
+        sprintf(str, TOOL_CATCH_BUG_ADVANCE);
+    }
 
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
     this->setTexture(texture);
