@@ -195,11 +195,11 @@ void MessObject::updateMess(float dt){
                         auto action = CallFunc::create(CC_CALLBACK_0(Tool::showMuiTen,_tool));
                         _tool->runAction(Sequence::create(DelayTime::create(0.4f),action, NULL));
                     }
-                    else if(_tool->_typeTool == TOOL_TYPE_INJECTION && _tool->_isSet && !_isCheckingMess){
-                        if(_tool->_isDropDrugWater){
-                            this->removeMess();
-                            _tool->_isDropDrugWater = false;
-                        }
+                }
+                else if(_tool->_typeTool == TOOL_TYPE_INJECTION && _tool->_isSet && !_isCheckingMess){
+                    if(_tool->_isDropDrugWater){
+                        this->removeMess();
+                        _tool->_isDropDrugWater = false;
                     }
                 }
                 else if(_tool->_typeTool == TOOL_TYPE_LAZER && !_needUseGel){
@@ -329,17 +329,18 @@ void MessObject::removeMess(){
     }
     else if(_typeMess == MESS_TYPE_MUN){
         _stateMess --;
-        if(_stateMess != 0){
+        if(_stateMess > 0){
             CCLOG("DROP");
             this->runAction(FadeTo::create(0.7f, 255.0f - 30*(4 - _stateMess)));
-        }else{
+        }else if(_stateMess == 0){
             this->deleteMess();
         }
     }
     else if(_typeMess == MESS_TYPE_MU_TAI){
-        CCLOG("REMOVE mu tai");
         _isCheckingMess = false;
         if(_tool->_typeTool != TOOL_TYPE_GEL){
+            CCLOG("REMOVE mu tai");
+            _isRemove = true;
             this->runAction(FadeTo::create(0.3f, 0.0f));
         }else{
             this->runAction(FadeTo::create(3.0f, 0.0f));
@@ -357,22 +358,32 @@ void MessObject::deleteMess(){
         _tool->_isSet = false;
         _tool->_muiTen->setVisible(false);
         _tool->_isDropDrugWater = false;
+        
         if(_typeMess == MESS_TYPE_MU_TAI){
+            _tool->_isMoved = false;
             _tool->setInjectionNormal();
             _tool->_isTouch = false;
             _tool->_noteHelp->setVisible(false);
             _tool->_patient->setMouthNormal();
             auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
             _tool->runAction(actionMove);
+        }else if (_typeMess == MESS_TYPE_MUN){
+            _tool->_isTouch = false;
+            _tool->_isMoved = false;
+            _tool->runAction(RotateTo::create(0.7f, 0.0f));
+            auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
+            _tool->runAction(actionMove);
         }
-    }else if(_tool->_typeTool == TOOL_TYPE_LAZER){
+    }
+    else if(_tool->_typeTool == TOOL_TYPE_LAZER){
         char str[100] = {0};
         sprintf(str, MESS_SEO);
         this->setOpacity(225.0f);
         Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(str);
         this->setTexture(texture);
         this->_tool = ((GamePlay*)(this->getParent()))->_bottleGel;
-    }else if(_tool->_typeTool == TOOL_TYPE_GEL){
+    }
+    else if(_tool->_typeTool == TOOL_TYPE_GEL){
         this->_isRemove = true;
     }
 }

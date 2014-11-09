@@ -420,6 +420,7 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
                     return true;
                 }
                 else{
+            
                     CCLOG("Nho thuoc");
                     _drugWater->_isDropDrugWater = true;
                     _drugWater->dropDrug();
@@ -443,7 +444,7 @@ bool GamePlay::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
                     
                     return true;
                 }
-                else{
+                else if(_injection->_isSet && _injection->_isMoved){
                     CCLOG("Hut mu");
                     _injection->_isDropDrugWater = true;
                     _injection->setInjectionFull();
