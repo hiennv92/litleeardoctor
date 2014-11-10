@@ -21,7 +21,8 @@ class GamePlay : public cocos2d::Layer{
 public:
     static cocos2d::Scene* createScene();
     virtual bool init();
-    
+    virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
+
     cocos2d::Sprite *_spriteTable, *_background, *_backgroundBlackFont, *_earHoleScale,*spriteCircle, *_darkBackground;
     cocos2d::extension::ControlSlider *slider;
     cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton, *_drawButton, *_homeButton, *_saveButton, *_mailButton, *_faceButton;
@@ -44,6 +45,9 @@ public:
     int _tag, _pageTools;
     bool _isChangeBarSlider;
     PointArray* _array;
+    
+    //DRAW
+    bool _isStartDraw;
 
     CREATE_FUNC(GamePlay);
 
@@ -52,6 +56,11 @@ public:
     bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event);
     void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event);
     void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event);
+    
+    void onTouchesBegan(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
+    void onTouchesMoved(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
+    void onTouchesEnded(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
+
 
     void addSliderBar();
     void addFlashLight();

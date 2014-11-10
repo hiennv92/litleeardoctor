@@ -370,6 +370,7 @@ void MessObject::deleteMess(){
         }else if (_typeMess == MESS_TYPE_MUN){
             _tool->_isTouch = false;
             _tool->_isMoved = false;
+            _tool->_noteHelp->setVisible(false);
             _tool->runAction(RotateTo::create(0.7f, 0.0f));
             auto actionMove = MoveTo::create(0.7f, _tool->_savePositionOriginal);
             _tool->runAction(actionMove);
