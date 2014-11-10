@@ -498,14 +498,14 @@ void Tool::setTouchDotPosition (Vec2 vec)
         this->setPosition (vec);
     }
     else if(_typeTool == TOOL_TYPE_LAZER){
-        if (vec.y > _visibleSize.height*0.3f ) {
-            vec.y = _visibleSize.height*0.3f;
+        if (vec.y > _visibleSize.height*0.4f ) {
+            vec.y = _visibleSize.height*0.4f;
         }
         this->setPosition (vec);
     }
     else if(_typeTool == TOOL_TYPE_CATCH_BUG_ADVANCE){
-        if (vec.y > _visibleSize.height*0.3f ) {
-            vec.y = _visibleSize.height*0.3f;
+        if (vec.y > _visibleSize.height*0.4f ) {
+            vec.y = _visibleSize.height*0.4f;
         }
         this->setPosition (vec);
     }
