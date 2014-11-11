@@ -2729,7 +2729,7 @@ void GamePlay::chooseStampsDraw(Ref *pSender){
     stempBrush->setColor(Color3B::WHITE);
     stempBrush->setSpriteFrame(SpriteFrame::create(str,Rect(0,0,spriteBrush->getContentSize().width,spriteBrush->getContentSize().height)));
     
-    ((Sprite*)spriteBarDraw->getChildByTag(20))->setSpriteFrame(SpriteFrame::create(str,Rect(0,0,spriteBrush->getContentSize().width,spriteBrush->getContentSize().height)));
+    spriteStamp->setSpriteFrame(SpriteFrame::create(str,Rect(0,0,spriteBrush->getContentSize().width,spriteBrush->getContentSize().height)));
 }
 
 //void GamePlay::facebook(Ref *pSender){
