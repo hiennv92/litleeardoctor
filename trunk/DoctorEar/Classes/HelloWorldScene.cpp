@@ -65,22 +65,22 @@ bool HelloWorld::init()
     pEraser->setPosition(getContentSize().width - 100, 30);
     
     MenuItemLabel* pBrush1 = MenuItemLabel::create(Label::createWithSystemFont("Brush 1", "System", 30), [&](Ref* sender){
-        brush->setTexture("pen_brush_1.png");
-        shadow->setTexture("pen_brush_1.png");
+        brush->setTexture("DrawResources/brush/pen_brush_1.png");
+        shadow->setTexture("DrawResources/brush/pen_brush_1.png");
         brushIndex = 1;
     });
     pBrush1->setPosition(getContentSize().width - 220, 30);
     
     MenuItemLabel* pBrush2 = MenuItemLabel::create(Label::createWithSystemFont("Brush 2", "System", 30), [&](Ref* sender){
-        brush->setTexture("pen_brush_2.png");
-        shadow->setTexture("pen_brush_2.png");
+        brush->setTexture("DrawResources/brush/pen_brush_2.png");
+        shadow->setTexture("DrawResources/brush/pen_brush_2.png");
         brushIndex = 2;
     });
     pBrush2->setPosition(getContentSize().width - 340, 30);
     
     MenuItemLabel* pBrush3 = MenuItemLabel::create(Label::createWithSystemFont("Brush 3", "System", 30), [&](Ref* sender){
-        brush->setTexture("pen_brush_3.png");
-        shadow->setTexture("pen_brush_3.png");
+        brush->setTexture("DrawResources/brush/pen_brush_3.png");
+        shadow->setTexture("DrawResources/brush/pen_brush_3.png");
         brushIndex = 3;
     });
     pBrush3->setPosition(getContentSize().width - 460, 30);
@@ -133,19 +133,19 @@ bool HelloWorld::init()
     canvas->retain();
     
     // set target as child and z order to 1
-    this->addChild(canvas, 2);
+    this->addChild(canvas, 15);
     
     shadowCanvas = RenderTexture::create(size.width, size.height, Texture2D::PixelFormat::RGBA8888);
     shadowCanvas->setPosition(size.width / 2, size.height / 2);
     shadowCanvas->retain();
     this->addChild(shadowCanvas, 1);
     
-    shadow = Sprite::create("pen_brush_1.png");
+    shadow = Sprite::create("DrawResources/brush/pen_brush_1.png");
     shadow->retain();
     shadow->setColor(Color3B::RED);
 
     // init the brush tip
-    brush = Sprite::create("pen_brush_1.png");
+    brush = Sprite::create("DrawResources/brush/pen_brush_1.png");
     // Change color of brush by this line.
     brush->setColor(Color3B::YELLOW);
     // RGB color
@@ -153,11 +153,11 @@ bool HelloWorld::init()
     // used later do not release
     brush->retain();
     
-    eraser = Sprite::create("brush.png");
-    eraser->retain();
-    eraser->setScale(3);
-    BlendFunc f = {GL_ZERO,GL_ONE_MINUS_SRC_ALPHA };
-    eraser->setBlendFunc(f);
+//    eraser = Sprite::create("brush.png");
+//    eraser->retain();
+//    eraser->setScale(3);
+//    BlendFunc f = {GL_ZERO,GL_ONE_MINUS_SRC_ALPHA };
+//    eraser->setBlendFunc(f);
     
     brushIndex = 1;
 

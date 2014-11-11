@@ -536,20 +536,6 @@ void Tool::setMoveCleanFalse(){
 
 void Tool::changeAngle()
 {
-//    if(this->getPositionX() >= _savePositionOriginal.x && (this->getPositionY() < _savePositionOriginal.y + 10*cosf(45) || this->getPositionY() > _savePositionOriginal.y - 10*cosf(45))){
-////        CCLOG("PHAI");
-//        _right = true;
-//        _left = false;
-//        _up = false;
-//        _down = false;
-//    }else if(this->getPositionX() < _savePositionOriginal.x && (this->getPositionY() < _savePositionOriginal.y + 10*cosf(45) || this->getPositionY() > _savePositionOriginal.y - 10*cosf(45))){
-////        CCLOG("TRAI");
-//        _right = false;
-//        _left = true;
-//        _up = false;
-//        _down = false;
-//    }
-    
     float x1 = this->getPosition().x;
     float x2 = _savePositionOriginal.x;
     float y1 = this->getPosition().y;

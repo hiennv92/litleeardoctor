@@ -19,6 +19,7 @@ public:
     void playGameSelected(cocos2d::Ref* pSender);
     void returnHome(cocos2d::Ref* pSender);
 
+    
     CREATE_FUNC(MenuChoosePatients);
 };
 

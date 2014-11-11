@@ -71,7 +71,6 @@ bool MainMenu::init(){
     auto menu = Menu::create(btnPlayGame,_btnSoundOnOff, NULL);
     menu->setPosition(Vec2::ZERO);
     background->addChild(menu,15);
-    
     return true;
 }
 
@@ -83,7 +82,7 @@ void MainMenu::playGameSelected(Ref* pSender){
 
     auto newScene = MenuChoosePatients::createScene();
     auto trans    = TransitionSplitCols::create(.5f, newScene);
-    Director::getInstance()->replaceScene(trans);    
+    Director::getInstance()->replaceScene(trans);
 }
 
 void MainMenu::soundOnOff(Ref* pSender){

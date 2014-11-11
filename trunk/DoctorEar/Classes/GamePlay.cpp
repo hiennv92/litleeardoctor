@@ -97,7 +97,7 @@ bool GamePlay::init(){
     _patient->createEarHole();
     
     //Add touch
-    auto *listener = EventListenerTouchOneByOne::create();
+    listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     
     listener->onTouchBegan = CC_CALLBACK_2(GamePlay::onTouchBegan, this);
@@ -105,11 +105,6 @@ bool GamePlay::init(){
     listener->onTouchEnded = CC_CALLBACK_2(GamePlay::onTouchEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
-    auto *listener2 = EventListenerTouchAllAtOnce::create();
-    listener2->onTouchesBegan = CC_CALLBACK_2(GamePlay::onTouchesBegan,this);
-    listener2->onTouchesMoved = CC_CALLBACK_2(GamePlay::onTouchesMoved,this);
-    listener2->onTouchesEnded = CC_CALLBACK_2(GamePlay::onTouchesEnded,this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener2, this);
     
     //Add Tool keep ear
     _keepEar = Tool::createTool(TOOL_KEEP_EAR_3, 1);
@@ -160,8 +155,7 @@ bool GamePlay::init(){
     _homeButton = MenuItemImage::create(GAME_PLAY_BTN_BACK_HOME,GAME_PLAY_BTN_BACK_HOME_SELECTED, CC_CALLBACK_1(GamePlay::backHome,this));
     _saveButton = MenuItemImage::create(GAME_PLAY_BTN_SAVE,GAME_PLAY_BTN_SAVE_SELECTED, CC_CALLBACK_1(GamePlay::saveImage,this));
     _mailButton = MenuItemImage::create(GAME_PLAY_BTN_MAIL,GAME_PLAY_BTN_MAIL_SELECTED, CC_CALLBACK_1(GamePlay::email,this));
-    _faceButton = MenuItemImage::create(GAME_PLAY_BTN_FB,GAME_PLAY_BTN_FB_SELECTED, CC_CALLBACK_1(GamePlay::facebook,this));
-    
+//    _faceButton = MenuItemImage::create(GAME_PLAY_BTN_FB,GAME_PLAY_BTN_FB_SELECTED, CC_CALLBACK_1(GamePlay::facebook,this));
     
     _btnNextTools->setPosition(visibleSize.width*0.9f,visibleSize.height*0.85f);
     _btnBackTools->setPosition(visibleSize.width*0.1f,visibleSize.height*0.85f);
@@ -174,8 +168,8 @@ bool GamePlay::init(){
     _saveButton->setVisible(false);
     _mailButton->setPosition(visibleSize.width*0.61f,visibleSize.height*0.07f);
     _mailButton->setVisible(false);
-    _faceButton->setPosition(visibleSize.width*0.83f,visibleSize.height*0.07f);
-    _faceButton->setVisible(false);
+//    _faceButton->setPosition(visibleSize.width*0.83f,visibleSize.height*0.07f);
+//    _faceButton->setVisible(false);
     
     _btnNextTools->setScale(2.0f);
     _btnBackTools->setScale(2.0f);
@@ -183,7 +177,7 @@ bool GamePlay::init(){
     _homeButton->setScale(1.8f);
     _saveButton->setScale(1.8f);
     _mailButton->setScale(1.8f);
-    _faceButton->setScale(1.8f);
+//    _faceButton->setScale(1.8f);
     _stopAdvanceLevelButton->setScale(2.0f);
 
     _btnBackTools->setVisible(false);
@@ -192,10 +186,14 @@ bool GamePlay::init(){
     _pageTools = 1;
 
     //Menu
-    auto menu = Menu::create(_btnNextTools,_btnBackTools,_stopAdvanceLevelButton,_drawButton,_homeButton,_saveButton,_mailButton,_faceButton, NULL);
+    auto menu = Menu::create(_btnNextTools,_btnBackTools,_stopAdvanceLevelButton,_drawButton,_homeButton,_saveButton,_mailButton, NULL);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu,16);
+    this->addChild(menu,18);
     
+    //Draw
+    setTouchMode(Touch::DispatchMode::ALL_AT_ONCE);
+    setTouchEnabled( true );
+
     _isStartDraw = false;
     return true;
 }
@@ -722,36 +720,133 @@ void GamePlay::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event){
     }
 }
 
-void GamePlay::onTouchesBegan(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
-//    if(_isStartDraw){
-//        SetIterator it;
-//        Touch* touch;
-//        
-//        for( it = touches->begin(); it != touches->end(); it++)
-//        {
-//            touch = (CCTouch*)(*it);
-//            
-//            if(!touch)
-//                break;
-//            
-//            plataformPoints.clear();
-//            
-//            
-//            CCPoint location = touch->getLocationInView();
-//            location = CCDirector::sharedDirector()->convertToGL(location);
-//            
-//            plataformPoints.push_back(location);
-//            
-//            previousLocation = location;
-//        }
-//    }
+void GamePlay::onTouchesBegan(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *unused_event) {
+    if(_isStartDraw && !_isShowBoard && !usingBrush){
+        std::vector<Touch *>::const_iterator it = touches.begin();
+        Touch* touch;
+        Point tap;
+        
+        for (int i =0; i<touches.size(); i++) {
+            touch = (Touch*)(*it);
+            if(touch){
+                tap = touch->getLocation();
+                canvas->begin();
+                stempBrush->setPosition(tap);
+                stempBrush->visit();
+                canvas->end();
+                Director::getInstance()->getRenderer()->render();
+            }
+            it++;
+        }
+    }
 }
 
-void GamePlay::onTouchesMoved(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
+void GamePlay::onTouchesMoved(const std::vector<Touch *> &touches, cocos2d::Event *unused_event)
+{
+    if(_isStartDraw && !_isShowBoard && usingBrush){
+        Touch* touch = touches.at(0);
+        
+        // get start & end location
+        Point start = touch->getLocationInView();
+        Point end = touch->getPreviousLocationInView();
+        
+        // get corrected location
+        start = Director::getInstance()->convertToGL(start);
+        end = Director::getInstance()->convertToGL(end);
+        
+        // draw line on the canvas
+        float distance = end.getDistance(start);
+        float diffX = end.x - start.x;
+        float diffY = end.y - start.y;
+        
+        if (isEraser) {
+            for (int i = 0; i < int(distance); i++)
+            {
+                float delta = float(i) / distance;
+                Point pos(start.x + (diffX * delta), start.y + (diffY * delta));
+                if (isEraser) {
+                    canvas->begin();
+                    eraser->setPosition(pos);
+                    eraser->visit();
+                    canvas->end();
+                    Director::getInstance()->getRenderer()->render();
+                }
+            }
+            
+            for (int i = 0; i < int(distance); i++)
+            {
+                float delta = float(i) / distance;
+                Point pos(start.x + (diffX * delta), start.y + (diffY * delta));
+                if (isEraser) {
+                    shadowCanvas->begin();
+                    eraser->setPosition(pos);
+                    eraser->visit();
+                    shadowCanvas->end();
+                    Director::getInstance()->getRenderer()->render();
+                }
+            }
+            return;
+        }
+        
+        if (brushIndexTab == 2) {
+            for (int i = 0; i < distance; i++) {
+                float delta = float(i) / distance;
+                Point pos(start.x + (diffX * delta), start.y + (diffY * delta));
+
+                shadowCanvas->begin();
+                shadow->setPosition(pos);
+                shadow->setOpacity(2);
+                shadow->visit();
+                
+                shadowBase->setPosition(pos);
+                shadowBase->visit();
+                
+                shadowCanvas->end();
+                Director::getInstance()->getRenderer()->render();
+            }
+        }
+        else if(brushIndexTab == 3){
+            for (int i = 0; i < distance; i++) {
+                float delta = float(i) / distance;
+                Point pos(start.x + (diffX * delta), start.y + (diffY * delta));
+                
+                shadowCanvas->begin();
+                shadowBase->setPosition(pos);
+                shadowBase->visit();
+                
+                shadowCanvas->end();
+                Director::getInstance()->getRenderer()->render();
+            }
+        }
+        
+        for (int i = 0; i < int(distance); i++)
+        {
+            float delta = float(i) / distance;
+            Point pos(start.x + (diffX * delta), start.y + (diffY * delta));
+
+            if (brushIndexTab == 5) {
+                canvas->begin();
+                brush->setPosition(pos);
+                brush->visit();
+                canvas->end();
+                Director::getInstance()->getRenderer()->render();
+            }
+            else{
+                canvas->begin();
+                brush->setPosition(pos);
+                brush->visit();
+                canvas->end();
+                Director::getInstance()->getRenderer()->render();
+            }
+        }
+    }
+}
+
+void GamePlay::onTouchesEnded(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *unused_event) {
     
 }
 
-void GamePlay::onTouchesEnded(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event){
+void GamePlay::onTouchesCancelled(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *unused_event) {
     
 }
 
@@ -761,8 +856,9 @@ void GamePlay::addSliderBar(){
     // Add the slider
     CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect(SOUND_MACHINE_KEEP_EAR);
     _isChangeBarSlider = false;
-
+    
     slider = cocos2d::extension::ControlSlider::create(TOOL_SLIDER_BAR_1,TOOL_SLIDER_BAR_1_BUTTON,TOOL_SLIDER_BAR_1_BUTTON);
+    slider->setTag(1);
     (slider->getProgressSprite())->setVisible(false);
     slider->setAnchorPoint(Vec2(0.5f, 1.0f));
     slider->setMinimumValue(0.0f); // Sets the min value of range
@@ -770,41 +866,51 @@ void GamePlay::addSliderBar(){
     slider->setMinimumAllowedValue(1.5f);
     slider->setValue(1.5f);
     slider->setPosition(Vec2(_background->getContentSize().width*0.185f, _background->getContentSize().height*0.9f));
-    slider->setTag(1);
     slider->addTargetWithActionForControlEvents(this, cccontrol_selector(GamePlay::valueChanged), cocos2d::extension::Control::EventType::VALUE_CHANGED);
     _background->addChild(slider,15);
 }
 
 void GamePlay::valueChanged(Ref *sender, cocos2d::extension::Control::EventType controlEvent)
 {
-    if(!_isChangeBarSlider){
-        _keepEar->_handHelp->stopAllActions();
-        _keepEar->_handHelp->removeFromParentAndCleanup(true);
-
-        auto spriteThumb = Sprite::create(TOOL_SLIDER_BAR_1_BUTTON);
-        slider->setEnabled(false);
-        (slider->getThumbSprite())->removeFromParentAndCleanup(true);
-
-        slider->addChild(spriteThumb);
-        spriteThumb->setPosition(slider->getContentSize().width*0.4f,slider->getContentSize().height*0.5f);
-        auto action = MoveTo::create(0.5f, Point(slider->getContentSize().width*0.7f,spriteThumb->getPosition().y));
-        spriteThumb->runAction(action);
-        
-        auto actionFlash = CallFunc::create( CC_CALLBACK_0(GamePlay::addFlashLight,this));
-        
-        _patient->_earHole->runAction(Sequence::create(ScaleTo::create(0.5f, 2.0f),NULL));
-        _patient->_earHole->runAction(Sequence::create(MoveTo::create(0.5f, Point(_patient->_earHole->getPosition().x - 15,_patient->_earHole->getPosition().y + 14)), NULL));
-
-        _keepEar->runAction(Sequence::create(ScaleTo::create(0.5f, 2.0f),NULL));
-        _keepEar->runAction(Sequence::create(MoveTo::create(0.5f, Point(_keepEar->_visibleSize.width*0.0f,_keepEar->_visibleSize.height*0.63f)),actionFlash,NULL));
-
-        slider->runAction(Sequence::create(DelayTime::create(0.6f),MoveTo::create(0.5f,Point(-slider->getPosition().x,slider->getPosition().y)), NULL));
-        
-        if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
-            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MACHINE_KEEP_EAR);
+    cocos2d::extension::ControlSlider *sd = (extension::ControlSlider*)sender;
+    
+    if (sd->getTag() == 1) {
+        if(!_isChangeBarSlider){
+            _keepEar->_handHelp->stopAllActions();
+            _keepEar->_handHelp->removeFromParentAndCleanup(true);
+            
+            auto spriteThumb = Sprite::create(TOOL_SLIDER_BAR_1_BUTTON);
+            slider->setEnabled(false);
+            (slider->getThumbSprite())->removeFromParentAndCleanup(true);
+            
+            slider->addChild(spriteThumb);
+            spriteThumb->setPosition(slider->getContentSize().width*0.4f,slider->getContentSize().height*0.5f);
+            auto action = MoveTo::create(0.5f, Point(slider->getContentSize().width*0.7f,spriteThumb->getPosition().y));
+            spriteThumb->runAction(action);
+            
+            auto actionFlash = CallFunc::create( CC_CALLBACK_0(GamePlay::addFlashLight,this));
+            
+            _patient->_earHole->runAction(Sequence::create(ScaleTo::create(0.5f, 2.0f),NULL));
+            _patient->_earHole->runAction(Sequence::create(MoveTo::create(0.5f, Point(_patient->_earHole->getPosition().x - 15,_patient->_earHole->getPosition().y + 14)), NULL));
+            
+            _keepEar->runAction(Sequence::create(ScaleTo::create(0.5f, 2.0f),NULL));
+            _keepEar->runAction(Sequence::create(MoveTo::create(0.5f, Point(_keepEar->_visibleSize.width*0.0f,_keepEar->_visibleSize.height*0.63f)),actionFlash,NULL));
+            
+            slider->runAction(Sequence::create(DelayTime::create(0.6f),MoveTo::create(0.5f,Point(-slider->getPosition().x,slider->getPosition().y)), NULL));
+            
+            if(UserDefault::getInstance()->getBoolForKey(SOUND_ON_OFF)){
+                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(SOUND_MACHINE_KEEP_EAR);
+            }
+            
+            _isChangeBarSlider = true;
         }
-        
-        _isChangeBarSlider = true;
+    }
+    else if(sd->getTag() == 2){
+        _bgBoardBrushes->getChildByTag(-500)->setScale(pSlider->getValue());
+
+        brush->setScale(pSlider->getValue());
+        shadowBase->setScale(pSlider->getValue()*2.0);
+        shadow->setScale(pSlider->getValue()*6.0f);
     }
 }
 
@@ -1018,6 +1124,453 @@ void GamePlay::showTools(){
     
     _pageTools = 1;
     _btnNextTools->setVisible(true);
+}
+
+void GamePlay::addToolsPaint(){
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+    //Init draw tool
+    spriteBarDraw = Sprite::create(DRAW_BAR);
+    spriteBarDraw->setScaleY(2.0f);
+    spriteBarDraw->setPosition(visibleSize.width/2, visibleSize.height - spriteBarDraw->getContentSize().height);
+    spriteBarDraw->setScaleX(visibleSize.width/spriteBarDraw->getContentSize().width);
+    this->addChild(spriteBarDraw,18);
+    
+    btnStopDraw = MenuItemImage::create("slice27_27.png","slice23_23.png","slice23_23.png",CC_CALLBACK_1(GamePlay::stopDraw,this));
+    btnStopDraw->setPosition(spriteBarDraw->getContentSize().width*0.1,spriteBarDraw->getContentSize().height*0.5f);
+    auto spriteErrow = Sprite::create("slice48_48.png");
+    spriteBarDraw->addChild(spriteErrow,19);
+    spriteErrow->setScale(0.5f);
+    spriteErrow->setPosition(btnStopDraw->getPosition());
+    
+    btnOpenTabBrush = MenuItemImage::create("slice14_14.png","slice14_14.png","slice28_28.png",CC_CALLBACK_1(GamePlay::chooseBrush,this));
+    btnOpenTabBrush->setPosition(spriteBarDraw->getContentSize().width*0.26,spriteBarDraw->getContentSize().height*0.5f);
+    spriteBrush = Sprite::create("slice13_13.png");
+    spriteBrushWhite = Sprite::create("slice18_18.png");
+    spriteBrushWhite->setColor(Color3B::BLACK);
+    spriteBrush->setPosition(btnOpenTabBrush->getPosition());
+    spriteBrushWhite->setPosition(btnOpenTabBrush->getPosition());
+    spriteBarDraw->addChild(spriteBrushWhite,19);
+    spriteBarDraw->addChild(spriteBrush,19);
+    
+    btnOpenTabStamp = MenuItemImage::create("slice28_28.png","slice14_14.png","slice28_28.png",CC_CALLBACK_1(GamePlay::chooseStamp,this));
+    btnOpenTabStamp->setPosition(spriteBarDraw->getContentSize().width*0.42,spriteBarDraw->getContentSize().height*0.5f);
+    spriteStamp = Sprite::create("stamp/slice24_24.png");
+    spriteBarDraw->addChild(spriteStamp,19);
+    spriteStamp->setScale(0.5f);
+    spriteStamp->setPosition(btnOpenTabStamp->getPosition());
+    
+    btnChooseEraser = MenuItemImage::create("slice28_28.png","slice14_14.png","slice28_28.png",CC_CALLBACK_1(GamePlay::chooseEraser,this));
+    btnChooseEraser->setPosition(spriteBarDraw->getContentSize().width*0.58,spriteBarDraw->getContentSize().height*0.5f);
+    auto spriteEraser = Sprite::create("common/slice16_16.png");
+    spriteBarDraw->addChild(spriteEraser,19);
+    spriteEraser->setScale(0.7f);
+    spriteEraser->setTag(30);
+    spriteEraser->setPosition(btnChooseEraser->getPosition());
+    
+    auto menuItem = Menu::create(btnStopDraw,btnOpenTabBrush,btnOpenTabStamp,btnChooseEraser, NULL);
+    menuItem->setPosition(0,0);
+    spriteBarDraw->addChild(menuItem,18);
+    spriteBarDraw->setVisible(false);
+    
+    tabIndex = 0;
+    
+    //Table brushes
+    _bgBoardBrushes = Sprite::create(DRAW_UI_BG_3);
+    this->addChild(_bgBoardBrushes, 20);
+    _bgBoardBrushes->setScale(2.0f);
+    _bgBoardBrushes->setPosition(visibleSize.width/2, visibleSize.height/2);
+    
+    //Starts
+    auto sprite1 = Sprite::create("common/slice15_15.png");
+    _bgBoardBrushes->addChild(sprite1,19);
+    sprite1->setPosition(_bgBoardBrushes->getContentSize().width *0.2, _bgBoardBrushes->getContentSize().height*0.95);
+    auto sprite2 = Sprite::create("common/slice22_22.png");
+    _bgBoardBrushes->addChild(sprite2,19);
+    sprite2->setPosition(_bgBoardBrushes->getContentSize().width *0.4, _bgBoardBrushes->getContentSize().height);
+    auto sprite3 = Sprite::create("common/slice27_27.png");
+    _bgBoardBrushes->addChild(sprite3,19);
+    sprite3->setPosition(_bgBoardBrushes->getContentSize().width *0.8, _bgBoardBrushes->getContentSize().height*0.9);
+    
+    _menuBrushesType = Menu::create();
+    _menuBrushesColor = Menu::create();
+    
+    for(int i = 0; i < 5;i++){
+        if(i == 0){
+            //41_41
+            auto item = MenuItemImage::create("slice23_23.png","slice23_23.png",CC_CALLBACK_1(GamePlay::chooseTypeBrush,this));
+            item->setPosition(_bgBoardBrushes->getContentSize().width*0.15, _bgBoardBrushes->getContentSize().height*0.83);
+            item->setTag(i);
+            _menuBrushesType->addChild(item);
+            
+            _iconBrushType1 = Sprite::create("slice13_13.png");
+            _iconBrushWhiteType1 = Sprite::create("slice18_18.png");
+            _iconBrushWhiteType1->setColor(Color3B::BLACK);
+            _iconBrushType1->setPosition(item->getPosition());
+            _iconBrushType1->setPosition(item->getPosition());
+            _bgBoardBrushes->addChild(_iconBrushType1,15);
+            _bgBoardBrushes->addChild(_iconBrushWhiteType1,15);
+        }else if(i == 4){
+            auto item = MenuItemImage::create("slice05_05.png","slice11_11.png",CC_CALLBACK_1(GamePlay::chooseTypeBrush,this));
+            item->setPosition(_bgBoardBrushes->getContentSize().width*(0.15 + i*0.175), _bgBoardBrushes->getContentSize().height*0.83);
+            item->setTag(i);
+            _menuBrushesType->addChild(item);
+            
+            auto sp = Sprite::create("slice16_16.png");
+            sp->setPosition(item->getPosition());
+            sp->setScale(0.5f);
+            _bgBoardBrushes->addChild(sp,15);
+        }else{
+            auto item = MenuItemImage::create("slice43_43.png","slice14_14.png",CC_CALLBACK_1(GamePlay::chooseTypeBrush,this));
+            item->setPosition(_bgBoardBrushes->getContentSize().width*(0.15 + i*0.175), _bgBoardBrushes->getContentSize().height*0.83);
+            item->setTag(i);
+            _menuBrushesType->addChild(item);
+        }
+    }
+    
+    auto itemClose = MenuItemImage::create("common/slice17_17.png","common/slice17_17.png",CC_CALLBACK_1(GamePlay::closeBoard,this));
+    itemClose->setPosition(_bgBoardBrushes->getContentSize().width*0.95f, _bgBoardBrushes->getContentSize().height*0.95f);
+    itemClose->setTag(-1);
+
+    _menuBrushesType->addChild(itemClose);
+    _menuBrushesType->setPosition(0,0);
+    _bgBoardBrushes->addChild(_menuBrushesType);
+    
+    auto imgRainBowBrush = Sprite::create("slice01_01.png");
+    imgRainBowBrush->setTag(-200);
+    imgRainBowBrush->setPosition(_bgBoardBrushes->getContentSize().width/2, _bgBoardBrushes->getContentSize().height/2);
+    _bgBoardBrushes->addChild(imgRainBowBrush,15);
+    imgRainBowBrush->setVisible(false);
+    
+    for(int i = 0; i < 24; i++){
+        auto spriteBrush = Sprite::create("slice31_31.png");
+        spriteBrush->setTag(-100);
+        _bgBoardBrushes->addChild(spriteBrush,10);
+        
+        auto spriteBrush2 = Sprite::create("slice04_04.png");
+        spriteBrush2->setVisible(false);
+        _bgBoardBrushes->addChild(spriteBrush2,10);
+        spriteBrush2->setTag(-101 - i);
+        
+        if (i <= 5) {
+            if ( i == 0) {
+                auto item = MenuItemImage::create("slice38_38.png","slice38_38.png",CC_CALLBACK_1(GamePlay::chooseBrushPath,this));
+                item->setPosition(_bgBoardBrushes->getContentSize().width*(0.155 + 0.14*i), _bgBoardBrushes->getContentSize().height*0.69);
+                item->setTag(i);
+                _menuBrushesColor->addChild(item);
+                
+                spriteBrush2->setPosition(item->getPosition());
+                spriteBrush2->setColor(Color3B::WHITE);
+                
+                spriteBrush->setPosition(item->getPosition());
+                spriteBrush->setColor(Color3B::BLACK);
+            }else{
+                auto item = MenuItemImage::create("slice40_40.png","slice40_40.png",CC_CALLBACK_1(GamePlay::chooseBrushPath,this));
+                item->setPosition(_bgBoardBrushes->getContentSize().width*(0.155 + 0.14*i), _bgBoardBrushes->getContentSize().height*0.69);
+                item->setTag(i);
+                _menuBrushesColor->addChild(item);
+                
+                spriteBrush2->setPosition(item->getPosition());
+                spriteBrush->setPosition(item->getPosition());
+                
+                if (i == 1) {
+                    spriteBrush2->setColor(Color3B::BLACK);
+                    spriteBrush->setColor(Color3B::WHITE);
+                }
+                else if(i == 2){
+                    spriteBrush2->setColor(Color3B::WHITE);
+                    spriteBrush->setColor(Color3B::GRAY);
+                }else if(i == 3){
+                    spriteBrush2->setColor(Color3B::YELLOW);
+                    spriteBrush->setColor(Color3B(220, 20, 60));
+                }else if(i == 4){
+                    spriteBrush2->setColor(Color3B::YELLOW);
+                    spriteBrush->setColor(Color3B(139, 0, 0));
+                }else if(i == 5){
+                    spriteBrush2->setColor(Color3B::WHITE);
+                    spriteBrush->setColor(Color3B(219, 112, 147));
+                }
+            }
+        }
+        else if(i> 5 && i<= 11){
+            auto item = MenuItemImage::create("slice40_40.png","slice40_40.png",CC_CALLBACK_1(GamePlay::chooseBrushPath,this));
+            item->setPosition(_bgBoardBrushes->getContentSize().width*(0.155 + 0.14*(i%6)), _bgBoardBrushes->getContentSize().height*0.56);
+            item->setTag(i);
+            _menuBrushesColor->addChild(item);
+            
+            spriteBrush2->setPosition(item->getPosition());
+            spriteBrush->setPosition(item->getPosition());
+            
+            if(i == 6){
+                spriteBrush2->setColor(Color3B::YELLOW);
+                spriteBrush->setColor(Color3B(0, 109, 255));
+            }else if(i == 7){
+                spriteBrush2->setColor(Color3B(0, 109, 255));
+                spriteBrush->setColor(Color3B::BLUE);
+            }else if(i == 8){
+                spriteBrush2->setColor(Color3B::GREEN);
+                spriteBrush->setColor(Color3B(106, 90, 205));
+            }else if(i == 9){
+                spriteBrush2->setColor(Color3B::YELLOW);
+                spriteBrush->setColor(Color3B(205, 0, 205));
+            }else if(i == 10){
+                spriteBrush2->setColor(Color3B::YELLOW);
+                spriteBrush->setColor(Color3B(205, 20, 147));
+            }else if(i == 11){
+                spriteBrush2->setColor(Color3B::WHITE);
+                spriteBrush->setColor(Color3B(255, 105, 180));
+            }
+        }
+        else if(i> 11 && i<= 17){
+            auto item = MenuItemImage::create("slice40_40.png","slice40_40.png",CC_CALLBACK_1(GamePlay::chooseBrushPath,this));
+            item->setPosition(_bgBoardBrushes->getContentSize().width*(0.155 + 0.14*(i%12)), _bgBoardBrushes->getContentSize().height*0.43);
+            item->setTag(i);
+            _menuBrushesColor->addChild(item);
+
+            spriteBrush2->setPosition(item->getPosition());
+            spriteBrush->setPosition(item->getPosition());
+            
+            if(i == 12){
+                spriteBrush2->setColor(Color3B::BLUE);
+                spriteBrush->setColor(Color3B(0, 205, 205));
+            }else if(i == 13){
+                spriteBrush2->setColor(Color3B::BLUE);
+                spriteBrush->setColor(Color3B(175, 238, 238));
+            }else if(i == 14){
+                spriteBrush2->setColor(Color3B::RED);
+                spriteBrush->setColor(Color3B(0,250,154));
+            }else if(i == 15){
+                spriteBrush2->setColor(Color3B::YELLOW);
+                spriteBrush->setColor(Color3B(0,255,127));
+            }else if(i == 16){
+                spriteBrush2->setColor(Color3B::WHITE);
+                spriteBrush->setColor(Color3B(0,255,0));
+            }else if(i == 17){
+                spriteBrush2->setColor(Color3B::MAGENTA);
+                spriteBrush->setColor(Color3B(0,128,0));
+            }
+        }
+        else{
+            auto item = MenuItemImage::create("slice40_40.png","slice40_40.png",CC_CALLBACK_1(GamePlay::chooseBrushPath,this));
+            item->setPosition(_bgBoardBrushes->getContentSize().width*(0.155 + 0.14*(i%18)), _bgBoardBrushes->getContentSize().height*0.3);
+            item->setTag(i);
+            _menuBrushesColor->addChild(item);
+
+            spriteBrush2->setPosition(item->getPosition());
+            spriteBrush->setPosition(item->getPosition());
+            
+            if(i == 18){
+                spriteBrush2->setColor(Color3B::ORANGE);
+                spriteBrush->setColor(Color3B(255,0,0));
+            }
+            else if(i == 19){
+                spriteBrush2->setColor(Color3B::YELLOW);
+                spriteBrush->setColor(Color3B(255,69,0));
+            }
+            else if(i == 20){
+                spriteBrush2->setColor(Color3B::RED);
+                spriteBrush->setColor(Color3B(255,140,0));
+            }else if(i == 21){
+                spriteBrush2->setColor(Color3B::BLUE);
+                spriteBrush->setColor(Color3B(255,165,0));
+            }else if(i == 22){
+                spriteBrush2->setColor(Color3B::BLUE);
+                spriteBrush->setColor(Color3B(255,215,0));
+            }else if(i == 23){
+                spriteBrush2->setColor(Color3B(205,0,205));
+                spriteBrush->setColor(Color3B(255,255,0));
+            }
+        }
+    }
+    
+    _menuBrushesColor->setPosition(0,0);
+    _bgBoardBrushes->addChild(_menuBrushesColor);
+    
+    //Sliceder
+    auto jsp1 = Sprite::create(TOOL_SLIDER_BAR_1);
+    Size sizeJ = jsp1->getContentSize();
+    sizeJ.width *= 1.7f;
+    jsp1->setContentSize(sizeJ);
+    
+    auto jsp2 = Sprite::create("slice39_39.png");
+    auto jsp3 = Sprite::create("slice39_39.png");
+
+    pSlider = cocos2d::extension::ControlSlider::create(jsp1,jsp2,jsp3);
+    pSlider->setTag(2);
+    (pSlider->getBackgroundSprite())->setVisible(false);
+    (pSlider->getProgressSprite())->setVisible(false);
+    
+    pSlider->setMinimumValue(0.5f); // Sets the min value of range
+    pSlider->setMaximumValue(2.5); // Sets the max value of range
+    pSlider->setValue(1.0f);
+    pSlider->setPosition(Vec2(_bgBoardBrushes->getContentSize().width*0.41f, _bgBoardBrushes->getContentSize().height*0.17f));
+    pSlider->addTargetWithActionForControlEvents(this, cccontrol_selector(GamePlay::valueChanged), cocos2d::extension::Control::EventType::VALUE_CHANGED);
+
+    auto jsp4 = Sprite::create("DrawResources/brush/pen_brush_1.png");
+    jsp4->setTag(-500);
+    jsp4->setPosition(_bgBoardBrushes->getContentSize().width*0.85f,pSlider->getPositionY());
+    
+    _bgBoardBrushes->addChild(pSlider,15);
+    _bgBoardBrushes->addChild(jsp4,15);
+    _bgBoardBrushes->setVisible(false);
+    _isShowBoard = false;
+    
+    //Tool draw
+    // ask director the window size
+    Size size = Director::getInstance()->getWinSize();
+    // create a canvas to draw on
+    canvas = RenderTexture::create(size.width, size.height,
+                                   Texture2D::PixelFormat::RGBA8888);
+    // position on the center of the screen
+    canvas->setPosition(Point(size.width / 2, size.height / 2));
+    // used later do not release
+    canvas->retain();
+    // set target as child and z order to 1
+    this->addChild(canvas, 17);
+    
+    shadowCanvas = RenderTexture::create(size.width, size.height, Texture2D::PixelFormat::RGBA8888);
+    shadowCanvas->setPosition(size.width / 2, size.height / 2);
+    shadowCanvas->retain();
+    this->addChild(shadowCanvas, 16);
+    
+    shadow = Sprite::create("DrawResources/brush/pen_brush_1.png");
+    shadow->setColor(Color3B::RED);
+    shadow->setScale(6.0f);
+    shadow->retain();
+
+    shadowBase = Sprite::create("DrawResources/brush/pen_brush_1.png");
+    shadowBase->setColor(Color3B::RED);
+    shadowBase->setScale(2.0f);
+    shadowBase->retain();
+    
+    // init the brush tip
+    brush = Sprite::create("DrawResources/brush/pen_brush_1.png");
+    // Change color of brush by this line.
+    brush->setColor(Color3B::BLACK);
+    // RGB color
+    // used later do not release
+    brush->retain();
+    
+    // init the brush tip
+    stempBrush = Sprite::create("stamp/slice24_24.png");
+    stempBrush->setColor(Color3B::WHITE);
+    stempBrush->retain();
+    
+    eraser = Sprite::create("common/slice16_16.png");
+    eraser->retain();
+    eraser->setScale(1.5f);
+    BlendFunc f = {GL_ZERO,GL_ONE_MINUS_SRC_ALPHA };
+    eraser->setBlendFunc(f);
+    
+    brushIndexTab = 1;
+    isEraser = false;
+    _isStartDraw = false;
+}
+
+void GamePlay::addStempBoard(){
+      Size visibleSize = Director::getInstance()->getVisibleSize();
+    //Table stamp
+    _bgBoardStemp = Sprite::create(DRAW_UI_BG_2);
+    this->addChild(_bgBoardStemp, 20);
+    _bgBoardStemp->setScale(2.0f);
+    _bgBoardStemp->setPosition(visibleSize.width/2, visibleSize.height/2);
+    _bgBoardStemp->setVisible(false);
+    
+    //Starts
+    auto sprite1 = Sprite::create("common/slice15_15.png");
+    _bgBoardStemp->addChild(sprite1,19);
+    sprite1->setPosition(_bgBoardStemp->getContentSize().width *0.2, _bgBoardStemp->getContentSize().height*0.95);
+    auto sprite2 = Sprite::create("common/slice22_22.png");
+    _bgBoardStemp->addChild(sprite2,19);
+    sprite2->setPosition(_bgBoardStemp->getContentSize().width *0.4, _bgBoardStemp->getContentSize().height);
+    auto sprite3 = Sprite::create("common/slice27_27.png");
+    _bgBoardStemp->addChild(sprite3,19);
+    sprite3->setPosition(_bgBoardStemp->getContentSize().width *0.8, _bgBoardStemp->getContentSize().height*0.9);
+    
+    _menuStemps = Menu::create();
+    
+    auto itemClose = MenuItemImage::create("common/slice17_17.png","common/slice17_17.png",CC_CALLBACK_1(GamePlay::closeBoard,this));
+    itemClose->setPosition(_bgBoardStemp->getContentSize().width*0.95f, _bgBoardStemp->getContentSize().height*0.95f);
+    itemClose->setTag(-25);
+    _menuStemps->addChild(itemClose);
+    
+    _menuStemps->setPosition(0,0);
+    _bgBoardStemp->addChild(_menuStemps);
+    
+    for(int i = 0; i < 24; i++){
+        char str[100] ={0};
+        if(i<=8)
+            sprintf(str, "stamp/slice0%d_0%d.png",i+1,i+1);
+        else{
+            sprintf(str, "stamp/slice%d_%d.png",i+1,i+1);
+        }
+        
+        auto spriteBrush = Sprite::create(str);
+        spriteBrush->setTag(-i);
+        spriteBrush->setScale(0.5f);
+        _bgBoardStemp->addChild(spriteBrush,10);
+        
+        //37 - 21
+        if (i <= 3) {
+            if ( i == 0) {
+                auto item = MenuItemImage::create("slice21_21.png","slice21_21.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+                item->setPosition(_bgBoardStemp->getContentSize().width*0.2, _bgBoardStemp->getContentSize().height*0.82);
+                item->setTag(i);
+                _menuStemps->addChild(item);
+                
+                spriteBrush->setPosition(item->getPosition());
+                spriteBrush->setColor(Color3B::BLACK);
+            }else{
+                auto item = MenuItemImage::create("slice37_37.png","slice37_37.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+                item->setPosition(_bgBoardStemp->getContentSize().width*(0.2 + 0.2*i), _bgBoardStemp->getContentSize().height*0.82);
+                item->setTag(i);
+                _menuStemps->addChild(item);
+                
+                spriteBrush->setPosition(item->getPosition());
+            }
+        }
+        else if(i> 3 && i<= 7){
+            auto item = MenuItemImage::create("slice37_37.png","slice37_37.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+            item->setPosition(_bgBoardStemp->getContentSize().width*(0.2 + 0.2*(i%4)), _bgBoardStemp->getContentSize().height*0.7);
+            item->setTag(i);
+            _menuStemps->addChild(item);
+            
+            spriteBrush->setPosition(item->getPosition());
+            
+        }else if(i> 7 && i<= 11){
+            auto item = MenuItemImage::create("slice37_37.png","slice37_37.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+            item->setPosition(_bgBoardStemp->getContentSize().width*(0.2 + 0.2*(i%8)), _bgBoardStemp->getContentSize().height*0.58);
+            item->setTag(i);
+            _menuStemps->addChild(item);
+            
+            spriteBrush->setPosition(item->getPosition());
+            
+        }else if(i > 11 && i <= 15){
+            auto item = MenuItemImage::create("slice37_37.png","slice37_37.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+            item->setPosition(_bgBoardStemp->getContentSize().width*(0.2 + 0.2*(i%12)), _bgBoardStemp->getContentSize().height*0.46);
+            item->setTag(i);
+            _menuStemps->addChild(item);
+            
+            spriteBrush->setPosition(item->getPosition());
+        }else if(i > 15 && i <= 19){
+            auto item = MenuItemImage::create("slice37_37.png","slice37_37.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+            item->setPosition(_bgBoardStemp->getContentSize().width*(0.2 + 0.2*(i%16)), _bgBoardStemp->getContentSize().height*0.34);
+            item->setTag(i);
+            _menuStemps->addChild(item);
+            
+            spriteBrush->setPosition(item->getPosition());
+        }else if(i > 19 && i <= 23){
+            auto item = MenuItemImage::create("slice37_37.png","slice37_37.png",CC_CALLBACK_1(GamePlay::chooseStampsDraw,this));
+            item->setPosition(_bgBoardStemp->getContentSize().width*(0.2 + 0.2*(i%20)), _bgBoardStemp->getContentSize().height*0.22);
+            item->setTag(i);
+            _menuStemps->addChild(item);
+            
+            spriteBrush->setPosition(item->getPosition());
+        }
+    }
+    
+    _menuStemps->setPosition(0,0);
+    _bgBoardStemp->setVisible(false);
+    _isShowBoard = false;
 }
 
 #pragma mark - mess and bugs
@@ -1677,9 +2230,13 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         
         _saveButton->setVisible(true);
         _homeButton->setVisible(true);
-        _faceButton->setVisible(true);
+//        _faceButton->setVisible(true);
         _mailButton->setVisible(true);
         _drawButton->setVisible(true);
+        
+        _eventDispatcher->removeEventListener(listener);
+        this->addToolsPaint();
+        this->addStempBoard();
     }
 }
 
@@ -1734,15 +2291,368 @@ void GamePlay::saveImage(Ref *pSender){
 }
 
 void GamePlay::drawImage(Ref *pSender){
-    _isStartDraw = true;
+    if(!_isStartDraw){
+        _drawButton->setVisible(false);
+        _homeButton->setVisible(false);
+        _saveButton->setVisible(false);
+        _mailButton->setVisible(false);
+        //    _faceButton->setVisible(false);
+        _isStartDraw = true;
+        
+        _patient->stopAllActions();
+        _patient->unscheduleUpdate();
+        _patient->unscheduleAllSelectors();
+        _patient->setOpenEye();
+        
+        spriteBarDraw->setVisible(true);
+        //    for (auto mess : this->getChildren()) {
+        //        mess->setPosition(mess->getPositionX(), mess->getPositionY() - 100);
+        //    }
+        auto normalImg1 = Sprite::create("slice14_14.png");
+        auto normalImg2 = Sprite::create("slice28_28.png");
+        btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+        btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        
+        isEraser = false;
+        usingBrush = true;
+        
+        this->schedule(schedule_selector(GamePlay::updateColorBrush), 0.02f);
+    }
+}
+
+void GamePlay::updateColorBrush(float dt){
+    if (brushIndexTab == 5 && usingBrush) {
+        brush->setColor(Color3B(arc4random() % 255, arc4random() %255, arc4random() % 255));
+    }
+}
+
+
+void GamePlay::chooseBrush(Ref *pSender){
+    if (!_isShowBoard) {
+        auto normalImg1 = Sprite::create("slice14_14.png");
+        auto normalImg2 = Sprite::create("slice28_28.png");
+        btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+        btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        isEraser = false;
+        _bgBoardBrushes->setVisible(true);
+        _isShowBoard = true;
+        usingBrush = true;
+    }
+}
+
+void GamePlay::chooseStamp(Ref *pSender){
+    auto normalImg1 = Sprite::create("slice14_14.png");
+    auto normalImg2 = Sprite::create("slice28_28.png");
+    btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+    btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+    btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+
+    isEraser = false;
+    _isShowBoard = true;
+    _bgBoardStemp->setVisible(true);
+    _bgBoardBrushes->setVisible(false);
+    usingBrush = false;
+}
+
+void GamePlay::chooseEraser(Ref *pSender){
+    auto normalImg1 = Sprite::create("slice14_14.png");
+    auto normalImg2 = Sprite::create("slice28_28.png");
+    btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+    btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+    btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+
+    usingBrush = true;
+    isEraser = true;
 }
 
 void GamePlay::email(Ref *pSender){
     
 }
 
-void GamePlay::facebook(Ref *pSender){
+void GamePlay::closeBoard(Ref *pSender){
+    _bgBoardBrushes->setVisible(false);
+    _bgBoardStemp->setVisible(false);
+    _isShowBoard = false;
+}
+
+void GamePlay::chooseTypeBrush(Ref *pSender){
+    for (auto child : _menuBrushesColor->getChildren()) {
+        MenuItemImage *childItem = (MenuItemImage*)child;
+        childItem->setVisible(true);
+    }
+    _bgBoardBrushes->getChildByTag(-200)->setVisible(false);
     
+    MenuItemImage *item = (MenuItemImage*)pSender;
+    auto normalImg1 = Sprite::create("slice41_41.png");
+    auto normalImg2 = Sprite::create("slice05_05.png");
+    auto normalImg3 = Sprite::create("slice43_43.png");
+    auto normalImg4 = Sprite::create("slice23_23.png");
+    auto normalImg5 = Sprite::create("slice11_11.png");
+    auto normalImg6 = Sprite::create("slice14_14.png");
+    
+    brushIndexTab = item->getTag()+1;
+
+    if(item->getTag() == 0){
+        auto itemSprite = Sprite::create("slice31_31.png");
+        
+        for (auto c : _bgBoardBrushes->getChildren()) {
+            if (c->getTag() == -100) {
+                ((Sprite*)c)->setSpriteFrame(SpriteFrame::create("slice31_31.png",Rect(0,0,itemSprite->getContentSize().width,itemSprite->getContentSize().height)));
+                c->setScale(1.0f);
+                c->setVisible(true);
+            }else if(c->getTag() <= -101 && c->getTag() >= -124){
+                c->setVisible(false);
+            }
+        }
+        
+        auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_1.png");
+        brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_1.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+    }
+    else if(item->getTag() == 1){
+        auto itemSprite = Sprite::create("slice33_33.png");
+        
+        for (auto c : _bgBoardBrushes->getChildren()) {
+            if (c->getTag() == -100) {
+                ((Sprite*)c)->setSpriteFrame(SpriteFrame::create("slice33_33.png",Rect(0,0,itemSprite->getContentSize().width,itemSprite->getContentSize().height)));
+                c->setScale(0.7f);
+                c->setVisible(true);
+            }else if(c->getTag() <= -101 && c->getTag() >= -124){
+                c->setVisible(false);
+            }
+        }
+        
+        auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_1.png");
+        brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_1.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+    }
+    else if(item->getTag() == 2){
+        auto itemSprite = Sprite::create("slice36_36.png");//04
+        for (auto c : _bgBoardBrushes->getChildren()) {
+            if (c->getTag() == -100) {
+                ((Sprite*)c)->setSpriteFrame(SpriteFrame::create("slice36_36.png",Rect(0,0,itemSprite->getContentSize().width,itemSprite->getContentSize().height)));
+                c->setScale(1.0f);
+                c->setVisible(true);
+            }else if(c->getTag() <= -101 && c->getTag() >= -124){
+                c->setVisible(true);
+            }
+        }
+        
+        auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_1.png");
+        brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_1.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+    }
+    else if(item->getTag() == 3){
+        auto itemSprite = Sprite::create("slice06_06.png");
+        for (auto c : _bgBoardBrushes->getChildren()) {
+            if (c->getTag() == -100) {
+                ((Sprite*)c)->setSpriteFrame(SpriteFrame::create("slice06_06.png",Rect(0,0,itemSprite->getContentSize().width,itemSprite->getContentSize().height)));
+                c->setScale(1.0f);
+                c->setVisible(true);
+            }else if(c->getTag() <= -101 && c->getTag() >= -124){
+                c->setVisible(false);
+            }
+        }
+        
+        auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_4.png");
+        brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_4.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+    }
+    else if(item->getTag() == 4){
+        for (auto c : _bgBoardBrushes->getChildren()) {
+            if (c->getTag() == -100) {
+                c->setScale(1.0f);
+                c->setVisible(false);
+            }else if(c->getTag() <= -101 && c->getTag() >= -124){
+                c->setVisible(false);
+            }
+        }
+        
+        for (auto child : _menuBrushesColor->getChildren()) {
+            MenuItemImage *childItem = (MenuItemImage*)child;
+            childItem->setVisible(false);
+        }
+        
+        _bgBoardBrushes->getChildByTag(-200)->setVisible(true);
+    }
+    
+    for (auto child : _menuBrushesType->getChildren()) {
+        MenuItemImage *childItem = (MenuItemImage*)child;
+        if(child->getTag() == 0){
+            if (child->getTag() != item->getTag()) {
+                childItem->setNormalSpriteFrame(SpriteFrame::create("slice41_41.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+            }else{
+                childItem->setNormalSpriteFrame(SpriteFrame::create("slice23_23.png", Rect(0, 0, normalImg4->getContentSize().width,normalImg4->getContentSize().height)));
+                
+            }
+        }else if(child->getTag() == 4){
+            if (child->getTag() != item->getTag()) {
+                childItem->setNormalSpriteFrame(SpriteFrame::create("slice05_05.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+            }else{
+                childItem->setNormalSpriteFrame(SpriteFrame::create("slice11_11.png", Rect(0, 0, normalImg5->getContentSize().width,normalImg5->getContentSize().height)));
+            }
+        }else if(child->getTag() > 0){
+            if (child->getTag() != item->getTag()) {
+                childItem->setNormalSpriteFrame(SpriteFrame::create("slice43_43.png", Rect(0, 0, normalImg3->getContentSize().width,normalImg3->getContentSize().height)));
+            }else{
+                childItem->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg6->getContentSize().width,normalImg6->getContentSize().height)));
+            }
+        }
+    }
+}
+
+void GamePlay::chooseBrushPath(Ref *pSender){
+    MenuItemImage *item = (MenuItemImage*)pSender;
+
+    auto normalImg1 = Sprite::create("slice38_38.png");
+    auto normalImg2 = Sprite::create("slice40_40.png");
+
+    item->setNormalSpriteFrame(SpriteFrame::create("slice38_38.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+
+    for (auto child : _menuBrushesColor->getChildren()) {
+        MenuItemImage *childItem = (MenuItemImage*)child;
+        if (childItem->getTag() != item->getTag()) {
+            childItem->setNormalSpriteFrame(SpriteFrame::create("slice40_40.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        }
+    }
+    
+    switch (item->getTag()) {
+        case 0:
+            brush->setColor(Color3B::BLACK);
+            break;
+        case 1:
+            brush->setColor(Color3B::WHITE);
+            break;
+        case 2:
+            brush->setColor(Color3B::GRAY);
+            break;
+        case 3:
+            brush->setColor(Color3B(220, 20, 60));
+            break;
+        case 4:
+            brush->setColor(Color3B(139, 0, 0));
+            break;
+        case 5:
+            brush->setColor(Color3B(219, 112, 147));
+            break;
+        case 6:
+            brush->setColor(Color3B(0, 109, 255));
+            break;
+        case 7:
+            brush->setColor(Color3B::BLUE);
+            break;
+        case 8:
+            brush->setColor(Color3B(106, 90, 205));
+            break;
+        case 9:
+            brush->setColor(Color3B(205, 0, 205));
+            break;
+        case 10:
+            brush->setColor(Color3B(205, 20, 147));
+            break;
+        case 11:
+            brush->setColor(Color3B(255, 105, 180));
+            break;
+        case 12:
+            brush->setColor(Color3B(0, 205, 205));
+            break;
+        case 13:
+            brush->setColor(Color3B(175, 238, 238));
+            break;
+        case 14:
+            brush->setColor(Color3B(0,250,154));
+            break;
+        case 15:
+            brush->setColor(Color3B(0,255,127));
+            break;
+        case 16:
+            brush->setColor(Color3B(0,255,0));
+            break;
+        case 17:
+            brush->setColor(Color3B(0,128,0));
+            break;
+        case 18:
+            brush->setColor(Color3B(255,0,0));
+            break;
+        case 19:
+            brush->setColor(Color3B(255,69,0));
+            break;
+        case 20:
+            brush->setColor(Color3B(255,140,0));
+            break;
+        case 21:
+            brush->setColor(Color3B(255,165,0));
+            break;
+        case 22:
+            brush->setColor(Color3B(255,215,0));
+            break;
+        case 23:
+            brush->setColor(Color3B(255,255,0));
+            break;
+        default:
+            break;
+    }
+    
+    if (brushIndexTab == 2) {
+        shadow->setColor(brush->getColor());
+        shadowBase->setColor(brush->getColor());
+        brush->setColor(Color3B::WHITE);
+    }else if (brushIndexTab == 3){
+        shadowBase->setColor(_bgBoardBrushes->getChildByTag(-101 - item->getTag())->getColor());
+    }
+    
+    spriteBrushWhite->setColor(brush->getColor());
+    _isShowBoard = false;
+    _bgBoardBrushes->setVisible(false);
+}
+
+void GamePlay::chooseStampsDraw(Ref *pSender){
+    _isShowBoard = false;
+    _bgBoardStemp->setVisible(false);
+    
+    MenuItemImage *item = (MenuItemImage*)pSender;
+    
+    auto normalImg1 = Sprite::create("slice21_21.png");
+    auto normalImg2 = Sprite::create("slice37_37.png");
+    
+    item->setNormalSpriteFrame(SpriteFrame::create("slice21_21.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+    
+    for (auto child : _menuStemps->getChildren()) {
+        MenuItemImage *childItem = (MenuItemImage*)child;
+        if (childItem->getTag() != item->getTag() && childItem->getTag() >= 0) {
+            childItem->setNormalSpriteFrame(SpriteFrame::create("slice37_37.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        }
+    }
+    
+    char str[100] ={0};
+    if(item->getTag()<=8)
+        sprintf(str, "stamp/slice0%d_0%d.png",item->getTag()+1,item->getTag()+1);
+    else{
+        sprintf(str, "stamp/slice%d_%d.png",item->getTag()+1,item->getTag()+1);
+    }
+
+    auto spriteBrush = Sprite::create(str);
+
+    stempBrush->setColor(Color3B::WHITE);
+    stempBrush->setSpriteFrame(SpriteFrame::create(str,Rect(0,0,spriteBrush->getContentSize().width,spriteBrush->getContentSize().height)));
+    
+    ((Sprite*)spriteBarDraw->getChildByTag(20))->setSpriteFrame(SpriteFrame::create(str,Rect(0,0,spriteBrush->getContentSize().width,spriteBrush->getContentSize().height)));
+}
+
+//void GamePlay::facebook(Ref *pSender){
+//
+//}
+
+void GamePlay::stopDraw(Ref *pSender){
+    if(!_isShowBoard){
+        _drawButton->setVisible(true);
+        _drawButton->setVisible(true);
+        _homeButton->setVisible(true);
+        _saveButton->setVisible(true);
+        _mailButton->setVisible(true);
+        //    _faceButton->setVisible(true);
+        _isStartDraw = false;
+        spriteBarDraw->setVisible(false);
+        this->unschedule(schedule_selector(GamePlay::updateColorBrush));
+    }
 }
 
 void GamePlay::setupAdvanceLevel(){
