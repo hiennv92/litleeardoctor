@@ -1206,24 +1206,58 @@ void GamePlay::addToolsPaint(){
             _iconBrushWhiteType1 = Sprite::create("slice18_18.png");
             _iconBrushWhiteType1->setColor(Color3B::BLACK);
             _iconBrushType1->setPosition(item->getPosition());
-            _iconBrushType1->setPosition(item->getPosition());
-            _bgBoardBrushes->addChild(_iconBrushType1,15);
+            _iconBrushWhiteType1->setPosition(item->getPosition());
             _bgBoardBrushes->addChild(_iconBrushWhiteType1,15);
+            _bgBoardBrushes->addChild(_iconBrushType1,15);
+            _iconBrushWhiteType1->setScale(1.0f);
+            _iconBrushType1->setScale(1.0f);
         }else if(i == 4){
             auto item = MenuItemImage::create("slice05_05.png","slice11_11.png",CC_CALLBACK_1(GamePlay::chooseTypeBrush,this));
             item->setPosition(_bgBoardBrushes->getContentSize().width*(0.15 + i*0.175), _bgBoardBrushes->getContentSize().height*0.83);
             item->setTag(i);
             _menuBrushesType->addChild(item);
             
-            auto sp = Sprite::create("slice16_16.png");
-            sp->setPosition(item->getPosition());
-            sp->setScale(0.5f);
-            _bgBoardBrushes->addChild(sp,15);
+            _iconBrushRainBow = Sprite::create("slice16_16.png");
+            _iconBrushRainBow->setPosition(item->getPosition());
+            _iconBrushRainBow->setScale(0.5f);
+            _bgBoardBrushes->addChild(_iconBrushRainBow,15);
         }else{
             auto item = MenuItemImage::create("slice43_43.png","slice14_14.png",CC_CALLBACK_1(GamePlay::chooseTypeBrush,this));
             item->setPosition(_bgBoardBrushes->getContentSize().width*(0.15 + i*0.175), _bgBoardBrushes->getContentSize().height*0.83);
             item->setTag(i);
             _menuBrushesType->addChild(item);
+            
+            if (i == 1) {
+                _iconBrushType2 = Sprite::create("slice29_29.png");
+                _iconBrushWhiteType2 = Sprite::create("slice47_47.png");
+                _iconBrushWhiteType2->setColor(Color3B::BLACK);
+                _iconBrushType2->setPosition(item->getPosition());
+                _iconBrushWhiteType2->setPosition(item->getPosition());
+                _bgBoardBrushes->addChild(_iconBrushWhiteType2,15);
+                _bgBoardBrushes->addChild(_iconBrushType2,15);
+                _iconBrushWhiteType2->setScale(0.5f);
+                _iconBrushType2->setScale(0.5f);
+            }else if (i == 2){
+                _iconBrushType3 = Sprite::create("slice42_42.png");
+                _iconBrushWhiteType3 = Sprite::create("slice45_45.png");
+                _iconBrushWhiteType3->setColor(Color3B::BLACK);
+                _iconBrushType3->setPosition(item->getPosition());
+                _iconBrushWhiteType3->setPosition(item->getPosition());
+                _bgBoardBrushes->addChild(_iconBrushWhiteType3,15);
+                _bgBoardBrushes->addChild(_iconBrushType3,15);
+                _iconBrushWhiteType3->setScale(0.5f);
+                _iconBrushType3->setScale(0.5f);
+            }else if (i == 3){
+                _iconBrushType4 = Sprite::create("slice20_20.png");
+                _iconBrushWhiteType4 = Sprite::create("slice15_15.png");
+                _iconBrushWhiteType4->setColor(Color3B::BLACK);
+                _iconBrushType4->setPosition(item->getPosition());
+                _iconBrushWhiteType4->setPosition(item->getPosition());
+                _bgBoardBrushes->addChild(_iconBrushWhiteType4,15);
+                _bgBoardBrushes->addChild(_iconBrushType4,15);
+                _iconBrushWhiteType4->setScale(0.5f);
+                _iconBrushType4->setScale(0.5f);
+            }
         }
     }
     
@@ -2382,6 +2416,7 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
         MenuItemImage *childItem = (MenuItemImage*)child;
         childItem->setVisible(true);
     }
+    
     _bgBoardBrushes->getChildByTag(-200)->setVisible(false);
     
     MenuItemImage *item = (MenuItemImage*)pSender;
@@ -2394,6 +2429,18 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
     
     brushIndexTab = item->getTag()+1;
 
+    _iconBrushWhiteType1->setScale(0.5f);
+    _iconBrushType1->setScale(0.5f);
+    _iconBrushWhiteType2->setScale(0.5f);
+    _iconBrushType2->setScale(0.5f);
+    _iconBrushWhiteType2->setScale(0.5f);
+    _iconBrushType2->setScale(0.5f);
+    _iconBrushWhiteType3->setScale(0.5f);
+    _iconBrushType3->setScale(0.5f);
+    _iconBrushWhiteType4->setScale(0.5f);
+    _iconBrushType4->setScale(0.5f);
+    _iconBrushRainBow->setScale(0.5f);
+    
     if(item->getTag() == 0){
         auto itemSprite = Sprite::create("slice31_31.png");
         
@@ -2409,6 +2456,9 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
         
         auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_1.png");
         brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_1.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+    
+        _iconBrushWhiteType1->setScale(1.0f);
+        _iconBrushType1->setScale(1.0f);
     }
     else if(item->getTag() == 1){
         auto itemSprite = Sprite::create("slice33_33.png");
@@ -2425,6 +2475,9 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
         
         auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_1.png");
         brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_1.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+        
+        _iconBrushWhiteType2->setScale(1.0f);
+        _iconBrushType2->setScale(1.0f);
     }
     else if(item->getTag() == 2){
         auto itemSprite = Sprite::create("slice36_36.png");//04
@@ -2440,6 +2493,9 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
         
         auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_1.png");
         brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_1.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+        
+        _iconBrushWhiteType3->setScale(1.0f);
+        _iconBrushType3->setScale(1.0f);
     }
     else if(item->getTag() == 3){
         auto itemSprite = Sprite::create("slice06_06.png");
@@ -2455,6 +2511,9 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
         
         auto brushSprite = Sprite::create("DrawResources/brush/pen_brush_4.png");
         brush->setSpriteFrame(SpriteFrame::create("DrawResources/brush/pen_brush_4.png",Rect(0,0,brushSprite->getContentSize().width,brushSprite->getContentSize().height)));
+        
+        _iconBrushWhiteType4->setScale(1.0f);
+        _iconBrushType4->setScale(1.0f);
     }
     else if(item->getTag() == 4){
         for (auto c : _bgBoardBrushes->getChildren()) {
@@ -2472,7 +2531,38 @@ void GamePlay::chooseTypeBrush(Ref *pSender){
         }
         
         _bgBoardBrushes->getChildByTag(-200)->setVisible(true);
+        
+        _iconBrushRainBow->setScale(1.0f);
     }
+    
+    if (brushIndexTab == 1) {
+        auto sp1 = Sprite::create("slice13_13.png");
+        auto sp2 = Sprite::create("slice18_18.png");
+        spriteBrush->setSpriteFrame(SpriteFrame::create("slice13_13.png", Rect(0, 0, sp1->getContentSize().width,sp1->getContentSize().height)));
+        spriteBrushWhite->setSpriteFrame(SpriteFrame::create("slice18_18.png", Rect(0, 0, sp2->getContentSize().width,sp2->getContentSize().height)));
+        
+    }else if (brushIndexTab == 2){
+        auto sp1 = Sprite::create("slice29_29.png");
+        auto sp2 = Sprite::create("slice47_47.png");
+        spriteBrush->setSpriteFrame(SpriteFrame::create("slice29_29.png", Rect(0, 0, sp1->getContentSize().width,sp1->getContentSize().height)));
+        spriteBrushWhite->setSpriteFrame(SpriteFrame::create("slice47_47.png", Rect(0, 0, sp2->getContentSize().width,sp2->getContentSize().height)));
+    }else if(brushIndexTab == 3){
+        auto sp1 = Sprite::create("slice42_42.png");
+        auto sp2 = Sprite::create("slice45_45.png");
+        spriteBrush->setSpriteFrame(SpriteFrame::create("slice42_42.png", Rect(0, 0, sp1->getContentSize().width,sp1->getContentSize().height)));
+        spriteBrushWhite->setSpriteFrame(SpriteFrame::create("slice45_45.png", Rect(0, 0, sp2->getContentSize().width,sp2->getContentSize().height)));
+    }else if(brushIndexTab == 4){
+        auto sp1 = Sprite::create("slice20_20.png");
+        auto sp2 = Sprite::create("slice15_15.png");
+        spriteBrush->setSpriteFrame(SpriteFrame::create("slice20_20.png", Rect(0, 0, sp1->getContentSize().width,sp1->getContentSize().height)));
+        spriteBrushWhite->setSpriteFrame(SpriteFrame::create("slice15_15.png", Rect(0, 0, sp2->getContentSize().width,sp2->getContentSize().height)));
+    }else if(brushIndexTab == 5){
+        auto sp1 = Sprite::create("slice16_16.png");
+        auto sp2 = Sprite::create("slice16_16.png");
+        spriteBrush->setSpriteFrame(SpriteFrame::create("slice16_16.png", Rect(0, 0, sp1->getContentSize().width,sp1->getContentSize().height)));
+        spriteBrushWhite->setSpriteFrame(SpriteFrame::create("slice16_16.png", Rect(0, 0, sp2->getContentSize().width,sp2->getContentSize().height)));
+    }
+
     
     for (auto child : _menuBrushesType->getChildren()) {
         MenuItemImage *childItem = (MenuItemImage*)child;
@@ -2591,6 +2681,12 @@ void GamePlay::chooseBrushPath(Ref *pSender){
             break;
     }
     
+    _iconBrushWhiteType1->setColor(brush->getColor());
+    _iconBrushWhiteType2->setColor(brush->getColor());
+    _iconBrushWhiteType3->setColor(brush->getColor());
+    _iconBrushWhiteType4->setColor(brush->getColor());
+    spriteBrushWhite->setColor(brush->getColor());
+    
     if (brushIndexTab == 2) {
         shadow->setColor(brush->getColor());
         shadowBase->setColor(brush->getColor());
@@ -2599,7 +2695,6 @@ void GamePlay::chooseBrushPath(Ref *pSender){
         shadowBase->setColor(_bgBoardBrushes->getChildByTag(-101 - item->getTag())->getColor());
     }
     
-    spriteBrushWhite->setColor(brush->getColor());
     _isShowBoard = false;
     _bgBoardBrushes->setVisible(false);
 }

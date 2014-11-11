@@ -104,7 +104,7 @@ public:
     Menu *_menuBrushesType, *_menuBrushesColor, *_menuStemps;
 
     Sprite *spriteBrush, *spriteBrushWhite, *spriteStamp, *_bgBoardBrushes, *_bgBoardStemp;
-    Sprite *_iconBrushType1, *_iconBrushWhiteType1,*_iconBrushType2, *_iconBrushWhiteType2,*_iconBrushType3, *_iconBrushWhiteType3,*_iconBrushType4, *_iconBrushWhiteType4;
+    Sprite *_iconBrushType1, *_iconBrushWhiteType1,*_iconBrushType2, *_iconBrushWhiteType2,*_iconBrushType3, *_iconBrushWhiteType3,*_iconBrushType4, *_iconBrushWhiteType4, *_iconBrushRainBow;
     
 private:
     // canvas and brush tip
