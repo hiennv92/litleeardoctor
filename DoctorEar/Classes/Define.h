@@ -236,4 +236,16 @@
 #define MESS_TYPE_MANG_TAI          7
 #define MESS_TYPE_NAM_MOC           8
 
+//DRAW
+#define DRAW_UI_BG_1                "DrawResources/ui/draw_uibg1.png"
+#define DRAW_UI_BG_2                "DrawResources/ui/draw_uibg2.png"
+#define DRAW_UI_BG_3                "DrawResources/ui/draw_uibg3.png"
+#define DRAW_UI_BG_4                "DrawResources/ui/draw_uibg4.png"
+#define DRAW_UI_BG_5                "DrawResources/ui/draw_uibg6.png"
+
+#define DRAW_BAR                    "DrawResources/ui/draw_xdt.png"
+#define DRAW_ITEM_TAB_BRUSH         "DrawResources/ui/draw.png"
+#define DRAW_ITEM_TAB_STAMP         "DrawResources/stamp.png"
+#define DRAW_ITEM_COMMOEN           "DrawResources/common.png"
+
 #endif

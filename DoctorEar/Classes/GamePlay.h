@@ -24,8 +24,10 @@ public:
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
 
     cocos2d::Sprite *_spriteTable, *_background, *_backgroundBlackFont, *_earHoleScale,*spriteCircle, *_darkBackground;
-    cocos2d::extension::ControlSlider *slider;
-    cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton, *_drawButton, *_homeButton, *_saveButton, *_mailButton, *_faceButton;
+    Sprite *spriteBarDraw;
+    
+    cocos2d::extension::ControlSlider *slider,*pSlider;
+    cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton, *_drawButton, *_homeButton, *_saveButton, *_mailButton;
     
     Patient *_patient;
     Tool *_keepEar, *_flashLight, *_scissor, *_getMess, *_catchBug, *_getWater, *_drugWater, *_injection, *_tamPon, *_desiccate, *_sprayChemicals, *_shakeEar, *_smallTable, *_ongSoi;
@@ -48,7 +50,8 @@ public:
     
     //DRAW
     bool _isStartDraw;
-
+    bool _isShowBoard;
+    
     CREATE_FUNC(GamePlay);
 
     //Touch handle
@@ -56,11 +59,7 @@ public:
     bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event);
     void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event);
     void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event);
-    
-    void onTouchesBegan(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
-    void onTouchesMoved(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
-    void onTouchesEnded(const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event);
-
+    EventListenerTouchOneByOne *listener;
 
     void addSliderBar();
     void addFlashLight();
@@ -74,13 +73,51 @@ public:
     void nextToolsSelected(cocos2d::Ref* pSender);
     void backToolsSelected(cocos2d::Ref* pSender);
     void stopAdvanceLevel(cocos2d::Ref* pSender);
+
     void backHome(cocos2d::Ref* pSender);
     void drawImage(cocos2d::Ref* pSender);
     void saveImage(cocos2d::Ref* pSender);
     void email(cocos2d::Ref* pSender);
-    void facebook(cocos2d::Ref* pSender);
-    
     void setupAdvanceLevel();
+    
+    //Draw
+    void addToolsPaint();
+    void addStempBoard();
+    void stopDraw(cocos2d::Ref* pSender);
+    void chooseBrush(cocos2d::Ref* pSender);
+    void chooseStamp(cocos2d::Ref* pSender);
+    void chooseEraser(cocos2d::Ref* pSender);
+    void chooseTypeBrush(cocos2d::Ref* pSender);
+    void chooseBrushPath(cocos2d::Ref* pSender);
+    void chooseStampsDraw(cocos2d::Ref* pSender);
+    void closeBoard(cocos2d::Ref* pSender);
+    void updateColorBrush(float dt);
+    
+    // touch move event to handle draw input
+    virtual void onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event *unused_event);
+    virtual void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event *unused_event);
+    virtual void onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event *unused_event);
+    virtual void onTouchesCancelled(const std::vector<cocos2d::Touch*>&touches, cocos2d::Event *unused_event);
+    
+    int tabIndex;
+    MenuItemImage *btnOpenTabBrush, *btnStopDraw, *btnOpenTabStamp, *btnChooseEraser;
+    Menu *_menuBrushesType, *_menuBrushesColor, *_menuStemps;
+
+    Sprite *spriteBrush, *spriteBrushWhite, *spriteStamp, *_bgBoardBrushes, *_bgBoardStemp;
+    Sprite *_iconBrushType1, *_iconBrushWhiteType1,*_iconBrushType2, *_iconBrushWhiteType2,*_iconBrushType3, *_iconBrushWhiteType3,*_iconBrushType4, *_iconBrushWhiteType4;
+    
+private:
+    // canvas and brush tip
+    cocos2d::RenderTexture* canvas;
+    cocos2d::RenderTexture* shadowCanvas;
+    cocos2d::Sprite* shadow;
+    cocos2d::Sprite* shadowBase;
+    cocos2d::Sprite* brush;
+    cocos2d::Sprite* eraser;
+    cocos2d::Sprite* stempBrush;
+    
+    bool isEraser, usingBrush;
+    int brushIndexTab;
 };
 
 #endif /* defined(__DoctorEar__GamePlay__) */
