@@ -9,6 +9,7 @@
 #include "AppDelegate.h"
 #include "MainMenu.h"
 
+
 USING_NS_CC;
 
 Scene* GamePlay::createScene(){
@@ -759,6 +760,7 @@ void GamePlay::onTouchesMoved(const std::vector<Touch *> &touches, cocos2d::Even
         float diffX = end.x - start.x;
         float diffY = end.y - start.y;
         
+        
         if (isEraser) {
             for (int i = 0; i < int(distance); i++)
             {
@@ -819,7 +821,12 @@ void GamePlay::onTouchesMoved(const std::vector<Touch *> &touches, cocos2d::Even
             }
         }
         
-        for (int i = 0; i < int(distance); i++)
+        int next = 1;
+        if (brushIndexTab == 4) {
+            next = int(brush->getContentSize().width * brush->getScale()) / 2;
+        }
+        
+        for (int i = 0; i < int(distance); i+= next)
         {
             float delta = float(i) / distance;
             Point pos(start.x + (diffX * delta), start.y + (diffY * delta));
@@ -2321,7 +2328,31 @@ void GamePlay::backHome(Ref *pSender){
 }
 
 void GamePlay::saveImage(Ref *pSender){
+    // hide button
+    _saveButton->setVisible(false);
+    _homeButton->setVisible(false);
+    _drawButton->setVisible(false);
+    _mailButton->setVisible(false);
     
+    cocos2d::Size size = cocos2d::Director::getInstance()->getWinSize();
+    cocos2d::RenderTexture* texture = cocos2d::RenderTexture::create(size.width,
+                                                                     size.height);
+    texture->setPosition(cocos2d::Point(size.width / 2, size.height / 2));
+    texture->begin();
+    cocos2d::Director::getInstance()->getRunningScene()->visit();
+    texture->end();
+    if (texture->saveToFile("screenshot.png", Image::Format::PNG)) {
+        CCLOG("save screenshot success!");
+        MessageBox("Save image success!", "");
+    } else {
+        MessageBox("Save image failed!", "");
+        CCLOG("save screenshot failed!");
+    }
+    _saveButton->setVisible(true);
+    _homeButton->setVisible(true);
+    _drawButton->setVisible(true);
+    _mailButton->setVisible(true);
+
 }
 
 void GamePlay::drawImage(Ref *pSender){

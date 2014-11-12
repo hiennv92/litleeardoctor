@@ -8,6 +8,8 @@
 
 #ifndef DoctorEar_Define_h
 #define DoctorEar_Define_h
+#include "SimpleAudioEngine.h"
+
 
 //Key local
 #define SOUND_ON_OFF        "soundOnOff"
