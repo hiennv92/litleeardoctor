@@ -21,10 +21,10 @@ class GamePlay : public cocos2d::Layer{
 public:
     static cocos2d::Scene* createScene();
     virtual bool init();
-    virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
 
     cocos2d::Sprite *_spriteTable, *_background, *_backgroundBlackFont, *_earHoleScale,*spriteCircle, *_darkBackground;
     Sprite *spriteBarDraw;
+    ParticleSystemQuad* particleStar, *particleStar2, *particleStar3;
     
     cocos2d::extension::ControlSlider *slider,*pSlider;
     cocos2d::MenuItemImage *_btnNextTools, *_btnBackTools, *_stopAdvanceLevelButton, *_drawButton, *_homeButton, *_saveButton, *_mailButton;

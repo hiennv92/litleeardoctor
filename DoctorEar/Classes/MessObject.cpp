@@ -338,7 +338,7 @@ void MessObject::removeMess(){
     }
     else if(_typeMess == MESS_TYPE_MU_TAI){
         _isCheckingMess = false;
-        if(_tool->_typeTool != TOOL_TYPE_GEL){
+        if(_tool->_typeTool != TOOL_TYPE_GEL && _tool->_typeTool != TOOL_TYPE_LAZER){
             CCLOG("REMOVE mu tai");
             _isRemove = true;
             this->runAction(FadeTo::create(0.3f, 0.0f));
