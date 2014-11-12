@@ -2279,16 +2279,20 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         this->addToolsPaint();
         this->addStempBoard();
         
-        particleStar = ParticleSystemQuad::create("star2.plist");
+        particleStar = ParticleSystemQuad::create("particle_texture.plist");
         particleStar->setPosition(_drawButton->getPosition());
         this->getParent()->addChild(particleStar,15);
         
-        particleStar2 = ParticleSystemQuad::create("star2.plist");
+        particleStar2 = ParticleSystemQuad::create("particle_texture.plist");
         particleStar2->setPosition(_saveButton->getPositionX()*2, _saveButton->getPositionY());
         this->getParent()->addChild(particleStar2,15);
         
-        particleStar3 = ParticleSystemQuad::create("star2.plist");
+        particleStar3 = ParticleSystemQuad::create("particle_texture.plist");
         this->getParent()->addChild(particleStar3,15);
+        
+        particleStar->setScale(0.7f);
+        particleStar2->setScale(0.7f);
+        particleStar3->setScale(0.7f);
     }
 }
 
