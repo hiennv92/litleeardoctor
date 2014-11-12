@@ -2278,6 +2278,17 @@ void GamePlay::nextToolsSelected(Ref *pSender){
         _eventDispatcher->removeEventListener(listener);
         this->addToolsPaint();
         this->addStempBoard();
+        
+        particleStar = ParticleSystemQuad::create("star2.plist");
+        particleStar->setPosition(_drawButton->getPosition());
+        this->getParent()->addChild(particleStar,15);
+        
+        particleStar2 = ParticleSystemQuad::create("star2.plist");
+        particleStar2->setPosition(_saveButton->getPositionX()*2, _saveButton->getPositionY());
+        this->getParent()->addChild(particleStar2,15);
+        
+        particleStar3 = ParticleSystemQuad::create("star2.plist");
+        this->getParent()->addChild(particleStar3,15);
     }
 }
 
@@ -2352,7 +2363,6 @@ void GamePlay::saveImage(Ref *pSender){
     _homeButton->setVisible(true);
     _drawButton->setVisible(true);
     _mailButton->setVisible(true);
-
 }
 
 void GamePlay::drawImage(Ref *pSender){
@@ -2361,6 +2371,14 @@ void GamePlay::drawImage(Ref *pSender){
         _homeButton->setVisible(false);
         _saveButton->setVisible(false);
         _mailButton->setVisible(false);
+
+        _mailButton->setEnabled(false);
+        _saveButton->setEnabled(false);
+        _homeButton->setEnabled(false);
+        _drawButton->setEnabled(false);
+        particleStar->setVisible(false);
+        particleStar2->setVisible(false);
+        particleStar3->setVisible(false);
         //    _faceButton->setVisible(false);
         _isStartDraw = true;
         
@@ -2770,10 +2788,18 @@ void GamePlay::chooseStampsDraw(Ref *pSender){
 void GamePlay::stopDraw(Ref *pSender){
     if(!_isShowBoard){
         _drawButton->setVisible(true);
-        _drawButton->setVisible(true);
         _homeButton->setVisible(true);
         _saveButton->setVisible(true);
         _mailButton->setVisible(true);
+        
+        _mailButton->setEnabled(true);
+        _saveButton->setEnabled(true);
+        _homeButton->setEnabled(true);
+        _drawButton->setEnabled(true);
+        particleStar->setVisible(true);
+        particleStar2->setVisible(true);
+        particleStar3->setVisible(true);
+        
         //    _faceButton->setVisible(true);
         _isStartDraw = false;
         spriteBarDraw->setVisible(false);
@@ -2808,14 +2834,4 @@ void GamePlay::setupAdvanceLevel(){
     _darkBackground->setVisible(true);
     
     this->addMessesAndBugsAdvance();
-}
-
-#pragma mark - DRAW
-
-void GamePlay::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
-{
-//    Layer::draw();
-//    ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position );
-//    kmGLPushMatrix();
-//    kmGLPopMatrix();
 }
