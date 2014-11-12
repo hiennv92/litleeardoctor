@@ -2403,6 +2403,7 @@ void GamePlay::drawImage(Ref *pSender){
         
         isEraser = false;
         usingBrush = true;
+        pSlider->setEnabled(false);
         
         this->schedule(schedule_selector(GamePlay::updateColorBrush), 0.02f);
     }
@@ -2417,6 +2418,7 @@ void GamePlay::updateColorBrush(float dt){
 
 void GamePlay::chooseBrush(Ref *pSender){
     if (!_isShowBoard) {
+        pSlider->setEnabled(true);
         auto normalImg1 = Sprite::create("slice14_14.png");
         auto normalImg2 = Sprite::create("slice28_28.png");
         btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
@@ -2430,28 +2432,32 @@ void GamePlay::chooseBrush(Ref *pSender){
 }
 
 void GamePlay::chooseStamp(Ref *pSender){
-    auto normalImg1 = Sprite::create("slice14_14.png");
-    auto normalImg2 = Sprite::create("slice28_28.png");
-    btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
-    btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
-    btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
-
-    isEraser = false;
-    _isShowBoard = true;
-    _bgBoardStemp->setVisible(true);
-    _bgBoardBrushes->setVisible(false);
-    usingBrush = false;
+    if(!_isShowBoard){
+        auto normalImg1 = Sprite::create("slice14_14.png");
+        auto normalImg2 = Sprite::create("slice28_28.png");
+        btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+        btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        
+        isEraser = false;
+        _isShowBoard = true;
+        _bgBoardStemp->setVisible(true);
+        _bgBoardBrushes->setVisible(false);
+        usingBrush = false;
+    }
 }
 
 void GamePlay::chooseEraser(Ref *pSender){
-    auto normalImg1 = Sprite::create("slice14_14.png");
-    auto normalImg2 = Sprite::create("slice28_28.png");
-    btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
-    btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
-    btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
-
-    usingBrush = true;
-    isEraser = true;
+    if(!_isShowBoard){
+        auto normalImg1 = Sprite::create("slice14_14.png");
+        auto normalImg2 = Sprite::create("slice28_28.png");
+        btnOpenTabBrush->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        btnOpenTabStamp->setNormalSpriteFrame(SpriteFrame::create("slice28_28.png", Rect(0, 0, normalImg2->getContentSize().width,normalImg2->getContentSize().height)));
+        btnChooseEraser->setNormalSpriteFrame(SpriteFrame::create("slice14_14.png", Rect(0, 0, normalImg1->getContentSize().width,normalImg1->getContentSize().height)));
+        
+        usingBrush = true;
+        isEraser = true;
+    }
 }
 
 void GamePlay::email(Ref *pSender){
@@ -2459,6 +2465,7 @@ void GamePlay::email(Ref *pSender){
 }
 
 void GamePlay::closeBoard(Ref *pSender){
+    pSlider->setEnabled(false);
     _bgBoardBrushes->setVisible(false);
     _bgBoardStemp->setVisible(false);
     _isShowBoard = false;
